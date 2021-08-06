@@ -1,21 +1,29 @@
 import * as React from 'react';
 import Nav from '../component/Nav';
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 type LocationProps = {
-    si : string
+    location: {
+        si: string,
+        gu: string,
+        dong: string,
+        latitude: Number,
+        longitude: Number,
+        detail: string
+    }
 }
-const Main :React.FC<LocationProps> =({si})=>{
-    React.useEffect(()=>{
+const Main: React.FC<LocationProps> = ({ location }) => {
+    React.useEffect(() => {
         //서버 랭킹 store 리스트 get
-    },[si])
-    return(
-    <div>
-        <header>{si}</header>
+    }, [location])
+    return (
         <div>
-            <span>랭킹 TOP5</span>
+            <header><FontAwesomeIcon icon={faMapMarkerAlt} />{location?.si}</header>
+            <div>
+                <span>랭킹 TOP5</span>
 
-        </div>
-        <Nav/>
-    </div>)
+            </div>
+            <Nav />
+        </div>)
 }
 export default Main;

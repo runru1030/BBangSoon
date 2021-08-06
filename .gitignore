@@ -11,6 +11,9 @@
 # production
 /build
 
+.env
+.history
+/src/routes/Login.tsx
 # misc
 .DS_Store
 .env.local

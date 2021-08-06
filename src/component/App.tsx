@@ -1,49 +1,48 @@
+import axios from 'axios';
 import * as React from 'react';
-import './App.css';
 import AppRouter from './Router';
+type pos = {
+  si: string,
+  gu: string,
+  dong: string,
+  latitude: number,
+  longitude: number,
+  detail: string
+}
 
 function App() {
-  
-  type pos = {
-    si: string,
-    gu: string,
-    dong: string,
-    locationX: Number,
-    locationY: Number,
-    detail: string
-  }
-  
   const [location, setLocation] = React.useState<pos>({
-    si: "",
+    si: "서울",
     gu: "",
     dong: "",
-    locationX: 0,
-    locationY: 0,
-    detail:"" 
+    latitude: 33.450701,
+    longitude: 126.570667,
+    detail: ""
   });
-  const kakao = (window as any).kakao;
-  let geocoder = new kakao.maps.services.Geocoder();
-  
-  let callback = (result: any, status: any )=> {
-    if (status === kakao.maps.services.Status.OK) {
-    setLocation({
-      si: result[0].address.region_1depth_name,
-      gu: result[0].address.region_2depth_name,
-      dong: result[0].address.region_3depth_name,
-      locationX: result[0].address.x,
-      locationY: result[0].address.y,
-      detail: result[0].address.address_name
-    })
-  }
-  };
+
   React.useEffect(() => {
     navigator.geolocation.getCurrentPosition((position) => {
-      let coord = new kakao.maps.LatLng(position.coords.latitude, position.coords.longitude);
-      geocoder.coord2Address(coord.getLng(), coord.getLat(), callback);
+      axios.get(`https://dapi.kakao.com/v2/local/geo/coord2address.json`, {
+        headers: { Authorization: `KakaoAK ${process.env.REACT_APP_KAKAO_REST_KEY}` },
+        params: {
+          y: position.coords.latitude,
+          x: position.coords.longitude
+        }
+      }).then(res => {
+        setLocation({
+          si: res.data.documents[0].address.region_1depth_name,
+          gu: res.data.documents[0].address.region_2depth_name,
+          dong: res.data.documents[0].address.region_3depth_name,
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          detail: res.data.documents[0].address.address_namee,
+        })
+      }
+      )
     });
-  },[])
+  }, [])
   return (
-    <AppRouter si={location.si} />
+    <AppRouter location={location} />
   );
 }
 

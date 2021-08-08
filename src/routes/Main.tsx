@@ -2,6 +2,7 @@ import * as React from 'react';
 import Nav from '../component/Nav';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
+import styled from 'styled-components';
 type LocationProps = {
     location: {
         si: string,
@@ -18,7 +19,7 @@ const Main: React.FC<LocationProps> = ({ location }) => {
     }, [location])
     return (
         <div>
-            <header><FontAwesomeIcon icon={faMapMarkerAlt} />{location?.si}</header>
+            <Header><FontAwesomeIcon icon={faMapMarkerAlt} /> {location?.si}</Header>
             <div>
                 <span>랭킹 TOP5</span>
 
@@ -27,3 +28,11 @@ const Main: React.FC<LocationProps> = ({ location }) => {
         </div>)
 }
 export default Main;
+
+const Header=styled.header`
+position: sticky;
+padding: 20px;
+top: 0px;
+border-bottom: solid thin #d0d0d0;
+font-weight:bold;
+`

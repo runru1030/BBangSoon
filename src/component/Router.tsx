@@ -1,6 +1,7 @@
 import * as React from "react";
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Main from "../routes/Main";
+import Store from "../routes/Store";
 import Surrounding from "../routes/Surrounding";
 
 type AppProps = {
@@ -23,7 +24,10 @@ const AppRouter: React.FC<AppProps> = ({ location }) => {
                     <Main location={location} />
                 </Route>
                 <Route exact path="/surrounding">
-                    <Surrounding location={location} />
+                    <Surrounding />
+                </Route>
+                <Route exact path="/store">
+                    <Store />
                 </Route>
             </Switch>
         </Router>

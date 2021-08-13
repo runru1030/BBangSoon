@@ -37,6 +37,14 @@ function App() {
           longitude: position.coords.longitude,
           detail: res.data.documents[0].address.address_namee,
         })
+        window.localStorage.setItem("location", JSON.stringify({
+          si: res.data.documents[0].address.region_1depth_name,
+          gu: res.data.documents[0].address.region_2depth_name,
+          dong: res.data.documents[0].address.region_3depth_name,
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          detail: res.data.documents[0].address.address_namee,
+        }))
       }
       )
     });

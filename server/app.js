@@ -13,7 +13,7 @@ const logger = require('./logger');
 const { sequelize } = require('./models');
 
 const app = express();
-app.set('port', process.env.PORT || 8001);
+app.set('port', process.env.PORT || 3001);
 
 sequelize.sync({ force: false })
     .then(() => {

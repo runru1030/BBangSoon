@@ -1,30 +1,27 @@
 import * as React from 'react';
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import Map from '../component/Map';
 import Nav from '../component/Nav';
 import styled from 'styled-components';
-
-type locationProps = {
-    location: {
-        si: string,
-        gu: string,
-        dong: string,
-        latitude: number,
-        longitude: number,
-        detail: string
-    }
-}
+import StoreList from '../component/StoreList';
 type marker = {
     title: string,
     lat: number,
     lng: number,
-    page: number,
-    is_end_page: boolean,
+    address: string,
+    url: string
 }
-const Surrounding: React.FC<locationProps> = ({ location }) => {
+const Surrounding: React.FC = ({  }) => {
+    const location = JSON.parse(window.localStorage.getItem("location")||`{
+        si: "서울",
+        gu: "",
+        dong: "",
+        latitude: 33.450701,
+        longitude: 126.570667,
+        detail: ""
+      }`);
     const [markerArr, setMarkerArr] = React.useState<marker[]>([]);
     const [isOpen, setIsOpen] = React.useState<boolean>(false);
     const [address, setAddress] = React.useState<string>("");
@@ -42,6 +39,7 @@ const Surrounding: React.FC<locationProps> = ({ location }) => {
     const [isEnd, setIsEnd] = React.useState<boolean>();
     const [curpage, setCurPage] = React.useState<number>(1);
     //const [storeArr,setStoreArr]= React.useState<store[]>([]);
+
     const onClickChange = () => {
         setIsOpen(true);
     }
@@ -76,21 +74,20 @@ const Surrounding: React.FC<locationProps> = ({ location }) => {
                 sort: "distance"
             }
         }).then(res => {
-            setIsEnd(res.data.meta.is_end);
             console.log(res.data);
+            
+            setIsEnd(res.data.meta.is_end);
             setCurPage(page + 1);
             if (page == 1) {
-                setMarkerArr(res.data.documents.map((it: any) => ({ title: it.place_name, lng: it.x, lat: it.y })));
+                setMarkerArr(res.data.documents.map((it: any) => ({ title: it.place_name, lng: it.x, lat: it.y, address: it.address_name, url: it.place_url})));
             }
             else {
-                setMarkerArr([...markerArr, ...res.data.documents.map((it: any) => ({ title: it.place_name, lng: it.x, lat: it.y }))]);
+                setMarkerArr([...markerArr, ...res.data.documents.map((it: any) => ({ title: it.place_name, lng: it.x, lat: it.y , address: it.address_name, url: it.place_url}))]);
 
             }
         })
     }
     React.useEffect(() => {
-        console.log(loc);
-
         getStoreApi(1);
 
     }, [loc])
@@ -102,13 +99,15 @@ const Surrounding: React.FC<locationProps> = ({ location }) => {
                 <input type="submit" value="검색" />
             </form>}
 
-            {addressList.length == 0 ? <><Map loc={loc} setLoc={setLoc} curLoc={curLoc} markerArr={markerArr} /><div className="scroll-list">
+            {addressList.length == 0 ? <>
+            <Map loc={loc} setLoc={setLoc} curLoc={curLoc} markerArr={markerArr} />
+            <div className="scroll-list">
                 {markerArr.map((store) =>
-                    <StoreList>{store.title}</StoreList>
+                    <StoreList store={store}/>
                 )}
                 {!isEnd && <button className="more-btn" onClick={onClickNext}>더 보기</button>}
             </div></>
-                : <div>{addressList.map((it: any, idx: number) => <StoreList id={"" + idx} onClick={(event) => onClick(event.currentTarget.id)}>{it.place_name}</StoreList>)}
+                : <div>{addressList.map((it: any, idx: number) => <List id={"" + idx} onClick={(event) => onClick(event.currentTarget.id)}>{it.place_name}</List>)}
                 </div>}
 
         </div>
@@ -132,7 +131,7 @@ span{
     
 }
 `
-const StoreList = styled.div`
+const List = styled.div`
 width: 100%;
 display: flex;
 align-items: center;

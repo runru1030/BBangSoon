@@ -13,7 +13,7 @@ module.exports = class Menu extends Sequelize.Model {
       },
     }, {
       sequelize,
-      timestamps: true,
+      timestamps: false,
       underscored: false,
       modelName: 'Menu',
       tableName: 'Menu',
@@ -24,6 +24,6 @@ module.exports = class Menu extends Sequelize.Model {
   }
   
   static associate(db) {
-    db.Menu.belongsTo(db.Store, { foreignKey: 'storeId', targetKey: 'id' });
+    db.Menu.belongsTo(db.Store, { foreignKey: 'StoreId', targetKey: 'id' });
   }
 }

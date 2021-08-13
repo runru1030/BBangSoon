@@ -8,11 +8,11 @@ module.exports = class Review extends Sequelize.Model {
         allowNull: false,
       },
       content: {
-        type: Sequelize.STRING(100),
+        type: Sequelize.STRING(300),
         allowNull: true,
       },
       date:{
-        type:Sequelize.DATE,
+        type:Sequelize.STRING(12),
         allowNull:false
       },
       nickName:{
@@ -21,7 +21,7 @@ module.exports = class Review extends Sequelize.Model {
       }
     }, {
       sequelize,
-      timestamps: true,
+      timestamps: false,
       underscored: false,
       modelName: 'Review',
       tableName: 'Review',
@@ -32,6 +32,6 @@ module.exports = class Review extends Sequelize.Model {
   }
   
   static associate(db) {
-    db.Review.belongsTo(db.Store, { foreignKey: 'storeId', targetKey: 'id' });
+    db.Review.belongsTo(db.Store, { foreignKey: 'StoreId', targetKey: 'id' });
   }
 }

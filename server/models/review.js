@@ -12,13 +12,17 @@ module.exports = class Review extends Sequelize.Model {
         allowNull: true,
       },
       date:{
-        type:Sequelize.STRING(12),
+        type:'TIMESTAMP',
         allowNull:false
       },
       nickName:{
         type:Sequelize.STRING(15),
         allowNull:false
-      }
+      },
+      reviewImg:{
+        type:Sequelize.STRING(200),
+        allowNull:true,
+      },
     }, {
       sequelize,
       timestamps: false,

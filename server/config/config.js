@@ -6,7 +6,7 @@ module.exports = {
       "database": "bbangsoon",
       "host": "3.35.167.4",
       "dialect": "mysql",
-      "operatorAliases" : false
+      "operatorAliases" : false,
     }
   };
 /* module.exports = {

@@ -9,11 +9,13 @@ const cors = require('cors');
 dotenv.config();
 
 const storeRouter = require('./routes/store');
+const storeCrawlRouter = require('./routes/storeCrawl');
 const logger = require('./logger');
 const { sequelize } = require('./models');
 
 const app = express();
 app.set('port', process.env.PORT || 3001);
+
 
 sequelize.sync({ force: false })
     .then(() => {
@@ -38,6 +40,7 @@ app.use(cors());
 
 
 app.use('/store', storeRouter);
+app.use('/storeCrawl', storeCrawlRouter);
 app.use((req, res, next) => {
     const error = new Error(`${req.method} ${req.url} 라우터가 없습니다.`);
     error.status = 404;
@@ -49,6 +52,6 @@ app.use((err, req, res, next) => {
     res.status(err.status || 500).send(err.message);
 });
 
-app.listen(app.get('port'), () => {
+app.listen(app.get('port'), 5000, () => {
     console.log(app.get('port'), '번 포트에서 대기 중');
 });

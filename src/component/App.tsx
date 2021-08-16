@@ -22,6 +22,7 @@ function App() {
 
   React.useEffect(() => {
     navigator.geolocation.getCurrentPosition((position) => {
+      
       axios.get(`https://dapi.kakao.com/v2/local/geo/coord2address.json`, {
         headers: { Authorization: `KakaoAK ${process.env.REACT_APP_KAKAO_REST_KEY}` },
         params: {

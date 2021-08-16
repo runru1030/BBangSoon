@@ -1,23 +1,22 @@
 
+import { faRedo } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import * as React from 'react';
+import { useLocation } from 'react-router-dom';
 
 type locationProps = {
   loc: {
     title: string,
     lat: number,
     lng: number
-  },
-  setLoc: any,
+  }|null,
+  setLoc: any|null,
   curLoc: {
     title: string,
     lat: number,
     lng: number
   },
-  markerArr: {
-    title: string,
-    lat: number,
-    lng: number,
-  }[],
+  markerArr: any[],
 
 }
 declare global {
@@ -26,7 +25,8 @@ declare global {
   }
 }
 const Map: React.FC<locationProps> = ({ loc, setLoc, curLoc, markerArr }) => {
-  const [mapCenter, setMapcenter] = React.useState({ title: "", lat: loc.lat, lng: loc.lng } as {
+  const location=useLocation();
+  const [mapCenter, setMapcenter] = React.useState({ title: "", lat: loc?.lat, lng: loc?.lng } as {
     title: string,
     lat: number,
     lng: number
@@ -40,7 +40,7 @@ const Map: React.FC<locationProps> = ({ loc, setLoc, curLoc, markerArr }) => {
   }
   const map = () => {
     const map = new window.naver.maps.Map("map", {
-      center: new window.naver.maps.LatLng(loc.lat, loc.lng),
+      center: new window.naver.maps.LatLng(loc?.lat, loc?.lng),
       zoom: 15,
     });
     new window.naver.maps.Marker({
@@ -53,11 +53,14 @@ const Map: React.FC<locationProps> = ({ loc, setLoc, curLoc, markerArr }) => {
     markerArr.map((el) => {
 
       const marker = new window.naver.maps.Marker({
-        position: new window.naver.maps.LatLng(el.lat, el.lng),
+        position: new window.naver.maps.LatLng(el.y, el.x),
         map: map,
       });
       var contentString = `
-       <div ><div id="info">${el.title}</div></div> 
+       <div ><div id="info">
+       <span>${el.place_name}</span>
+       <span>${el.address_name}</span>
+       </div></div> 
       `;
       var infowindow = new window.naver.maps.InfoWindow({
         content: contentString,
@@ -83,7 +86,10 @@ const Map: React.FC<locationProps> = ({ loc, setLoc, curLoc, markerArr }) => {
     });
   }
   return (<>
-    <span onClick={onClick}>현 위치에서 재검색</span>
+    {location.pathname=="/surrounding"&&<div onClick={onClick} className="re-search-btn">
+      <FontAwesomeIcon icon={faRedo}/>
+      <span>현 위치 검색</span>
+      </div>}
     <div id="map" style={{
       width: '100%',
       height: '300px'

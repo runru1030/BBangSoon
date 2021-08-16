@@ -1,5 +1,7 @@
-import { faHome, faMapMarkerAlt, faPeopleArrows, faPersonBooth, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faBreadSlice, faHome, faMapMarkerAlt, faPeopleArrows, faPersonBooth, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useState } from 'react';
+import { useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
@@ -15,21 +17,21 @@ const Nav = () => {
     const onClickMy = () => {
         history.push("/surrounding");
     }
-    return (
-        <BottomNav>
+    return (<><BottomNav>
             <div id="surrounding" onClick={onClickSurr}>
-                <FontAwesomeIcon id="icon" icon={faMapMarkerAlt} />
+                <FontAwesomeIcon id="icon" icon={faMapMarkerAlt}  color={location.pathname=="/surrounding"? "#46A6FF":"#6f6f6f"} />
                 <span>내 주변</span>
             </div>
             <div id="home" onClick={onClickHome}>
-                <FontAwesomeIcon id="icon" icon={faHome} />
+            <FontAwesomeIcon icon={faBreadSlice}  color={location.pathname=="/"? "#e2c26e":"#6f6f6f"}/>
                 <span>홈</span>
             </div>
             <div>
-                <FontAwesomeIcon id="icon" icon={faUser} />
+                <FontAwesomeIcon id="icon" icon={faUser} color={location.pathname=="/mypage"? "#46A6FF":"#6f6f6f"}/>
                 <span id="mypage">마이페이지</span>
             </div>
         </BottomNav>
+        </>
     )
 
 }
@@ -46,7 +48,7 @@ flex-direction: row;
 gap:25%;
 align-items:center;
 justify-content: center;
-padding: 15px 0;
+padding: 10px 0;
 border-top:solid thin #d0d0d0 ;
 background-color: white;
 div{
@@ -61,6 +63,7 @@ div{
 }
 span{
     font-size: xx-small;
+    margin-top: 5px;
 }
 
 `

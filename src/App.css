@@ -1,5 +1,8 @@
+@import url(//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSans-kr.css);
+@import url(//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSans-jp.css);
 *{
   outline: none;
+  font-family: 'Spoqa Han Sans', 'Spoqa Han Sans JP', 'Sans-serif';
 }
 
 body{
@@ -7,7 +10,7 @@ body{
   margin: 0;
 }
 a{
-  text-decoration: none;
+  all: unset;
 }
 .scroll-list{
   height: 50vh;
@@ -27,14 +30,30 @@ input[type=text]{
 }
 #info{
   font-size: small;
-  font-weight: bold;
+  border: solid #dcdcdc;
   border: solid #46A6FF;
   background-color: rgb(255, 255, 255);
   padding: 5px 10px;
   border-radius: 10px;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   transform: translate(40%);
+  box-shadow: 2px 2px 2px 2px #46a6ff33;
+}
+#info > span:nth-child(1){
+  color: #46A6FF;
+}
+.surrounding{
+  height: 100%;
+}
+.scroll-list{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height:100%;
+  max-height: 100vh;
+  overflow: auto;
 }
 .scroll-list>.more-btn{
   all: unset;
@@ -42,27 +61,181 @@ input[type=text]{
   text-align: center;
   width: 100%;
 }
+.re-search-btn{
+  color: #46A6FF;
+  display: flex;
+  align-items: center;
+  background-color: white;
+  position: absolute;
+  z-index: 999;
+  font-size: small;
+  padding: 5px 10px;
+  border-radius: 20px;
+  margin-left: 50%;
+  transform: translate(-50%, 10px);
+  gap: 5px;
+}
+.surrounding input{
+  position: absolute;
+  z-index: 9999;
+  background-color: white;
+  padding: 10px 20px;
+  width: 80%;
+  margin-left: 50%;
+  transform: translate(-50%, 5px);
+  box-shadow: 2px 2px 2px 2px #63636331;
+  border-radius: 5px;
+  border: solid thin #46A6FF;
+}
+
 .store{
   width: 100%;
+  min-height: 120vh;
+  overflow: scroll;
 }
 .list{
   display: flex;
   align-items: center;
 }
+.store .map{
+  width: 100%;
+  padding: 0;
+  font-size: medium;
+  border-top: solid thin #dddddd;
+  background-color: teal;
+}
 .detail > div{
   display: flex;
-  margin: 10px 0;
+  margin: 20px 0;
+  align-items: center;
+  color: #636363;
 }
 .detail #label{
-  color: #c4c4c4;
-  margin-right: 10px;
+  color: #63636377;
+  margin-right: 6px;
 }
-
+.map #navi{
+  font-size: xx-large;
+  color: #46A6FF;
+  margin-right: 5px;
+}
+.map .navi-wrapper{
+  background-color: rgba(255, 255, 255, 0.96);
+  position: absolute;
+  z-index: 999;
+  border-radius: 25px;
+  padding: 5px 10px;
+  transform: translate(5px, -60px);
+}
 .list #tit{
+  color: #636363;
   font-weight: bold;
 }
 .list #price{
   flex: 1;
   text-align: end;
   color: #46A6FF;
+}
+#side{
+  flex: 1;
+  text-align: end;
+  font-size: xx-small;
+  color: #6f6f6f;
+}
+.review{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.review >div{
+  padding: 10px 0;
+}
+.review .star *{
+  margin-right: 3px;
+}
+.review .detail span{
+  margin-right: 5px;
+  color: #6f6f6f;
+}
+.review-wrapper{
+  margin-bottom: 100px;
+}
+.review-form{
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  font-size: medium;
+  padding: 15px;
+  
+}
+.review-form > #star{
+  font-size: xx-large;
+  text-align: center;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 3px;
+  margin-top: 30px;
+}
+.review-form > #star >#small{
+  font-size: x-large;
+  margin-left: 10px;
+  font-weight: bold;
+  color: #e2c26e;
+}
+.review-form #content{
+  all: unset;
+  margin-top: 30px;
+  width: 100%;
+  overflow:hidden;
+  resize: none;
+  padding: 10px 4px; 
+  position: relative;
+}
+.review-form .wrapper{
+  font-size: small;
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+}
+.review-form .wrapper label{
+  padding: 5px 10px;
+  background-color: #8c8c8c;
+  color: white;
+}
+.review-form .wrapper #sbm-btn{
+  border-left: white solid thin;
+}
+.grid-container{
+  display: grid;
+  width: 100vw;
+  height: 100vw;
+  grid-template-columns: 50% 50%;
+  column-gap: 3px;
+row-gap: 3px;
+  cursor: pointer;
+}
+.grid-container div{
+  display: flex;
+  background-color: black;
+  overflow: hidden;
+  justify-content: center;
+  align-items: center;
+}
+.grid-container span{
+  z-index: 999;
+  color: white;
+  position: absolute;
+  font-size: large;
+}
+.grid-container .plus-img{
+  opacity: 50%;
+}
+.grid-container .item1{
+  grid-row-start: 1;
+  grid-row-end: 3;
+}
+.grid-container img{
+
+  object-fit: cover;
 }

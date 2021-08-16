@@ -21,7 +21,7 @@ const Main: React.FC<LocationProps> = ({ location }) => {
         <div>
             <Header><FontAwesomeIcon icon={faMapMarkerAlt} /> {location?.si}</Header>
             <div>
-                <span>랭킹 TOP5</span>
+                <span>{location.gu}</span>
 
             </div>
             <Nav />
@@ -31,8 +31,8 @@ export default Main;
 
 const Header=styled.header`
 position: sticky;
-padding: 20px;
+padding: 10px 20px;
 top: 0px;
 border-bottom: solid thin #d0d0d0;
-font-weight:bold;
+  color: #6f6f6f;
 `

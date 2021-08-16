@@ -6,6 +6,7 @@ import Map from '../component/Map';
 import Nav from '../component/Nav';
 import styled from 'styled-components';
 import StoreList from '../component/StoreList';
+import { useState } from 'react';
 type marker = {
     title: string,
     lat: number,
@@ -14,15 +15,13 @@ type marker = {
     url: string
 }
 const Surrounding: React.FC = ({  }) => {
-    const location = JSON.parse(window.localStorage.getItem("location")||`{
-        si: "서울",
+    const location = window.localStorage.getItem("location")?JSON.parse(window.localStorage.getItem("location")||""):{si: "서울",
         gu: "",
         dong: "",
-        latitude: 33.450701,
-        longitude: 126.570667,
-        detail: ""
-      }`);
-    const [markerArr, setMarkerArr] = React.useState<marker[]>([]);
+        latitude: 37.5283169,
+        longitude: 126.9294254,
+        detail: ""};
+    const [markerArr, setMarkerArr] = React.useState<any[]>([]);
     const [isOpen, setIsOpen] = React.useState<boolean>(false);
     const [address, setAddress] = React.useState<string>("");
     const [addressList, setAddressList] = React.useState<any[]>([]);
@@ -38,8 +37,8 @@ const Surrounding: React.FC = ({  }) => {
     });
     const [isEnd, setIsEnd] = React.useState<boolean>();
     const [curpage, setCurPage] = React.useState<number>(1);
-    //const [storeArr,setStoreArr]= React.useState<store[]>([]);
-
+  
+    
     const onClickChange = () => {
         setIsOpen(true);
     }
@@ -61,9 +60,10 @@ const Surrounding: React.FC = ({  }) => {
         }).then(res => {
             setAddressList(res.data.documents)
         })
+        setIsOpen(false);
     }
     const getStoreApi = (page: number) => {
-        axios.get(`https://dapi.kakao.com/v2/local/search/keyword.json?query=베이커리`, {
+        axios.get(`https://dapi.kakao.com/v2/local/search/keyword.json?query=디저트`, {
             headers: { Authorization: `KakaoAK ${process.env.REACT_APP_KAKAO_REST_KEY}` },
             params: {
                 y: loc.lat,
@@ -74,29 +74,53 @@ const Surrounding: React.FC = ({  }) => {
                 sort: "distance"
             }
         }).then(res => {
-            console.log(res.data);
-            
             setIsEnd(res.data.meta.is_end);
             setCurPage(page + 1);
-            if (page == 1) {
-                setMarkerArr(res.data.documents.map((it: any) => ({ title: it.place_name, lng: it.x, lat: it.y, address: it.address_name, url: it.place_url})));
+            var arr=res.data.documents;
+            if (page != 1) {
+                arr=[...markerArr, ...res.data.documents];
             }
-            else {
-                setMarkerArr([...markerArr, ...res.data.documents.map((it: any) => ({ title: it.place_name, lng: it.x, lat: it.y , address: it.address_name, url: it.place_url}))]);
-
-            }
+            setMarkerArr(arr);
+            axios.post("/store/list", arr.map((store:any)=>({id: store.id}))).then(res=>{
+                setMarkerArr(arr.map((store:any, idx:number)=>({...store, ...res.data[idx]})))
+                arr=arr.map((store:any, idx:number)=>({...store, ...res.data[idx]}))
+                arr.forEach(async(element:any, i:number) => {
+                    if(element.avgStar==null){
+                    await axios.post("/storeCrawl/count", {id: element.id, url:element.place_url}).then(res=>{
+                        arr[i]={...arr[i], ...res.data};
+                        
+                        setMarkerArr([...arr])
+                    })
+                }
+                });
+            })
+            
+            
+            
+            console.log(arr, markerArr);
+            
+            
+            
         })
     }
     React.useEffect(() => {
+        
         getStoreApi(1);
 
     }, [loc])
-    return (<div>
-        <Header><FontAwesomeIcon icon={faMapMarkerAlt} /> 내 주변 <span onClick={onClickChange}>위치 검색</span></Header>
+    return (<div className="surrounding">
+        <Header>
+            <div>
+            <FontAwesomeIcon icon={faMapMarkerAlt} /> 내 주변
+            </div> 
+            <span onClick={onClickChange}>위치 검색</span></Header>
         <div>
             {isOpen && <form onSubmit={onSubmit}>
                 <input type="text" value={address} onChange={(event) => setAddress(event.target.value)} />
-                <input type="submit" value="검색" />
+                
+                <label  >
+                <input id="sbm-btn" type="submit" value="검색" style={{"display":"none"}}/>
+                </label>
             </form>}
 
             {addressList.length == 0 ? <>
@@ -119,15 +143,17 @@ const Header = styled.header`
 position: sticky;
 display: flex;
 align-items: center;
-padding: 20px;
+padding: 10px 20px;
 top: 0px;
+font-size: medium;
 border-bottom: solid thin #d0d0d0;
-font-weight:bold;
+background-color: white;
 span{
     font-size: x-small;
     font-weight: normal;
     flex: 1;
     text-align: end;
+    color: #46A6FF;
     
 }
 `

@@ -1,5 +1,6 @@
 import axios from 'axios';
 import * as React from 'react';
+import { useState } from 'react';
 import AppRouter from './Router';
 type pos = {
   si: string,
@@ -19,8 +20,18 @@ function App() {
     longitude: 126.570667,
     detail: ""
   });
-
+  const loding =sessionStorage.getItem("loding")||"";
+  const [isLoding, setIsLoding]=useState<boolean>(loding=="false"?false:true);
   React.useEffect(() => {
+    console.log(loding);
+    
+    if(isLoding==true){
+      sessionStorage.setItem("loding","false")
+      //setIsLoding(true);
+    setTimeout(()=>{
+      setIsLoding(false);
+    },3000)
+  }
     navigator.geolocation.getCurrentPosition((position) => {
       
       axios.get(`https://dapi.kakao.com/v2/local/geo/coord2address.json`, {
@@ -51,7 +62,7 @@ function App() {
     });
   }, [])
   return (
-    <AppRouter location={location} />
+    <AppRouter location={location} isLoding={isLoding} />
   );
 }
 

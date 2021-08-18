@@ -1,13 +1,17 @@
 const puppeteer = require("puppeteer");
 const { Cluster } = require('puppeteer-cluster');
-const { Store, Menu, Review, StoreImg } = require('../models');
+const { Count, Menu, Review, StoreImg } = require('../models');
 const Op = require('Sequelize').Op
 async function crawlerKakao({ id, url }) {
     const cluster = await Cluster.launch({
         concurrency: Cluster.CONCURRENCY_CONTEXT, // use one browser per worker
-        maxConcurrency: 4, // cluster with four workers
+        maxConcurrency: 10, // cluster with four workers
     });
 
+    const result = {
+        reviewCnt: 0,
+        avgStar: 0
+    };
     const storeCrawl = async () => {
         try {
             const menu = {
@@ -148,7 +152,7 @@ async function crawlerKakao({ id, url }) {
                 const sel2 = await page.$(`.num_photo > .num_g`)
                 const cnt = parseInt(await page.evaluate((el) => el.textContent, sel2));
                 for (let i = 1; i <= cnt && i <= 500; i++) {
-                    const img = await page.$$eval(`.img_photo`, imgs => imgs.map(img => img.getAttribute('src')));
+                    const img = await page.$$eval(`#photoViewer > div.layer_body > div.view_photo > div.view_image > img`, imgs => imgs.map(img => img.getAttribute('src')));
                     
                     const imgurl="https://t1.kakaocdn.net/thumb"+img[0].split("local")[1];
                     console.log(imgurl);
@@ -163,10 +167,46 @@ async function crawlerKakao({ id, url }) {
                             imageUrl: imgurl
                         }
                     })
-                    await page.click("a.link_direction.link_next ")
+                    await page.click("#photoViewer > div.layer_body > div.view_photo > div.view_image > a.link_direction.link_next")
                 }
             }
 
+            await browser.close();
+        } catch (err) {
+            console.log(err);
+        }
+    }
+    const countCrawl = async () => {
+        try {
+            const browser = await puppeteer.launch({
+                headless: false,
+                args: ["--window-size=1920,1080", "--disable-notifications"],
+            });
+            const page = await browser.newPage();
+            await page.setUserAgent(
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.125 Safari/537.36"
+            );
+            await page.setViewport({
+                width: 1080,
+                height: 1080,
+            });
+            await page.goto(url);
+            await page.waitFor(1000);
+            const sel = await page.$(`#mArticle > div.cont_essential > div:nth-child(1) > div.place_details > div > div > a:nth-child(3) > span.color_b`)
+                if (sel) {result.avgStar = await page.evaluate((el) => el.textContent, sel);
+                    result.avgStar=parseFloat(result.avgStar.split("점")[0]);
+                }
+                
+                const sel2 = await page.$(`#mArticle > div.cont_evaluation > strong > span`)
+                //const sel2 = await page.$(`#mArticle > div.cont_evaluation > div.evaluation_sorting > a > span.color_b`)
+                if (sel2)  {
+                    result.reviewCnt =''?0: parseInt(await page.evaluate((el) => el.textContent, sel2));
+                }
+                console.log(result);
+            await Count.create({
+                id: id,
+                ...result
+            })
             await browser.close();
         } catch (err) {
             console.log(err);
@@ -190,10 +230,20 @@ async function crawlerKakao({ id, url }) {
             resolve();
         });
     })
+    const getcnt = () => new Promise((resolve, reject) => {
+        cluster.queue(async ({ page }) => {
+            countCrawl().then(()=>{
+                resolve(result);
+                cluster.close()
+            });
+            
+        });
+    })
     return {
         getStore: getStore,
         getReview: getReview,
         getImg: getImg,
+        getcnt: getcnt,
     };
 };
 module.exports = crawlerKakao;

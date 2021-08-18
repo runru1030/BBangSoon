@@ -9,7 +9,7 @@ module.exports = class StoreImg extends Sequelize.Model {
       },
     }, {
       sequelize,
-      timestamps: false,
+      timestamps: true,
       underscored: false,
       modelName: 'StoreImg',
       tableName: 'StoreImg',

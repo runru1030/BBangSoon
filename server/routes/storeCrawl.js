@@ -13,7 +13,8 @@ router.post('/', async (req, res) => {
         id: id,
         storeName: storeName,
         address: address,
-        telephone: telephone
+        telephone: telephone,
+        local:"서울"
       },
       include: [{
         model: Menu,

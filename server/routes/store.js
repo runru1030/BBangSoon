@@ -93,6 +93,57 @@ router.post('/review/:id', async (req, res) => {
     });
   }
 });
+
+router.post('/image/:id', async (req, res) => {
+  try {
+    let id = req.params.id;
+    const storeImgs= await StoreImg.findAll({
+      where: { StoreId: id },
+      order: [[Review, 'date', 'DESC']],
+      attributes: ['imageUrl'],
+      order: [['createdAt', 'DESC']]
+    })
+
+    return res.status(200).json(storeImgs);
+   
+    
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      success: false,
+      error: err.toString(),
+    });
+  }
+});
+router.get('/rankReview/:local', async (req, res) => {
+  try {
+    let local = req.params.local;
+    const storeRanking= await Store.findAll({
+      where:[{local:local}],
+      attributes:['id', 'storeName',
+      [sequelize.fn('count', sequelize.col('Reviews.id')), 'reviewCnt'],
+      [sequelize.fn('avg', sequelize.col('Reviews.star')), 'avgStar'],
+      [sequelize.fn('sum', sequelize.col('Reviews.star')), 'totalStar'],
+    ],
+      include:[{
+        model:Review,
+        attributes:[]
+      }], 
+      group:['id'],
+      order : [[sequelize.literal('totalStar'), 'DESC']],
+    })
+    
+    return res.status(200).json(storeRanking.splice(0, 10));
+   
+    
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      success: false,
+      error: err.toString(),
+    });
+  }
+});
 router.post('/:id', async (req, res) => {
   try {
     let id = req.params.id;
@@ -119,27 +170,6 @@ router.post('/:id', async (req, res) => {
     })
 
     return res.status(200).json(storeData.dataValues);
-   
-    
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json({
-      success: false,
-      error: err.toString(),
-    });
-  }
-});
-router.post('/image/:id', async (req, res) => {
-  try {
-    let id = req.params.id;
-    const storeImgs= await StoreImg.findAll({
-      where: { StoreId: id },
-      order: [[Review, 'date', 'DESC']],
-      attributes: ['imageUrl'],
-      order: [['createdAt', 'DESC']]
-    })
-
-    return res.status(200).json(storeImgs);
    
     
   } catch (err) {

@@ -1,4 +1,4 @@
-import { faBreadSlice, faHome, faMapMarkerAlt, faPeopleArrows, faPersonBooth, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faBook, faBreadSlice, faHeart, faHome, faMapMarkerAlt, faPeopleArrows, faPersonBooth, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import { useEffect } from 'react';
@@ -20,15 +20,19 @@ const Nav = () => {
     return (<><BottomNav>
             <div id="surrounding" onClick={onClickSurr}>
                 <FontAwesomeIcon id="icon" icon={faMapMarkerAlt}  color={location.pathname=="/surrounding"? "#46A6FF":"#6f6f6f"} />
-                <span>내 주변</span>
+                <span>빵 지도</span>
             </div>
             <div id="home" onClick={onClickHome}>
             <FontAwesomeIcon icon={faBreadSlice}  color={location.pathname=="/"? "#e2c26e":"#6f6f6f"}/>
                 <span>홈</span>
             </div>
             <div>
-                <FontAwesomeIcon id="icon" icon={faUser} color={location.pathname=="/mypage"? "#46A6FF":"#6f6f6f"}/>
-                <span id="mypage">마이페이지</span>
+                <FontAwesomeIcon id="icon" icon={faHeart} color={location.pathname=="/mypage"? "#46A6FF":"#6f6f6f"}/>
+                <span id="mypage">찜</span>
+            </div>
+            <div>
+                <FontAwesomeIcon id="icon" icon={faBook} color={location.pathname=="/mypage"? "#46A6FF":"#6f6f6f"}/>
+                <span id="mypage">일지</span>
             </div>
         </BottomNav>
         </>
@@ -45,7 +49,7 @@ bottom: 0;
 display:flex;
 width: 100%;
 flex-direction: row;
-gap:25%;
+gap:20%;
 align-items:center;
 justify-content: center;
 padding: 10px 0;

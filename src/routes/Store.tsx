@@ -9,10 +9,11 @@ import styled from "styled-components";
 import Grid from "../component/Grid";
 import Map from "../component/Map";
 import Nav from "../component/Nav";
+import ImgModal from "../component/ImgModal";
 const Store = () => {
     const storeInfo = JSON.parse(window.localStorage.getItem("store") || "");
 
-    const [store, setStore] = useState<any>(storeInfo);
+    const [store, setStore] = useState<any>({});
     const location = window.localStorage.getItem("location")?JSON.parse(window.localStorage.getItem("location")||""):
     {si: "서울",
     gu: "",
@@ -55,7 +56,7 @@ const Store = () => {
             review: false,
             [label]: true
         })
-        setIsWrite(false);
+        if(!isOpen.review)setIsWrite(false);
     }
     const onSubmit=(event:any)=>{
         event.preventDefault();
@@ -88,6 +89,11 @@ const Store = () => {
         reader.readAsDataURL(theFile);
     }
     useEffect(()=>{
+        axios.post(`/store/${storeInfo.id}`).then(res=>{
+            setStore(res.data);
+            console.log(res.data);
+            
+        })
         if(!storeInfo.Menus){
             const update = setInterval(()=>{
                 axios.post(`/store/${storeInfo.id}`).then(res=>{
@@ -117,12 +123,19 @@ const Store = () => {
             <FontAwesomeIcon icon={faBreadSlice} color={ "#e2c26e"} id="visit"/>
     </Header>
 
-            <div></div>
+            {!store.Reviews||store.Reviews.length<storeInfo.reviewCnt&&<Loding>
+                <img width="50%" src="loding.gif"/>
+                
+                <span>외부 사이트로부터 데이터를 가져오는 중 입니다</span>
+                </Loding>}
             <div className="img-viewer">
                 {store.StoreImgs?.length==1&&<Grid imgArr={[{url: store.StoreImgs[0].imageUrl}]}/>}
                 {store.StoreImgs?.length==2&&<Grid imgArr={[{url: store.StoreImgs[0].imageUrl},{url: store.StoreImgs[1].imageUrl}]}/>}
-                {store.StoreImgs?.length>3&&<Grid imgArr={[{url: store.StoreImgs[0].imageUrl}, {url: store.StoreImgs[1].imageUrl}, {url: store.StoreImgs[2].imageUrl}]}/>}
-                {!store.StoreImgs?.length&&<Grid imgArr={[{url: "logo192.png"}]}/>}
+                {store.StoreImgs?.length==3&&<Grid imgArr={[{url: store.StoreImgs[0].imageUrl}, {url: store.StoreImgs[1].imageUrl}, {url: store.StoreImgs[2].imageUrl}]}/>}
+                {store.StoreImgs?.length==0&&<div className="non-img">
+                    <img src="bread.png" width="40%"/>
+                    <span>{storeInfo.storeName}</span>
+                    </div>}
                 
             </div>
             <div>
@@ -162,7 +175,7 @@ const Store = () => {
                 </div>}
             </div>
             <div className="review-wrapper">
-                <Label onClick={(event) => onClick("review")} style={isOpen.review ? { "color": "#46A6FF" } : undefined}>리뷰<span onClick={onClickWrite} id="side">{isWrite?"취소":"작성하기"}</span></Label>
+                <Label onClick={(event) => onClick("review")} style={isOpen.review ? { "color": "#46A6FF" } : undefined}><span>리뷰</span><span onClick={onClickWrite} id="side">{isWrite?"취소":"작성하기"}</span></Label>
                 {isWrite&&<>
                     <form onSubmit={onSubmit} className="review-form">
                         {newReview.attach&&<img src={newReview.attach} width="60%"/>}
@@ -191,7 +204,7 @@ const Store = () => {
                 </>}
                 {isOpen.review && store.Reviews && <div>
                     {store.Reviews.map((review: any) => <List className="list review">
-                        <span id="">{review.reviewImg&&<img src={review.reviewImg} width="150%"/>}</span>
+                        <span id="">{review.reviewImg&&<ImgModal src={review.reviewImg} width="200%"/>}</span>
                         <div className="star">
                             <span id="star">
                                 <FontAwesomeIcon icon={faBreadSlice} color={review.star >= 1 ? "#e2c26e" : "#cabfa3"} />
@@ -253,6 +266,12 @@ padding: 15px;
 border-top: solid thin #dddddd;
   display: flex;
   align-items: center;
+span{
+    flex:1;
+}
+#side{
+    flex: 0.2;
+}
 `
 const List = styled.div`
 width: 90%;
@@ -266,4 +285,21 @@ width: 90%;
 font-size: medium;
 padding: 15px;
 border-top: solid thin #dddddd;
+`
+const Loding= styled.div`
+width: 100%;
+height: 100vh;
+display: flex;
+flex-direction: column;
+align-items: center;
+position: fixed;
+background-color: #ffffffda;
+top: 0;
+z-index: 10000;
+img{
+    margin-top: 150px;
+}
+span{
+    margin-top: 50px;
+}
 `

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
+import { faMapMarkerAlt, faSearch } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import Map from '../component/Map';
 import Nav from '../component/Nav';
@@ -68,6 +68,7 @@ const Surrounding: React.FC = ({  }) => {
             params: {
                 y: loc.lat,
                 x: loc.lng,
+                category_group_code:"CE7, FD6",
                 page: page,
                 size: 15,
                 radius: 500,
@@ -76,9 +77,9 @@ const Surrounding: React.FC = ({  }) => {
         }).then(res => {
             setIsEnd(res.data.meta.is_end);
             setCurPage(page + 1);
-            var arr=res.data.documents;
+            var arr=res.data.documents.filter((it:any)=>(it.category_group_code=="CE7"&&it.category_name.split(" > ")[2]!="커피전문점")||it.category_name.split(" > ")[1]=="간식");
             if (page != 1) {
-                arr=[...markerArr, ...res.data.documents];
+                arr=[...markerArr, ...arr];
             }
             setMarkerArr(arr);
             axios.post("/store/list", arr.map((store:any)=>({id: store.id}))).then(res=>{
@@ -116,10 +117,11 @@ const Surrounding: React.FC = ({  }) => {
             <span onClick={onClickChange}>위치 검색</span></Header>
         <div>
             {isOpen && <form onSubmit={onSubmit}>
-                <input type="text" value={address} onChange={(event) => setAddress(event.target.value)} />
+                <input type="text" value={address} placeholder="위치 검색" onChange={(event) => setAddress(event.target.value)} />
                 
-                <label  >
-                <input id="sbm-btn" type="submit" value="검색" style={{"display":"none"}}/>
+                <input type="submit" id="search" style={{"display":"none"}}/>
+                <label htmlFor="search" id="search-btn">
+                    <FontAwesomeIcon icon={faSearch}/>
                 </label>
             </form>}
 
@@ -146,7 +148,7 @@ align-items: center;
 padding: 10px 20px;
 top: 0px;
 font-size: medium;
-border-bottom: solid thin #d0d0d0;
+border-bottom: solid thin #e9e9e9;
 background-color: white;
 span{
     font-size: x-small;

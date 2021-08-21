@@ -6,12 +6,10 @@ import Map from '../component/Map';
 import Nav from '../component/Nav';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
-const StoreList: React.FC<any> = ({store}) => {
+const StoreList: React.FC<any> = ({store, children}) => {
     const history= useHistory();
     const storeInfo={id : store.id, storeName: store.place_name,  address:store.road_address_name?store.road_address_name:store.address_name, telephone:store.phone,url:store.place_url}
     const onClick = () => {
-        console.log(store);
-        
         window.localStorage.setItem("store", JSON.stringify({...storeInfo ,x: store.x, y:store.y, reviewCnt:store.reviewCnt, avgStar:store.avgStar  }))
         axios.post("/storeCrawl", storeInfo).then(res=>
             {
@@ -24,7 +22,8 @@ const StoreList: React.FC<any> = ({store}) => {
     }
  
     return (<Store onClick={onClick}>
-        <span id="storeName">{store.place_name}</span>
+        {children}
+        <span id="storeName">{store.place_name?store.place_name:store.storeName}</span>
         <div>
         <span>{store.avgStar==null?<FontAwesomeIcon icon={faSpinner}/>:store.reviewCnt}</span>
         <span id="small">리뷰</span>
@@ -33,20 +32,21 @@ const StoreList: React.FC<any> = ({store}) => {
         <span>{store.avgStar==null?<FontAwesomeIcon icon={faSpinner}/>:store.avgStar.toFixed(1)}</span>
         <span id="small">평점</span>
         </div>
-            <FontAwesomeIcon icon={faBreadSlice} color={ "#e2c26e"} id="visit"/>
+            <FontAwesomeIcon icon={faBreadSlice} color={ "#ece9e2"} id="visit"/>
     </Store>);
 }
 export default StoreList;
 const Store = styled.div`
-width: 90%;
+width: 100vw;
+max-width: 100vw;
 display: flex;
 align-items: center;
-justify-content: center;
-padding: 20px 0;
+padding: 20px 0px;
 height: 30px;
 border-top: solid thin #eeeeee;
 #storeName{
-    flex: 0.7;
+    flex: 0.6;
+    margin-left: 20px;
 }
 div{
     display: flex;
@@ -60,6 +60,6 @@ div>#small{
     font-size: xx-small;
 }
 div, #visit{
-    flex: 0.1;
+    flex: 0.15;
 }
 `

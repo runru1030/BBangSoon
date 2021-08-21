@@ -9,10 +9,6 @@ const Grid: React.FC<any> =({imgArr}) => {
   const onClick=()=>{
     history.push("/store/image");
   }
-    useEffect(()=>{
-
-        console.log(imgArr);
-    })
   return (
     <>
       <div className="grid-wrapper" >

@@ -23,7 +23,7 @@ const Nav = () => {
                 <span>빵 지도</span>
             </div>
             <div id="home" onClick={onClickHome}>
-            <FontAwesomeIcon icon={faBreadSlice}  color={location.pathname=="/"? "#e2c26e":"#6f6f6f"}/>
+            <FontAwesomeIcon icon={faBreadSlice}  id="icon" color={location.pathname=="/"? "#e2c26e":"#6f6f6f"}/>
                 <span>홈</span>
             </div>
             <div>

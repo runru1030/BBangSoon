@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Nav from '../component/Nav';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBreadSlice, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
+import { faBreadSlice, faMapMarkerAlt, faSearch } from '@fortawesome/free-solid-svg-icons';
 import styled from 'styled-components';
 import axios from 'axios';
 import { useState } from 'react';
@@ -18,42 +18,73 @@ type LocationProps = {
 }
 const Main: React.FC<LocationProps> = ({ location }) => {
     const [reviewRank, setReviewRank]=useState([]);
+    const [search, setSearch]= useState<string>("");
+    const [resultArr, setResultArr]=useState<any[]>([]);
+    const [isMore, setIsMore]=useState<boolean>(false);
     const colorList=["#FF764A", "#46A6FF","#46A6FF"];
     React.useEffect(() => {
-        //서버 랭킹 store 리스트 get
         axios.get(`/store/rankReview/${location.si}`).then(res=>{
             setReviewRank(res.data)
         })
     }, [location])
+    const onSubmit = (event: any) => {
+        event.preventDefault();
+        setResultArr([]);
+        axios.get(`https://dapi.kakao.com/v2/local/search/keyword.json?query=${search}`, {
+            headers: { Authorization: `KakaoAK ${process.env.REACT_APP_KAKAO_REST_KEY}` },
+            params: {
+                category_group_code:"CE7, FD6"
+            }
+        }).then(res=>{
+            setResultArr(res.data.documents.filter((it:any)=>it.category_group_code=="CE7"||it.category_name.split(" > ")[1]=="간식"))
+        })
+    }
+    const onChange=(e:React.ChangeEvent<HTMLInputElement>)=>{
+        const {target:{value}}=e;
+        setSearch(value);
+        if(value=="")setResultArr([]);
+    }
+    const onClick=()=>{
+        setIsMore(true);
+    }
     return (
         <div className="main container">
             <Header><FontAwesomeIcon icon={faMapMarkerAlt} /> {location?.si}</Header>
-           <form>
-                <input type="text" placeholder="매장 검색"/>
+           <form onSubmit={onSubmit}>
+                <input type="text" value={search} onChange={onChange} placeholder="매장 검색"/>
+                <input type="submit" id="search" style={{"display":"none"}}/>
+                <label htmlFor="search" id="search-btn">
+                    <FontAwesomeIcon icon={faSearch}/>
+                </label>
             </form>
-            <div className="reviewRank-wrapper">
-                <Label>랭킹 TOP10</Label>
-                {reviewRank.map((store:any, idx:number)=>idx<5&&<div className="row-container reviewRank">
-                    
-                    <StoreList store={store} children={<span id="rank-num" style={{"color":idx<3?colorList[idx]:"black"}}>{idx+1}</span>}/>
-                    </div>)}
-                <span><FontAwesomeIcon icon={faBreadSlice}/> 순위</span>
-            </div> 
+            {resultArr.length==0?<div className="col-container reviewRank-wrapper">
+                <Label>랭킹</Label>
+                {
+                reviewRank.map((store:any, idx:number)=>(idx<5||(isMore))&&<><div className="row-container reviewRank">
+                <StoreList store={store} children={<span id="rank-num" style={{"color":idx<3?colorList[idx]:"black"}}>{idx+1}</span>}/>
+                </div>
+                {idx==4&&!isMore&&<span className="more-btn" onClick={onClick}>더보기</span>}
+                </>)
+                }
+            
+                <Label><FontAwesomeIcon icon={faBreadSlice}/> 순위</Label>
+            </div> :<div>
+                {resultArr.map((result:any)=><StoreList store={result}/>)}
+                </div>}
             <Nav /> 
         </div>)
 }
 export default Main;
 
 const Header=styled.header`
-width: 100%;
+width: 90%;
 position: sticky;
-padding: 10px 30px;
+padding: 10px 20px;
 top: 0px;
-border-bottom: solid thin #d0d0d0;
+border-bottom: solid thin #e9e9e9;
   color: #6f6f6f;
 `
 const Label = styled.div`
-width: 90%;
 font-size: medium;
 padding: 15px;
   display: flex;

@@ -1,5 +1,7 @@
 const express = require('express');
+const { isNull } = require('util');
 const { Store, Menu, Review, StoreImg , Count, sequelize} = require('../models');
+const upload = require('../utils/s3');
 
 const router = express.Router();
 router.post('/list', async (req, res) => {
@@ -38,23 +40,18 @@ router.post('/list', async (req, res) => {
     });
   }
 });
-router.post('/review/:id', async (req, res) => {
+router.post('/review/:id', upload.single('reviewImg') , async (req, res) => {
   try {
     let id = req.params.id;
-    const {content, star, attach, nickName }=req.body;
-    console.log({
-      StoreId:id,
-      nickName:nickName,
-      content: content,
-      star: star,
-      date: new Date(),
-    });
+    const {content, star, nickName }=req.body;
+    const reviewImg= req.file;
     await Review.create({
       StoreId:id,
       nickName:nickName,
       content: content,
       star: star,
       date: new Date(),
+      reviewImg: reviewImg?reviewImg.location:null
     })
     const storeData = await Store.findOne({
       where: { id: id },

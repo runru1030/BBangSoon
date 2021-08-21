@@ -14,6 +14,7 @@ const Store = () => {
     const storeInfo = JSON.parse(window.localStorage.getItem("store") || "");
 
     const [store, setStore] = useState<any>({});
+    const [reviewImg, setReviewImg]=useState(null);
     const location = window.localStorage.getItem("location")?JSON.parse(window.localStorage.getItem("location")||""):
     {si: "서울",
     gu: "",
@@ -37,7 +38,7 @@ const Store = () => {
         content:"",
         star:0,
         attach:"",
-        nickName:"익명"
+        nickName:"익명",
     } as {content:string,
     star:number,
     attach:any,
@@ -60,7 +61,17 @@ const Store = () => {
     }
     const onSubmit=(event:any)=>{
         event.preventDefault();
-        axios.post(`/store/review/${store.id}`,newReview).then(res=>{
+        const formData = new FormData();
+        console.log(reviewImg);
+        
+        formData.append('reviewImg', reviewImg||"");
+        formData.append('content',newReview.content);
+        formData.append('nickName',newReview.nickName);
+        formData.append('star', newReview.star.toString());
+       
+        console.log(formData.get('reviewImg'));
+         
+        axios.post(`/store/review/${store.id}`,formData).then(res=>{
             console.log(res.data)
             
             setStore(res.data);
@@ -71,33 +82,30 @@ const Store = () => {
             content:"",
             star:0,
             attach:"",
-            nickName:"익명"
+            nickName:"익명",
         })
+        setReviewImg(null);
         setIsWrite(false);
     }
     const onFileChange=(e:any)=>{
         const { target: { files } } = e;
         const theFile = files[0];
-        const reader = new FileReader();
-        console.log(files);
+        setReviewImg(files[0])
         
+        const reader = new FileReader();
         reader.onloadend = (finishedEvent) => {
-            //const { currentTarget: { result } } = finishedEvent;
             setNewReview({...newReview,attach:finishedEvent.target?.result||""})
-            
         };
         reader.readAsDataURL(theFile);
     }
     useEffect(()=>{
         axios.post(`/store/${storeInfo.id}`).then(res=>{
             setStore(res.data);
-            console.log(res.data);
             
         })
         if(!storeInfo.Menus){
             const update = setInterval(()=>{
                 axios.post(`/store/${storeInfo.id}`).then(res=>{
-                    console.log(res.data);
                     setStore(res.data);
                 })
             },2000);
@@ -204,7 +212,7 @@ const Store = () => {
                 </>}
                 {isOpen.review && store.Reviews && <div>
                     {store.Reviews.map((review: any) => <List className="list review">
-                        <span id="">{review.reviewImg&&<ImgModal src={review.reviewImg} width="200%"/>}</span>
+                        <div className="reviewImg">{review.reviewImg&&<ImgModal src={review.reviewImg}  width="200%"/>}</div>
                         <div className="star">
                             <span id="star">
                                 <FontAwesomeIcon icon={faBreadSlice} color={review.star >= 1 ? "#e2c26e" : "#cabfa3"} />

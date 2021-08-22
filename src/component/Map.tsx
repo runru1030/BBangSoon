@@ -21,7 +21,7 @@ type locationProps = {
 }
 declare global {
   interface Window {
-    naver: any;
+    kakao: any;
   }
 }
 const Map: React.FC<locationProps> = ({ loc, setLoc, curLoc, markerArr }) => {
@@ -39,51 +39,59 @@ const Map: React.FC<locationProps> = ({ loc, setLoc, curLoc, markerArr }) => {
     setLoc(mapCenter)
   }
   const map = () => {
-    const map = new window.naver.maps.Map("map", {
-      center: new window.naver.maps.LatLng(loc?.lat, loc?.lng),
-      zoom: 15,
-    });
-    new window.naver.maps.Marker({
-      position: new window.naver.maps.LatLng(curLoc.lat, curLoc.lng),
+    let container = document.getElementById('map');
+    let options = {
+      center: new window.kakao.maps.LatLng(loc?.lat, loc?.lng),
+      level: 5
+    };
+    
+    const map = new window.kakao.maps.Map(container, options);
+    new window.kakao.maps.Marker({
       map: map,
-      icon: {
-        content: `<img src="curLoc.png" width="20px"/>`,
-      }
+      position: new window.kakao.maps.LatLng(curLoc?.lat, curLoc?.lng),
+      image: new window.kakao.maps.MarkerImage("curLoc.png", new window.kakao.maps.Size(20, 20), ),
+      clickable: true 
     });
     markerArr.map((el) => {
 
-      const marker = new window.naver.maps.Marker({
-        position: new window.naver.maps.LatLng(el.y, el.x),
+      const marker=new window.kakao.maps.Marker({
         map: map,
+        position: new window.kakao.maps.LatLng(el.y, el.x),
+        title: el.title,
+        clickable: true
       });
-      var contentString = `
-       <div ><div id="info">
+      const contentString = `
+       <div><div id="info">
        <span>${el.place_name}</span>
        <span>${el.address_name}</span>
-       </div></div> 
+       </div></div>
       `;
-      var infowindow = new window.naver.maps.InfoWindow({
+      var overlay = new window.kakao.maps.CustomOverlay({
         content: contentString,
-        borderWidth: 0,
-        disableAnchor: true,
-        backgroundColor: 'transperant',
-      });
-      window.naver.maps.Event.addListener(marker, "click", function (event: any) {
-        if (infowindow.getMap()) {
-          infowindow.close();
-        } else {
-          infowindow.open(map, marker);
-        }
-      });
+        map: map,
+        position: marker.getPosition()       
     });
-    window.naver.maps.Event.addListener(map, 'dragend', function () {
-
+    overlay.setMap(null);   
+    window.kakao.maps.event.addListener(marker, 'click', function() {
+      overlay.setMap(map);
+  });
+  window.kakao.maps.event.addListener(map, 'click', function(mouseEvent:any) {        
+    var latlng = mouseEvent.latLng;
+    if(latlng!=marker.getPosition() ){
+      
+      overlay.setMap(null);
+    }
+    
+});
+    });
+    window.kakao.maps.event.addListener(map, 'center_changed', function () {
       // 지도 중심좌표를 얻어옵니다 
-      var latlng = map.getCenter();
-      setMapcenter(({ title: "", lat: latlng._lat, lng: latlng._lng }))
-
-
+      var center = map.getCenter();
+      console.log(center);
+      
+      setMapcenter(({ title: "", lat: center.getLat(), lng: center.getLng() }))
     });
+    
   }
   return (<>
     {location.pathname=="/surrounding"&&<div onClick={onClick} className="re-search-btn">

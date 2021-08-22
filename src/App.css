@@ -123,26 +123,31 @@ input[type=text]{
 }
 .detail > div{
   display: flex;
-  margin: 20px 0;
+  margin: 15px 0;
   align-items: center;
-  color: #636363;
 }
 .detail #label{
-  color: #63636377;
-  margin-right: 6px;
+  color: #7e7e7e;
+  margin-right: 10px;
+  font-size: large;
 }
-.map #navi{
-  font-size: xx-large;
-  color: #46A6FF;
+#navi{
   margin-right: 5px;
-}
-.map .navi-wrapper{
-  background-color: rgba(255, 255, 255, 0.96);
-  position: absolute;
-  z-index: 999;
+  background-color: #FAE100;
   border-radius: 25px;
   padding: 5px 10px;
-  transform: translate(5px, -60px);
+  padding-right: 15px;
+  display: flex;
+  align-content: center;
+  font-size: small;
+  gap: 5px;
+  color: black;
+  transform: translate(10px);
+}
+.navi-wrapper{
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
 }
 .list #tit{
   color: #636363;

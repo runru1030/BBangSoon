@@ -1,6 +1,6 @@
 const puppeteer = require("puppeteer");
 const { Cluster } = require('puppeteer-cluster');
-const { Count, Menu, Review, StoreImg } = require('../models');
+const { Count, Menu, Review, StoreImg, Store } = require('../models');
 const Op = require('Sequelize').Op
 async function crawlerKakao({ id, url }) {
     const cluster = await Cluster.launch({
@@ -32,6 +32,16 @@ async function crawlerKakao({ id, url }) {
             });
             await page.goto(url);
             await page.waitFor(1000);
+
+            const siteSel = await page.$(`#mArticle > div.cont_essential > div.details_placeinfo > div.placeinfo_default.placeinfo_homepage > div > div > a`)
+            console.log(siteSel);
+            if(siteSel){ 
+                const site = await page.evaluate((el) => el.textContent, siteSel);
+                console.log(site);
+                await Store.update({site: site},{
+                    where:{id: id}
+                })
+            }
             //menu
             for (let j = 1; ; j++) {
                 const sel = await page.$(`.list_menu > li:nth-child(${j}) > div .loss_word`)
@@ -98,7 +108,6 @@ async function crawlerKakao({ id, url }) {
                     await page.waitFor(1000);
                 }
                 const sel = await page.$(`.list_evaluation > li:nth-child(${li}) > .star_info .num_rate`)
-                console.log(sel);
                 if (sel == null) await browser.close();
                 review.star = parseFloat(await page.evaluate((el) => el.textContent, sel));
                 const sel2 = await page.$(`.list_evaluation > li:nth-child(${li}) > .comment_info .txt_comment > span`)
@@ -107,7 +116,6 @@ async function crawlerKakao({ id, url }) {
                 review.date = await page.evaluate((el) => el.textContent, sel3);
                 review.reviewImg = await page.$$eval(`.list_evaluation > li:nth-child(${li}) .img_profile`, imgs => imgs.map(img => img.getAttribute('src')));
                 review.reviewImg = review.reviewImg.length == 0 ? "" : review.reviewImg[0]
-                console.log(review.reviewImg);
                 await Review.findOrCreate({
                     where: {
                         [Op.and]: [
@@ -115,10 +123,12 @@ async function crawlerKakao({ id, url }) {
                             { star: review.star },
                             { date: new Date(review.date) },
                             { content: review.content },
-                            { nickName: "익명" }]
+                            { nickName: "익명" },
+                            { UserId: 0 }]
                     },
                     defaults: {
                         StoreId: id,
+                        UserId:0,
                         ...review,
                         nickName: "익명"
                     }
@@ -155,7 +165,6 @@ async function crawlerKakao({ id, url }) {
                     const img = await page.$$eval(`#photoViewer > div.layer_body > div.view_photo > div.view_image > img`, imgs => imgs.map(img => img.getAttribute('src')));
                     
                     const imgurl="https://t1.kakaocdn.net/thumb"+img[0].split("local")[1];
-                    console.log(imgurl);
                     await StoreImg.findOrCreate({
                         where: {
                             [Op.and]: [
@@ -202,7 +211,6 @@ async function crawlerKakao({ id, url }) {
                 if (sel2)  {
                     result.reviewCnt =''?0: parseInt(await page.evaluate((el) => el.textContent, sel2));
                 }
-                console.log(result);
             await Count.create({
                 id: id,
                 ...result

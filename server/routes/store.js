@@ -43,6 +43,7 @@ router.post('/list', async (req, res) => {
 router.post('/review/:id', upload.single('reviewImg') , async (req, res) => {
   try {
     let id = req.params.id;
+    let userId=req.body.UserId
     const {content, star, nickName }=req.body;
     const reviewImg= req.file;
     await Review.create({
@@ -51,11 +52,12 @@ router.post('/review/:id', upload.single('reviewImg') , async (req, res) => {
       content: content,
       star: star,
       date: new Date(),
-      reviewImg: reviewImg?reviewImg.location:null
+      reviewImg: reviewImg?reviewImg.location:null,
+      UserId:userId
     })
     const storeData = await Store.findOne({
       where: { id: id },
-      attributes: ['storeName','address', 'telephone', 'id'],
+      attributes: ['storeName','address', 'telephone', 'id', 'site', 'x', 'y'],
       order: [[Review, 'date', 'DESC']],
       include: [{
         model: Menu,
@@ -63,11 +65,12 @@ router.post('/review/:id', upload.single('reviewImg') , async (req, res) => {
       },
       {
         model: Review,
-        attributes: ['star', 'content', 'date', 'nickName', 'reviewImg'],
+        attributes: ['star', 'content', 'date', 'nickName', 'reviewImg', 'UserId'],
       },
       {
         model: StoreImg,
         attributes:  ['imageUrl'],
+        limit:3
       }
     ]
     })
@@ -146,17 +149,15 @@ router.post('/:id', async (req, res) => {
     let id = req.params.id;
     const storeData = await Store.findOne({
       where: { id: id },
+      attributes: ['storeName','address', 'telephone', 'id', 'site', 'x', 'y'],
       order: [[Review, 'date', 'DESC']],
-      attributes: ['storeName','address', 'telephone', 'id'],
       include: [{
         model: Menu,
         attributes: ['tit', 'price'],
       },
       {
         model: Review,
-        attributes: ['star', 'content', 'date', 'nickName', 'reviewImg'],
-        order: [
-          ['date', 'DESC']],
+        attributes: ['star', 'content', 'date', 'nickName', 'reviewImg', 'UserId'],
       },
       {
         model: StoreImg,
@@ -165,8 +166,13 @@ router.post('/:id', async (req, res) => {
       }
     ]
     })
-
-    return res.status(200).json(storeData.dataValues);
+    const count = await Review.findAll({
+      where: { StoreId: id },
+      attributes: [[sequelize.fn('count', sequelize.col('star')), 'reviewCnt'],[sequelize.fn('avg', sequelize.col('star')), 'avgStar'] ],
+    
+    })
+    return res.status(200).json({
+      ...storeData.dataValues,...count.map(res=>res.dataValues)[0]});
    
     
   } catch (err) {

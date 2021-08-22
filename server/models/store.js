@@ -19,6 +19,18 @@ module.exports = class Store extends Sequelize.Model {
         type: Sequelize.STRING(20),
         allowNull: false,
       },
+      site: {
+        type: Sequelize.STRING(100),
+        allowNull: true,
+      },
+      x: {
+        type: Sequelize.FLOAT,
+        allowNull: false,
+      },
+      y: {
+        type: Sequelize.FLOAT,
+        allowNull: false,
+      },
     }, {
       sequelize,
       timestamps: false,

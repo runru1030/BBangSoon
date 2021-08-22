@@ -5,16 +5,18 @@ const { Store, Menu, Review, StoreImg, sequelize, Count } = require('../models')
 const router = express.Router();
 router.post('/', async (req, res) => {
   try {
-    let { id, storeName, address, telephone, url } = req.body;
+    let { id, place_name, road_address_name, phone, place_url, x, y } = req.body;
     const [storeData, created] = await Store.findOrCreate({
       where: { id: id },
-      attributes: ['storeName', 'address', 'telephone', 'id'],
+      attributes: ['storeName', 'address', 'telephone', 'id', 'site'],
       defaults: {
         id: id,
-        storeName: storeName,
-        address: address,
-        telephone: telephone,
-        local:"서울"
+        storeName: place_name,
+        address: road_address_name,
+        telephone: phone,
+        local:"서울",
+        x:x,
+        y:y
       },
       include: [{
         model: Menu,
@@ -23,8 +25,6 @@ router.post('/', async (req, res) => {
       {
         model: Review,
         attributes: ['star', 'content', 'date', 'nickName', 'reviewImg'],
-        order: [
-          ['date', 'DESC']],
       },
       {
         model: StoreImg,
@@ -33,7 +33,7 @@ router.post('/', async (req, res) => {
       ]
     })
     if (created) {
-      const crw = (await crawlerKakao({ id: id, url: url }));
+      const crw = (await crawlerKakao({ id: id, url: place_url }));
       crw.getStore();
       crw.getReview();
       crw.getImg();

@@ -1,4 +1,4 @@
-import { faBreadSlice, faMapMarkedAlt, faMapMarkerAlt, faPhone, faPhoneAlt, faPlus, faRoute, faStar, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faBreadSlice, faGlobe, faMapMarkedAlt, faMapMarkerAlt, faPhone, faPhoneAlt, faPlus, faRoute, faStar, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import React from "react"
@@ -62,18 +62,11 @@ const Store = () => {
     const onSubmit=(event:any)=>{
         event.preventDefault();
         const formData = new FormData();
-        console.log(reviewImg);
-        
         formData.append('reviewImg', reviewImg||"");
         formData.append('content',newReview.content);
         formData.append('nickName',newReview.nickName);
         formData.append('star', newReview.star.toString());
-       
-        console.log(formData.get('reviewImg'));
-         
         axios.post(`/store/review/${store.id}`,formData).then(res=>{
-            console.log(res.data)
-            
             setStore(res.data);
             window.localStorage.setItem("store", JSON.stringify({...store, ...res.data}))
            
@@ -101,6 +94,7 @@ const Store = () => {
     useEffect(()=>{
         axios.post(`/store/${storeInfo.id}`).then(res=>{
             setStore(res.data);
+            console.log(res.data);
             
         })
         if(!storeInfo.Menus){
@@ -121,11 +115,11 @@ const Store = () => {
         <Header >
         <span id="storeName">{storeInfo.storeName}</span>
         <div>
-        <span>{storeInfo.reviewCnt}</span>
+        <span>{store.reviewCnt}</span>
         <span id="small">리뷰</span>
         </div>
         <div>
-        <span>{storeInfo.avgStar.toFixed(1)}</span>
+        <span>{store.avgStar?.toFixed(1)}</span>
         <span id="small">평점</span>
         </div>
             <FontAwesomeIcon icon={faBreadSlice} color={ "#e2c26e"} id="visit"/>
@@ -155,21 +149,26 @@ const Store = () => {
                     </div>
                     <div>
                         <span id="label"><FontAwesomeIcon icon={faPhoneAlt} /></span>
-                        <a href={"tle:" + storeInfo.telephone}>{storeInfo.telephone}</a>
+                        <a href={"tel:" + storeInfo.telephone}>{storeInfo.telephone}</a>
                     </div>
+                    {store.site&&<div>
+                        <span id="label"><FontAwesomeIcon icon={faGlobe} /></span>
+                        <a href={"https://"+store.site}>{store.site}</a>
+                    </div>}
                 </Container>}
             </div>
             <div>
-                <Label onClick={(event) => onClick("map")} style={isOpen.map ? { "color": "#46A6FF" } : undefined}>지도</Label>
+                <Label onClick={(event) => onClick("map")} style={isOpen.map ? { "color": "#46A6FF" } : undefined}>지도
+                {isOpen.map&&<div className="navi-wrapper">
+                    <a href={"https://map.kakao.com/link/roadview/" + storeInfo.id} id="navi"><img src="kakaoMap.png" width="20px"/><span>길찾기</span></a>
+                    </div>}
+                </Label>
                 {isOpen.map && <div className="map">
                     <Map loc={{
-                        title: storeInfo.place_name,
-                        lat: storeInfo.y,
-                        lng: storeInfo.x,
-                    }} setLoc={null} curLoc={curLoc} markerArr={[storeInfo]} />
-                    <div className="navi-wrapper">
-                    <a href={"https://map.kakao.com/link/roadview/" + storeInfo.id} id="navi"><FontAwesomeIcon icon={faRoute}/></a>
-                    <span>길찾기</span></div>
+                        title: store.storeName,
+                        lat: store.y,
+                        lng: store.x,
+                    }} setLoc={null} curLoc={curLoc} markerArr={[{...store, place_name: store.storeName, address_name: store.address}]} />
                 </div>}
             </div>
             

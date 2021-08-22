@@ -11,10 +11,12 @@ const StoreList: React.FC<any> = ({store, children}) => {
     const storeInfo={id : store.id, storeName: store.place_name,  address:store.road_address_name?store.road_address_name:store.address_name, telephone:store.phone,url:store.place_url}
     const onClick = () => {
         window.localStorage.setItem("store", JSON.stringify({...storeInfo ,x: store.x, y:store.y, reviewCnt:store.reviewCnt, avgStar:store.avgStar  }))
-        axios.post("/storeCrawl", storeInfo).then(res=>
+        
+
+        axios.post("/storeCrawl", store).then(res=>
             {
                 if(res.data){
-                    window.localStorage.setItem("store", JSON.stringify({...res.data,...storeInfo ,x: store.x, y:store.y, reviewCnt:store.reviewCnt, avgStar:store.avgStar }))
+                    window.localStorage.setItem("store", JSON.stringify({...storeInfo, ...res.data }))
                 }
                 history.push("/store");
             })

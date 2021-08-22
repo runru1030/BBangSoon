@@ -37,5 +37,6 @@ module.exports = class Review extends Sequelize.Model {
   
   static associate(db) {
     db.Review.belongsTo(db.Store, { foreignKey: 'StoreId', targetKey: 'id' });
+    db.Review.belongsTo(db.User, { foreignKey: 'UserId', targetKey: 'id' });
   }
 }

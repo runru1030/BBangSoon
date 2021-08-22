@@ -2,12 +2,17 @@ import { faBook, faBreadSlice, faHeart, faHome, faMapMarkerAlt, faPeopleArrows, 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
 const Nav = () => {
     const history = useHistory();
     const location = useLocation();
+    
+    const { isLoggedin } = useSelector((state:any) => ({
+        isLoggedin: state.user.isLoggedin,
+    }))
     const onClickSurr = () => {
         history.push("/surrounding");
     }
@@ -15,7 +20,7 @@ const Nav = () => {
         history.push("/");
     }
     const onClickMy = () => {
-        history.push("/surrounding");
+        isLoggedin?history.push("/feed"):history.push("/auth");
     }
     return (<><BottomNav>
             <div id="surrounding" onClick={onClickSurr}>
@@ -30,7 +35,7 @@ const Nav = () => {
                 <FontAwesomeIcon id="icon" icon={faHeart} color={location.pathname=="/mypage"? "#46A6FF":"#6f6f6f"}/>
                 <span id="mypage">찜</span>
             </div>
-            <div>
+            <div onClick={onClickMy}>
                 <FontAwesomeIcon id="icon" icon={faBook} color={location.pathname=="/mypage"? "#46A6FF":"#6f6f6f"}/>
                 <span id="mypage">일지</span>
             </div>

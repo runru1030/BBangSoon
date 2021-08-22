@@ -36,7 +36,21 @@ const Main: React.FC<LocationProps> = ({ location }) => {
                 category_group_code:"CE7, FD6"
             }
         }).then(res=>{
+            var arr=res.data.documents.filter((it:any)=>it.category_group_code=="CE7"||it.category_name.split(" > ")[1]=="간식")
             setResultArr(res.data.documents.filter((it:any)=>it.category_group_code=="CE7"||it.category_name.split(" > ")[1]=="간식"))
+            axios.post("/store/list", arr.map((store:any)=>({id: store.id}))).then(res=>{
+                setResultArr(arr.map((store:any, idx:number)=>({...store, ...res.data[idx]})))
+                arr=arr.map((store:any, idx:number)=>({...store, ...res.data[idx]}))
+                arr.forEach(async(element:any, i:number) => {
+                    if(element.avgStar==null){
+                    await axios.post("/storeCrawl/count", {id: element.id, url:element.place_url}).then(res=>{
+                        arr[i]={...arr[i], ...res.data};
+                        
+                        setResultArr([...arr])
+                    })
+                }
+                });
+            })
         })
     }
     const onChange=(e:React.ChangeEvent<HTMLInputElement>)=>{

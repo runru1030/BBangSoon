@@ -1,18 +1,29 @@
 const SET_LOGGED_INFO = 'user/SET_LOGGED_INFO'; // 로그인 정보 설정
-const SET_USER_INFO = 'user/SET_USER_INFO'; // 로그아웃
+const SET_LOCATION_INFO = 'user/SET_LOCATION_INFO'; //위치 정보 설정
+const SET_USER_INFO = 'user/SET_USER_INFO'; 
 
 type userObj={
     userId:number,
-    nickName:string
+    nickName:string,
 }
+type location={
+    si: string,
+    y: number,
+    x: number,
+  }
 const initialState = {
     userObj: {
-        userId: 0,
+        id: 0,
         nickName: "",
+      },
+    location:{
+        si: "서울",
+        y: 33.450701,
+        x: 126.570667,
       },
     isLoggedin: false,
   };
-export const setLoggedInfo = (userObj:userObj, isLoggedin:boolean) => {
+export const setLoggedInfo = (userObj:userObj|null, isLoggedin:boolean) => {
     return {
         type: SET_LOGGED_INFO,
         userObj,
@@ -26,6 +37,12 @@ export const setUserInfo= (userObj:userObj) => {
         userObj
     };
 };
+export const setLocationInfo= (location:location) => {
+    return {
+        type: SET_LOCATION_INFO,
+        location
+    };
+};
 export default  function user(state = initialState, action:any) {
     switch (action.type) {
         case SET_LOGGED_INFO:
@@ -35,6 +52,8 @@ export default  function user(state = initialState, action:any) {
                 };
         case SET_USER_INFO:
             return { ...state,userObj: action.userObj  };
+        case SET_LOCATION_INFO:
+            return { ...state,location: action.location  };
         default:
             return state;
     }

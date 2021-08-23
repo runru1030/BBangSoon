@@ -6,24 +6,16 @@ import styled from 'styled-components';
 import axios from 'axios';
 import { useState } from 'react';
 import StoreList from '../component/StoreList';
-type LocationProps = {
-    location: {
-        si: string,
-        gu: string,
-        dong: string,
-        latitude: Number,
-        longitude: Number,
-        detail: string
-    }
-}
-const Main: React.FC<LocationProps> = ({ location }) => {
+import { useSelector } from 'react-redux';
+const Main = () => {
+    const location = useSelector((state:any)=> state.user.location)
     const [reviewRank, setReviewRank]=useState([]);
     const [search, setSearch]= useState<string>("");
     const [resultArr, setResultArr]=useState<any[]>([]);
     const [isMore, setIsMore]=useState<boolean>(false);
     const colorList=["#FF764A", "#46A6FF","#46A6FF"];
     React.useEffect(() => {
-        axios.get(`/store/rankReview/${location.si}`).then(res=>{
+        axios.get(`/store/rankReview/${location?.si}`).then(res=>{
             setReviewRank(res.data)
         })
     }, [location])
@@ -81,7 +73,6 @@ const Main: React.FC<LocationProps> = ({ location }) => {
                 </>)
                 }
             
-                <Label><FontAwesomeIcon icon={faBreadSlice}/> 순위</Label>
             </div> :<div>
                 {resultArr.map((result:any)=><StoreList store={result}/>)}
                 </div>}
@@ -95,7 +86,6 @@ width: 90%;
 position: sticky;
 padding: 10px 20px;
 top: 0px;
-border-bottom: solid thin #e9e9e9;
   color: #6f6f6f;
 `
 const Label = styled.div`

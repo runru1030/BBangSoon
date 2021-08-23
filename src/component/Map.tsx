@@ -7,14 +7,14 @@ import { useLocation } from 'react-router-dom';
 type locationProps = {
   loc: {
     title: string,
-    lat: number,
-    lng: number
+    y: number,
+    x: number
   }|null,
   setLoc: any|null,
   curLoc: {
     title: string,
-    lat: number,
-    lng: number
+    y: number,
+    x: number
   },
   markerArr: any[],
 
@@ -26,7 +26,7 @@ declare global {
 }
 const Map: React.FC<locationProps> = ({ loc, setLoc, curLoc, markerArr }) => {
   const location=useLocation();
-  const [mapCenter, setMapcenter] = React.useState({ title: "", lat: loc?.lat, lng: loc?.lng } as {
+  const [mapCenter, setMapcenter] = React.useState({ title: "", lat: loc?.y, lng: loc?.x } as {
     title: string,
     lat: number,
     lng: number
@@ -41,14 +41,14 @@ const Map: React.FC<locationProps> = ({ loc, setLoc, curLoc, markerArr }) => {
   const map = () => {
     let container = document.getElementById('map');
     let options = {
-      center: new window.kakao.maps.LatLng(loc?.lat, loc?.lng),
+      center: new window.kakao.maps.LatLng(loc?.y, loc?.x),
       level: 5
     };
     
     const map = new window.kakao.maps.Map(container, options);
     new window.kakao.maps.Marker({
       map: map,
-      position: new window.kakao.maps.LatLng(curLoc?.lat, curLoc?.lng),
+      position: new window.kakao.maps.LatLng(curLoc?.y, curLoc?.x),
       image: new window.kakao.maps.MarkerImage("curLoc.png", new window.kakao.maps.Size(20, 20), ),
       clickable: true 
     });

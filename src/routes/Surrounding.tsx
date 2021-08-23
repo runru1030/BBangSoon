@@ -7,6 +7,7 @@ import Nav from '../component/Nav';
 import styled from 'styled-components';
 import StoreList from '../component/StoreList';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 type marker = {
     title: string,
     lat: number,
@@ -15,25 +16,20 @@ type marker = {
     url: string
 }
 const Surrounding: React.FC = ({  }) => {
-    const location = window.localStorage.getItem("location")?JSON.parse(window.localStorage.getItem("location")||""):{si: "서울",
-        gu: "",
-        dong: "",
-        latitude: 37.5283169,
-        longitude: 126.9294254,
-        detail: ""};
+    const location = useSelector((state:any)=> state.user.location)
     const [markerArr, setMarkerArr] = React.useState<any[]>([]);
     const [isOpen, setIsOpen] = React.useState<boolean>(false);
     const [address, setAddress] = React.useState<string>("");
     const [addressList, setAddressList] = React.useState<any[]>([]);
-    const [loc, setLoc] = React.useState({ title: "", lat: location.latitude, lng: location.longitude } as {
+    const [loc, setLoc] = React.useState({ title: "", y: location.y, x: location.x } as {
         title: string,
-        lat: number,
-        lng: number,
+        y: number,
+        x: number,
     });
-    const [curLoc, setCurLoc] = React.useState({ title: "", lat: location.latitude, lng: location.longitude } as {
+    const [curLoc, setCurLoc] = React.useState({ title: "", y: location.y, x: location.x } as {
         title: string,
-        lat: number,
-        lng: number,
+        y: number,
+        x: number,
     });
     const [isEnd, setIsEnd] = React.useState<boolean>();
     const [curpage, setCurPage] = React.useState<number>(1);
@@ -43,7 +39,7 @@ const Surrounding: React.FC = ({  }) => {
         setIsOpen(true);
     }
     const onClick = (id: any) => {
-        setLoc({ title: addressList[id].place_name, lat: addressList[id].y, lng: addressList[id].x })
+        setLoc({ title: addressList[id].place_name, y: addressList[id].y, x: addressList[id].x })
         setAddress(addressList[id].place_name)
         setAddressList([]);
     }
@@ -66,8 +62,8 @@ const Surrounding: React.FC = ({  }) => {
         axios.get(`https://dapi.kakao.com/v2/local/search/keyword.json?query=디저트`, {
             headers: { Authorization: `KakaoAK ${process.env.REACT_APP_KAKAO_REST_KEY}` },
             params: {
-                y: loc.lat,
-                x: loc.lng,
+                y: loc.y,
+                x: loc.x,
                 category_group_code:"CE7, FD6",
                 page: page,
                 size: 15,
@@ -105,6 +101,7 @@ const Surrounding: React.FC = ({  }) => {
         })
     }
     React.useEffect(() => {
+        console.log(location);
         
         getStoreApi(1);
 
@@ -112,7 +109,7 @@ const Surrounding: React.FC = ({  }) => {
     return (<div className="surrounding">
         <Header>
             <div>
-            <FontAwesomeIcon icon={faMapMarkerAlt} /> 내 주변
+            <FontAwesomeIcon icon={faMapMarkerAlt} /> 빵 지도
             </div> 
             <span onClick={onClickChange}>위치 검색</span></Header>
         <div>
@@ -150,6 +147,7 @@ top: 0px;
 font-size: medium;
 border-bottom: solid thin #e9e9e9;
 background-color: white;
+color:#6f6f6f;
 span{
     font-size: x-small;
     font-weight: normal;

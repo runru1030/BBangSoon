@@ -10,14 +10,10 @@ import { useDispatch } from 'react-redux';
 import { setLoggedInfo } from '../modules/user';
 import { useHistory } from 'react-router-dom';
 const Login = (props: any) => {
-  const kauthUrl=`https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_KAKAO_REST_KEY}&redirect_uri=http://localhost:3000/auth&response_type=code`
+  const kauthUrl=`https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_KAKAO_REST_KEY}&redirect_uri=http://192.168.10.8:3000/auth&response_type=code`
   const query = queryString.parse(window.location.search);
   const dispatch= useDispatch();
   const history= useHistory();
-  const [userObj, setUserObj]=React.useState({
-    email:"",
-    name:""
-  })
  
   React.useEffect(() => {
     if (query.code) {
@@ -30,7 +26,7 @@ const Login = (props: any) => {
     const data:any = {
       grant_type: "authorization_code",
       client_id: process.env.REACT_APP_KAKAO_REST_KEY,
-      redirect_uri: "http://localhost:3000/auth",
+      redirect_uri: "http://192.168.10.8:3000/auth",
       code: code
     };
     const queryString = Object.keys(data)
@@ -52,13 +48,13 @@ const Login = (props: any) => {
         if (res.status == 201 || res.status == 200) {
           console.log(res.data);
           const user =res.data.user;
-          dispatch(setLoggedInfo({userId:user.id, nickName: user.nickName}, true))
+          dispatch(setLoggedInfo(user, true))
               
           window.localStorage.setItem("token", JSON.stringify({
             access_token: res.data.jwt
           })); 
           //axios.defaults.headers.common["Authorization"] = `${res.data.jwt}`;
-          history.push("/feed");
+          history.goBack();
           }
         else {
           window.alert("로그인에 실패하였습니다.");

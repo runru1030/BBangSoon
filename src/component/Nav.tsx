@@ -19,6 +19,9 @@ const Nav = () => {
     const onClickHome = () => {
         history.push("/");
     }
+    const onClickWish = () => {
+        isLoggedin?history.push("/wish"):history.push("/auth");
+    }
     const onClickMy = () => {
         isLoggedin?history.push("/feed"):history.push("/auth");
     }
@@ -31,12 +34,12 @@ const Nav = () => {
             <FontAwesomeIcon icon={faBreadSlice}  id="icon" color={location.pathname=="/"? "#e2c26e":"#6f6f6f"}/>
                 <span>홈</span>
             </div>
-            <div>
-                <FontAwesomeIcon id="icon" icon={faHeart} color={location.pathname=="/mypage"? "#46A6FF":"#6f6f6f"}/>
+            <div onClick={onClickWish}>
+                <FontAwesomeIcon id="icon" icon={faHeart} color={location.pathname=="/wish"? "#f89573":"#6f6f6f"}/>
                 <span id="mypage">찜</span>
             </div>
             <div onClick={onClickMy}>
-                <FontAwesomeIcon id="icon" icon={faBook} color={location.pathname=="/mypage"? "#46A6FF":"#6f6f6f"}/>
+                <FontAwesomeIcon id="icon" icon={faBook} color={location.pathname=="/feed"? "#46A6FF":"#6f6f6f"}/>
                 <span id="mypage">일지</span>
             </div>
         </BottomNav>
@@ -58,7 +61,7 @@ gap:20%;
 align-items:center;
 justify-content: center;
 padding: 10px 0;
-border-top:solid thin #d0d0d0 ;
+border-top: solid thin #eeeeee;
 background-color: white;
 div{
     display:flex;

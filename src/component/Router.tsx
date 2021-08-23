@@ -7,22 +7,12 @@ import Main from "../routes/Main";
 import Store from "../routes/Store";
 import StoreImg from "../routes/StoreImg";
 import Surrounding from "../routes/Surrounding";
+import Wish from "../routes/Wish";
 
 type AppProps = {
-    location: {
-        si: string,
-        gu: string,
-        dong: string,
-        latitude: number,
-        longitude: number,
-        detail: string
-    },
     isLoding:boolean,
-    isLoggedin:boolean
-
-
 }
-const AppRouter: React.FC<AppProps> = ({ location , isLoding, isLoggedin}) => {
+const AppRouter: React.FC<AppProps> = ({ isLoding}) => {
     return (
         <Router>
 
@@ -32,7 +22,7 @@ const AppRouter: React.FC<AppProps> = ({ location , isLoding, isLoggedin}) => {
                 <Loding />
             </Route>
                 :<Route exact path="/">
-                    <Main location={location} />
+                    <Main />
                 </Route>}
                 <Route exact path="/surrounding">
                     <Surrounding />
@@ -48,6 +38,9 @@ const AppRouter: React.FC<AppProps> = ({ location , isLoding, isLoggedin}) => {
                 </Route>
                 <Route exact path="/feed">
                     <Feed/>
+                </Route>
+                <Route exact path="/wish">
+                    <Wish/>
                 </Route>
             </Switch>
         </Router>

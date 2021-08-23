@@ -1,30 +1,21 @@
-import { faBreadSlice, faMapMarkedAlt, faMapMarkerAlt, faPhone, faPhoneAlt, faPlus, faRoute, faStar, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faBreadSlice} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
-import React from "react"
-import TextareaAutosize from 'react-textarea-autosize';
 import { useEffect } from "react";
 import { useState } from "react";
 import styled from "styled-components";
-import Grid from "../component/Grid";
-import Map from "../component/Map";
 import Nav from "../component/Nav";
 import ImgModal from "../component/ImgModal";
+import { useSelector } from "react-redux";
 type img={
     imageUrl:string
 }
 const StoreImg = () => {
-    const storeInfo = JSON.parse(window.localStorage.getItem("store") || "");
-
+    const storeInfo = useSelector((state:any)=>state.store.storeObj)
     const [storeImgArr, setStoreImgArr] = useState<any>([]);
-    
-   
-   
     useEffect(()=>{
         axios.post(`/store/image/${storeInfo.id}`).then(res=>{
             setStoreImgArr(res.data);
-            console.log(res.data);
-            
         })
     },[])
         

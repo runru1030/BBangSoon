@@ -1,4 +1,4 @@
-import { faBreadSlice, faGlobe, faMapMarkedAlt, faMapMarkerAlt, faPhone, faPhoneAlt, faPlus, faRoute, faStar, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faBreadSlice, faGlobe, faHeart, faMapMarkerAlt, faPhoneAlt, faPlus} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import React from "react"
@@ -10,11 +10,18 @@ import Grid from "../component/Grid";
 import Map from "../component/Map";
 import Nav from "../component/Nav";
 import ImgModal from "../component/ImgModal";
+import { useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
+import ReviewList from "../component/ReviewList";
 const Store = () => {
-    const storeInfo = JSON.parse(window.localStorage.getItem("store") || "");
-
-    const [store, setStore] = useState<any>({});
+    const storeInfo:any = useSelector((state:any)=>state.store.storeObj)
+    const [store, setStore] = useState<any>(storeInfo);
     const [reviewImg, setReviewImg]=useState(null);
+    const history= useHistory();
+    const { userObj, isLoggedin } = useSelector((state: any) => ({
+        userObj: state.user.userObj,
+        isLoggedin: state.user.isLoggedin,
+      }))
     const location = window.localStorage.getItem("location")?JSON.parse(window.localStorage.getItem("location")||""):
     {si: "서울",
     gu: "",
@@ -22,10 +29,10 @@ const Store = () => {
     latitude: 37.5283169,
     longitude: 126.9294254,
     detail: ""};
-    const [curLoc, setCurLoc] = React.useState({ title: "", lat: location.latitude, lng: location.longitude } as {
+    const [curLoc, setCurLoc] = React.useState({ title: "", y: location.y, x: location.x } as {
         title: string,
-        lat: number,
-        lng: number,
+        y: number,
+        x: number,
     });
     const [isOpen, setIsOpen] = useState({
         map: false,
@@ -43,6 +50,9 @@ const Store = () => {
     star:number,
     attach:any,
     nickName:string})
+    
+    const [isVisit, setIsVisit] = useState(store.Visits?.findIndex((i:any) => i.UserId == userObj.id) != -1);
+    const [isWish, setIsWish] = useState(store.Wishes?.findIndex((i:any) => i.UserId == userObj.id) != -1);
     const onClickWrite = () => {
         setIsWrite(prev=>!prev);
     }
@@ -57,7 +67,9 @@ const Store = () => {
             review: false,
             [label]: true
         })
-        if(!isOpen.review)setIsWrite(false);
+        if(!isOpen.review){
+            isLoggedin?setIsWrite(false):history.push("/auth")
+        }
     }
     const onSubmit=(event:any)=>{
         event.preventDefault();
@@ -66,6 +78,7 @@ const Store = () => {
         formData.append('content',newReview.content);
         formData.append('nickName',newReview.nickName);
         formData.append('star', newReview.star.toString());
+        formData.append('UserId', userObj.id);
         axios.post(`/store/review/${store.id}`,formData).then(res=>{
             setStore(res.data);
             window.localStorage.setItem("store", JSON.stringify({...store, ...res.data}))
@@ -92,12 +105,12 @@ const Store = () => {
         reader.readAsDataURL(theFile);
     }
     useEffect(()=>{
+        console.log(store.Visits?.findIndex((i:any) => i.UserId == userObj.id) != -1);
+        
         axios.post(`/store/${storeInfo.id}`).then(res=>{
             setStore(res.data);
-            console.log(res.data);
-            
         })
-        if(!storeInfo.Menus){
+        if(!storeInfo.Reviews){
             const update = setInterval(()=>{
                 axios.post(`/store/${storeInfo.id}`).then(res=>{
                     setStore(res.data);
@@ -109,11 +122,36 @@ const Store = () => {
             
     }
     },[])
-        
-    return (<>
-        <div className="store">
-        <Header >
-        <span id="storeName">{storeInfo.storeName}</span>
+    const onClickFeature=(id:string)=>{
+        if(!isLoggedin){
+            history.push("/auth");
+        }
+        else{
+        if(id=="visit"){
+            isVisit?
+            axios.delete(`/user/visit/${userObj.id}/${store.id}`).then(res=>{
+                res.data.success&&setIsVisit(false);
+            })
+            :
+            axios.get(`/user/visit/${userObj.id}/${store.id}`).then(res=>{
+                res.data.success&&setIsVisit(true);
+            })
+        }
+        else{
+            isWish?
+            
+            axios.delete(`/user/wish/${userObj.id}/${store.id}`).then(res=>{
+                res.data.success&&setIsWish(false);
+            })
+            :
+            axios.get(`/user/wish/${userObj.id}/${store.id}`).then(res=>{
+                res.data.success&&setIsWish(true);
+            })
+
+        }}
+    }  
+    return (<><Header >
+        <span id="storeName">{store.storeName}</span>
         <div>
         <span>{store.reviewCnt}</span>
         <span id="small">리뷰</span>
@@ -122,14 +160,17 @@ const Store = () => {
         <span>{store.avgStar?.toFixed(1)}</span>
         <span id="small">평점</span>
         </div>
-            <FontAwesomeIcon icon={faBreadSlice} color={ "#e2c26e"} id="visit"/>
+            <FontAwesomeIcon onClick={()=>onClickFeature("visit")} icon={faBreadSlice} color={isVisit? "#e2c26e": "#bfbfbf"} id="visit"/>
+            <FontAwesomeIcon onClick={()=>onClickFeature("wish")}icon={faHeart}  color={isWish? "#f89573": "#bfbfbf"} id="wish"/>
     </Header>
+        <div className="store">
+        
 
             {!store.Reviews||store.Reviews.length<storeInfo.reviewCnt&&<Loding>
                 <img width="50%" src="loding.gif"/>
-                
                 <span>외부 사이트로부터 데이터를 가져오는 중 입니다</span>
                 </Loding>}
+
             <div className="img-viewer">
                 {store.StoreImgs?.length==1&&<Grid imgArr={[{url: store.StoreImgs[0].imageUrl}]}/>}
                 {store.StoreImgs?.length==2&&<Grid imgArr={[{url: store.StoreImgs[0].imageUrl},{url: store.StoreImgs[1].imageUrl}]}/>}
@@ -166,8 +207,8 @@ const Store = () => {
                 {isOpen.map && <div className="map">
                     <Map loc={{
                         title: store.storeName,
-                        lat: store.y,
-                        lng: store.x,
+                        y: store.y,
+                        x: store.x,
                     }} setLoc={null} curLoc={curLoc} markerArr={[{...store, place_name: store.storeName, address_name: store.address}]} />
                 </div>}
             </div>
@@ -182,7 +223,10 @@ const Store = () => {
                 </div>}
             </div>
             <div className="review-wrapper">
-                <Label onClick={(event) => onClick("review")} style={isOpen.review ? { "color": "#46A6FF" } : undefined}><span>리뷰</span><span onClick={onClickWrite} id="side">{isWrite?"취소":"작성하기"}</span></Label>
+                <Label onClick={(event) => onClick("review")} style={isOpen.review ? { "color": "#46A6FF" } : undefined}>
+                    <span>리뷰</span>
+                    <span onClick={onClickWrite} id="side">{isWrite?"취소":"작성하기"}</span>
+                    </Label>
                 {isWrite&&<>
                     <form onSubmit={onSubmit} className="review-form">
                         {newReview.attach&&<img src={newReview.attach} width="60%"/>}
@@ -210,24 +254,7 @@ const Store = () => {
                     </form>
                 </>}
                 {isOpen.review && store.Reviews && <div>
-                    {store.Reviews.map((review: any) => <List className="list review">
-                        <div className="reviewImg">{review.reviewImg&&<ImgModal src={review.reviewImg}  width="200%"/>}</div>
-                        <div className="star">
-                            <span id="star">
-                                <FontAwesomeIcon icon={faBreadSlice} color={review.star >= 1 ? "#e2c26e" : "#cabfa3"} />
-                                <FontAwesomeIcon icon={faBreadSlice} color={review.star >= 2 ? "#e2c26e" : "#cabfa3"} />
-                                <FontAwesomeIcon icon={faBreadSlice} color={review.star >= 3 ? "#e2c26e" : "#cabfa3"} />
-                                <FontAwesomeIcon icon={faBreadSlice} color={review.star >= 4 ? "#e2c26e" : "#cabfa3"} />
-                                <FontAwesomeIcon icon={faBreadSlice} color={review.star >= 5 ? "#e2c26e" : "#cabfa3"} />
-                            </span>
-                            <span>{review.star}</span>
-                        </div>
-                        <span id="">{review.content}</span>
-                        <div className="detail">
-                            <span id="nickName">{review.nickName}</span>
-                            <span id="">{new Date(review.date).getFullYear()}.{new Date(review.date).getMonth() + 1}.{new Date(review.date).getDate()}</span>
-                        </div>
-                    </List>)}
+                    {store.Reviews.map((review: any) => <ReviewList review={review}/>)}
                 </div>}
             </div>
             <Nav />
@@ -238,7 +265,8 @@ export default Store;
 
 const Header = styled.header`
 position: sticky;
-top: 5px;
+top: 0;
+width: 100%;
 background-color: white;
 display: flex;
 align-items: center;
@@ -270,7 +298,7 @@ const Label = styled.div`
 width: 90%;
 font-size: medium;
 padding: 15px;
-border-top: solid thin #dddddd;
+border-top: solid thin #eeeeee;
   display: flex;
   align-items: center;
 span{
@@ -279,13 +307,6 @@ span{
 #side{
     flex: 0.2;
 }
-`
-const List = styled.div`
-width: 90%;
-font-size: medium;
-padding: 15px;
-border-top: solid thin #dddddd;
-  display: flex;
 `
 const Container = styled.div`
 width: 90%;

@@ -15,14 +15,12 @@ router.post('/kakao', async (req, res) => {
       userEmail = kakaoUser.email;
       userNickName = kakaoUser.profile.nickname;
     } else {
-      console.log(req.headers.authorization)
       const user = jwt.verify(req.headers.authorization, process.env.JWT_SECRET, {
         ignoreExpiration: true,
       });
       userEmail = user.email;
     }
 
-    console.log(userEmail,userNickName);
     const [user, created] = await User.findOrCreate({
       where: { email: userEmail },
       defaults: {
@@ -30,10 +28,6 @@ router.post('/kakao', async (req, res) => {
         nickName: userNickName,
       },
       attributes: ['id', 'nickName'],
-       include: [{
-        model: Review,
-        attributes: ['star', 'content', 'date', 'reviewImg', 'StoreId'],
-      }], 
     });
 
     let responseData = {

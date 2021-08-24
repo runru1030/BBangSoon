@@ -47,5 +47,7 @@ module.exports = class Store extends Sequelize.Model {
     db.Store.hasMany(db.Menu, { foreignKey: 'StoreId', sourceKey: 'id' });
     db.Store.hasMany(db.Review, { foreignKey: 'StoreId', sourceKey: 'id' });
     db.Store.hasMany(db.StoreImg, { foreignKey: 'StoreId', sourceKey: 'id' });
+    db.Store.hasMany(db.Wish, { foreignKey: 'StoreId', sourceKey: 'id' });
+    db.Store.hasMany(db.Visit, { foreignKey: 'StoreId', sourceKey: 'id' });
   }
 }

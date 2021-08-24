@@ -124,11 +124,11 @@ async function crawlerKakao({ id, url }) {
                             { date: new Date(review.date) },
                             { content: review.content },
                             { nickName: "익명" },
-                            { UserId: 0 }]
+                            { UserId: 2 }]
                     },
                     defaults: {
                         StoreId: id,
-                        UserId:0,
+                        UserId:2,
                         ...review,
                         nickName: "익명"
                     }

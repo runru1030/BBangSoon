@@ -1,10 +1,4 @@
-/* const AWS = require("aws-sdk");
 
-AWS.config.loadFromPath(__dirname + '/../config/s3.json');
-AWS.config.region = process.env.AWS_CONFIG_REGION;
-AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-  IdentityPoolId: process.env.AWS_CONFIG_IDENTITYPOOLID
-}); */
 const multer = require('multer');
 const multerS3 = require('multer-s3');
 const aws = require('aws-sdk');

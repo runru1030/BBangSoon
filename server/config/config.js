@@ -4,9 +4,10 @@ module.exports = {
       "username": "root",
       "password": process.env.SEQUELIZE_PASSWORD,
       "database": "bbangsoon",
-      "host": "3.35.167.4",
+      "host": "52.78.91.104",
       "dialect": "mysql",
       "operatorAliases" : false,
+      "logging": false
     }
   };
 /* module.exports = {

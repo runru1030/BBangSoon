@@ -1,37 +1,30 @@
 const express = require('express');
-const { isNull } = require('util');
-const { Store, Menu, Review, StoreImg , Count, sequelize} = require('../models');
+const { Store, Menu, Review, StoreImg , Count, sequelize, Visit, Wish, Sequelize} = require('../models');
 const upload = require('../utils/s3');
-
+const Op = Sequelize.Op;
 const router = express.Router();
 router.post('/list', async (req, res) => {
   try {
-    const storeArr = req.body;
-    const resultArr=[]
-    storeArr.forEach(async(element, idx) => {
-      await Review.findAll({
-        where: { StoreId: element.id },
-        attributes: [[sequelize.fn('count', sequelize.col('star')), 'reviewCnt'],[sequelize.fn('avg', sequelize.col('star')), 'avgStar'] ],
-      
-      }).then( async result => {
-        const reviewData=result.map(res=>res.dataValues)[0];
-        resultArr[idx]=reviewData;
-       if (reviewData.avgStar == null) {
-          
+    const resultArr=[];
+    const storeArr=await Store.findAll({
+      where:{id: {[Op.in]:req.body}},
+      attributes:['id', 'storeName', [sequelize.fn('count', sequelize.col('Reviews.star')), 'reviewCnt'],
+      [sequelize.fn('avg', sequelize.col('Reviews.star')), 'avgStar'], 
+      ],
+      group:['id'],
+      include:{ model:Review}, 
+    })
+    
+    resultArr.map(async(element, idx) => {
+       if (!element.avgStar) {
           await Count.findOne({
             where:{id:element.id},
             attributes:['reviewCnt', 'avgStar']
           }).then(res=>{
-            resultArr[idx]=res?res.dataValues:reviewData;
+            storeArr[idx]={...storeArr[idx], ...res.dataValues}
           })
-        }
-        if(idx==storeArr.length-1){
-          console.log(resultArr);
-          return res.status(200).json(resultArr);
-        }
-      });
-      
-    });
+        }})
+        return res.status(200).json(storeArr);
   } catch (err) {
     console.log(err);
     return res.status(500).json({
@@ -163,6 +156,14 @@ router.post('/:id', async (req, res) => {
         model: StoreImg,
         attributes:  ['imageUrl'],
         limit:3,
+      },
+      {
+        model: Visit,
+        attributes:  ['UserId']
+      },
+      {
+        model: Wish,
+        attributes:  ['UserId']
       }
     ]
     })

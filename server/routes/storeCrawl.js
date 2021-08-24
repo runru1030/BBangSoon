@@ -1,6 +1,6 @@
 const express = require('express');
 const crawlerKakao = require('../crawler/crawlerKakao');
-const { Store, Menu, Review, StoreImg, sequelize, Count } = require('../models');
+const { Store, Menu, Review, StoreImg, sequelize, Count, Visit, Wish } = require('../models');
 
 const router = express.Router();
 router.post('/', async (req, res) => {
@@ -29,6 +29,14 @@ router.post('/', async (req, res) => {
       {
         model: StoreImg,
         attributes: ['imageUrl'],
+      },
+      {
+        model: Visit,
+        attributes:  ['UserId']
+      },
+      {
+        model: Wish,
+        attributes:  ['UserId']
       }
       ]
     })

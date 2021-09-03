@@ -150,7 +150,8 @@ const Store = () => {
 
         }}
     }  
-    return (<><Header >
+    return (<>
+    <Header >
         <span id="storeName">{store.storeName}</span>
         <div>
         <span>{store.reviewCnt}</span>
@@ -271,10 +272,10 @@ background-color: white;
 display: flex;
 align-items: center;
 justify-content: center;
-padding: 20px;
-height: 30px;
+padding: 10px 20px ;
 gap: 10px;
 border-bottom: solid thin #eeeeee;
+box-sizing: border-box;
 #storeName{
     flex: 0.7;
 }

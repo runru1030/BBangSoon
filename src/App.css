@@ -60,7 +60,7 @@ input[type=text]{
   border-radius: 10px;
   display: flex;
   flex-direction: column;
-  transform: translate(40%);
+  transform: translate(40%, -130%);
   box-shadow: 2px 2px 2px 2px #46a6ff33;
 }
 #info > span:nth-child(1){
@@ -347,4 +347,8 @@ color: #46A6FF;
   position: absolute;
   transform: translate(42vw);
   color: #46A6FF;
+  }
+  #back{
+    font-size: large;
+    margin-right: 10px;
   }

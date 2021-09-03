@@ -20,6 +20,8 @@ const Feed = () => {
     axios.get(`/user/feed/${userObj.id}`).then(res => {
       setReviewArr(res.data.Reviews)
       setVisitId(res.data.Visits.map((it: any) => (it.StoreId)))
+      console.log(res.data.Visits.map((it: any) => (it.StoreId)));
+      
     })
   }, [])
   const onClick = (review: any | null) => {
@@ -33,8 +35,13 @@ const Feed = () => {
     }
   }
   const onClickVisit = () => {
+    setIsDetail(false);
       axios.post(`/store/list`, visitId)
-        .then(res => setVisitArr(res.data))
+        .then(res => {
+          setVisitArr(res.data)
+          console.log(res.data);
+          
+        })
       setIsDetailVisit(true);
     }
     const onClickFeed = () => {

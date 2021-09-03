@@ -15,7 +15,7 @@ type marker = {
     address: string,
     url: string
 }
-const Surrounding: React.FC = ({  }) => {
+const Surrounding= () => {
     const location = useSelector((state:any)=> state.user.location)
     const [markerArr, setMarkerArr] = React.useState<any[]>([]);
     const [isOpen, setIsOpen] = React.useState<boolean>(false);
@@ -91,18 +91,9 @@ const Surrounding: React.FC = ({  }) => {
                 }
                 });
             })
-            
-            
-            
-            console.log(arr, markerArr);
-            
-            
-            
         })
     }
     React.useEffect(() => {
-        console.log(location);
-        
         getStoreApi(1);
 
     }, [loc])

@@ -18,8 +18,8 @@ const initialState = {
       },
     location:{
         si: "서울",
-        y: 33.450701,
-        x: 126.570667,
+        y: 37.556428224476505,
+        x: 126.97150576481177
       },
     isLoggedin: false,
   };

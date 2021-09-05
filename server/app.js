@@ -35,11 +35,14 @@ if (process.env.NODE_ENV === 'production') {
 } else {
     app.use(morgan('dev'));
 }
+
+app.get("/", async(req, res)=>{
+    res.send("sucess");
+})
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors());
-
 
 app.use('/store', storeRouter);
 app.use('/storeCrawl', storeCrawlRouter);

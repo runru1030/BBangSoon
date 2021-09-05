@@ -83,7 +83,7 @@ const Login = (props: any) => {
 
 export default Login;   
 const Randing=styled.div`
-margin-top: 100px;
+margin-top: 50px;
 >span{
   font-weight: lighter;
   font-size: large;

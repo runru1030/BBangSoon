@@ -1,7 +1,7 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const { User, Review } = require('../models');
-const kakaoAuth = require('../utils/kakaoAuth');
+const kakaoAuth = require('../utils/KakaoAuth');
 
 const router = express.Router();
 

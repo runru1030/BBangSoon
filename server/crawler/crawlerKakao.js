@@ -1,7 +1,7 @@
 const puppeteer = require("puppeteer");
 const { Cluster } = require('puppeteer-cluster');
-const { Count, Menu, Review, StoreImg, Store } = require('../models');
-const Op = require('Sequelize').Op
+const { Count, Menu, Review, StoreImg, Store, sequelize } = require('../models');
+const Op = sequelize.Op;
 async function crawlerKakao({ id, url }) {
     const cluster = await Cluster.launch({
         concurrency: Cluster.CONCURRENCY_CONTEXT, // use one browser per worker

@@ -126,7 +126,7 @@ router.get('/rankReview/:local', async (req, res) => {
       order : [[sequelize.literal('totalStar'), 'DESC']],
     })
     
-    return res.status(200).json(storeRanking.splice(0, 10));
+    return res.status(200).json(storeRanking.splice(0, 20));
    
     
   } catch (err) {

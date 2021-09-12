@@ -247,7 +247,7 @@ row-gap: 3px;
 }
 .grid-container >div{
   display: flex;
-  background-color: black;
+  background-color: white;
   overflow: hidden;
   justify-content: center;
   align-items: center;

@@ -96,14 +96,23 @@ async function crawlerKakao({ id, url }) {
                     reviewImg: ""
                 }
                 let page_num = parseInt(((j + 4) / 5))
-                let li = parseInt((j - 1) % 5 + 1)
+                let li = parseInt(j-(page_num-1)*5)
                 if (j != 1 && li == 1) {
 
-                    if ((j - 1) / 5 % 5 == 0) {
-                        await page.click(`.paging_mapdetail > .btn_next`)
+                    if (page_num % 5 == 1) {
+                        await page.click(`#mArticle > div.cont_evaluation > div.evaluation_review > div > a.btn_next`)
+                    }
+                    else if(page_num % 5==0){
+                        console.log(page_num/5, page_num,j);
+                        await page.click(`#mArticle > div.cont_evaluation > div.evaluation_review > div > a:nth-child(${j<6?6:7})`)
+                        
+                        //await page.click(`.link_page:nth-child(${page_num})`)
                     }
                     else {
-                        await page.click(`.paging_mapdetail > .link_page:nth-child(${page_num})`)
+                        console.log(page_num/5, page_num,j);
+                        //#mArticle > div.cont_evaluation > div.evaluation_review > div > a:nth-child(3)
+                        await page.click(`#mArticle > div.cont_evaluation > div.evaluation_review > div > a:nth-child(${j<6?1+page_num%5:2+page_num%5})`)
+                        //await page.click(`.link_page:nth-child(${page_num})`)
                     }
                     await page.waitFor(1000);
                 }

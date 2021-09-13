@@ -26,9 +26,14 @@ const ImgModal :React.FC<any>=({src, width, height})=> {
         
     }
   }
- 
+  const imgError=(event:React.MouseEvent<HTMLImageElement, Event>)=>{
+    event.currentTarget.src="logo.png";
+    event.currentTarget.width=60;
+
+    event.currentTarget.height=60;
+  }
     return (<>
-    <img src={src} onClick={onClick} width={width} height={height} className="img"/>
+    <img src={src} style={{"backgroundColor":"white"}} onError={imgError} onClick={onClick} width={width} height={height} className="img"/>
     {isOpen&&
     <Modal>
         

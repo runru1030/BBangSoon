@@ -266,6 +266,7 @@ export default Store;
 
 const Header = styled.header`
 position: sticky;
+z-index:999;
 top: 0;
 width: 100%;
 background-color: white;

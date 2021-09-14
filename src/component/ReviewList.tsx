@@ -22,7 +22,7 @@ const ReviewList:React.FC<review> = ({review}) => {
                                 <FontAwesomeIcon icon={faBreadSlice} color={review.star >= 4 ? "#e2c26e" : "#cabfa3"} />
                                 <FontAwesomeIcon icon={faBreadSlice} color={review.star >= 5 ? "#e2c26e" : "#cabfa3"} />
                             </span>
-                            <span>{review.star}</span>
+                            <span id="text">{review.star}점</span>
                         </div>
                         <span id="">{review.content}</span>
                         <div className="detail">
@@ -39,4 +39,15 @@ font-size: medium;
 padding: 15px;
 border-top: solid thin #dddddd;
   display: flex;
+.star{
+    background-color: #f3ecdc;
+    padding: 5px 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+.star #text{
+    font-weight: lighter;
+    font-size: small;
+    margin-left: 5px;
+}
 `

@@ -352,3 +352,13 @@ color: #46A6FF;
     font-size: large;
     margin-right: 10px;
   }
+.logout-modal{
+  padding: 5px 10px;
+  border: solid thin #9c9789;
+  position: absolute;
+  background-color: white;
+  margin-left: 60px;
+  border-radius: 15px;
+  font-size: small;
+  font-weight: lighter;
+}

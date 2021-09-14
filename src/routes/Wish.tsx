@@ -7,10 +7,16 @@ import axios from 'axios';
 import { useState } from 'react';
 import StoreList from '../component/StoreList';
 import { useSelector } from 'react-redux';
+import { useHistory } from 'react-router';
 const Wish = () => {
   const [storeArr, setStoreArr] = useState<any[]>([])
   const { userObj } = useSelector((state: any) => ({ userObj: state.user.userObj, }))
+  const { isLoggedin } = useSelector((state: any) => ({
+    isLoggedin: state.user.isLoggedin,
+}))
+  const history=useHistory();
   React.useEffect(() => {
+    !isLoggedin&&history.push("/auth");
     axios.get(`/user/wishArr/${userObj.id}`).then(res => {
         setStoreArr(res.data)
     })

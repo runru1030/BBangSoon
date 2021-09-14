@@ -7,6 +7,7 @@ import axios from 'axios';
 import { useState } from 'react';
 import StoreList from '../component/StoreList';
 import { useSelector } from 'react-redux';
+import { useHistory } from 'react-router';
 const Feed = () => {
   const [reviewArr, setReviewArr] = useState<any[]>([])
   const [visitId, setVisitId] = useState<any[]>([])
@@ -16,7 +17,12 @@ const Feed = () => {
   const [isDetailVisit, setIsDetailVisit] = useState<boolean>(false);
   const [review, setReview] = useState<any>({});
   const [store, setStore] = useState<any>({});
+  const { isLoggedin } = useSelector((state: any) => ({
+    isLoggedin: state.user.isLoggedin,
+}))
+  const history=useHistory();
   React.useEffect(() => {
+    !isLoggedin&&history.push("/auth");
     axios.get(`/user/feed/${userObj.id}`).then(res => {
       setReviewArr(res.data.Reviews)
       setVisitId(res.data.Visits.map((it: any) => (it.StoreId)))

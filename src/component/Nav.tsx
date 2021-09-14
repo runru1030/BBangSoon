@@ -9,8 +9,8 @@ import styled, { css } from 'styled-components';
 const Nav = () => {
     const history = useHistory();
     const location = useLocation();
-    
-    const { isLoggedin } = useSelector((state:any) => ({
+
+    const { isLoggedin } = useSelector((state: any) => ({
         isLoggedin: state.user.isLoggedin,
     }))
     const onClickSurr = () => {
@@ -20,30 +20,32 @@ const Nav = () => {
         history.push("/");
     }
     const onClickWish = () => {
-        isLoggedin?history.push("/wish"):history.push("/auth");
+        history.push("/wish")
+        //isLoggedin ? history.push("/wish") : history.push("/auth");
     }
-    const onClickMy = () => {
-        isLoggedin?history.push("/feed"):history.push("/auth");
+    const onClickFeed = () => {
+        history.push("/feed")
     }
     return (<><BottomNav>
-            <div id="surrounding" onClick={onClickSurr}>
-                <FontAwesomeIcon id="icon" icon={faMapMarkerAlt}  color={location.pathname=="/surrounding"? "#46A6FF":"#6f6f6f"} />
-                <span>빵 지도</span>
-            </div>
-            <div id="home" onClick={onClickHome}>
-            <FontAwesomeIcon icon={faBreadSlice}  id="icon" color={location.pathname=="/"? "#e2c26e":"#6f6f6f"}/>
-                <span>홈</span>
-            </div>
-            <div onClick={onClickWish}>
-                <FontAwesomeIcon id="icon" icon={faHeart} color={location.pathname=="/wish"? "#f89573":"#6f6f6f"}/>
-                <span id="mypage">찜</span>
-            </div>
-            <div onClick={onClickMy}>
-                <FontAwesomeIcon id="icon" icon={faBook} color={location.pathname=="/feed"? "#46A6FF":"#6f6f6f"}/>
-                <span id="mypage">일지</span>
-            </div>
-        </BottomNav>
-        </>
+        <div id="home" onClick={onClickHome}>
+            <FontAwesomeIcon icon={faBreadSlice} id="icon" color={location.pathname == "/" ? "#e2c26e" : "#6f6f6f"} />
+            <span>홈</span>
+        </div>
+        <div id="surrounding" onClick={onClickSurr}>
+            <FontAwesomeIcon id="icon" icon={faMapMarkerAlt} color={location.pathname == "/surrounding" ? "#46A6FF" : "#6f6f6f"} />
+            <span>빵 지도</span>
+        </div>
+
+        <div onClick={onClickWish}>
+            <FontAwesomeIcon id="icon" icon={faHeart} color={location.pathname == "/wish" ? "#f89573" : "#6f6f6f"} />
+            <span id="mypage">찜</span>
+        </div>
+        <div onClick={onClickFeed}>
+            <FontAwesomeIcon id="icon" icon={faBook} color={location.pathname == "/feed" ? "#46A6FF" : "#6f6f6f"} />
+            <span id="mypage">일지</span>
+        </div>
+    </BottomNav>
+    </>
     )
 
 }

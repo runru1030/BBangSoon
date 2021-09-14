@@ -14,7 +14,7 @@ router.post('/', async (req, res) => {
         storeName: place_name,
         address: road_address_name,
         telephone: phone,
-        local:"서울",
+        local:road_address_name.split(" ")[0],
         x:x,
         y:y
       },

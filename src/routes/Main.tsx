@@ -66,10 +66,10 @@ const Main = () => {
             {resultArr.length==0?<div className="col-container reviewRank-wrapper">
                 <Label>랭킹</Label>
                 {
-                reviewRank.map((store:any, idx:number)=>(idx<5||(isMore))&&<><div className="row-container reviewRank">
+                reviewRank.map((store:any, idx:number)=>(idx<10||(isMore))&&<><div className="row-container reviewRank">
                 <StoreList store={store} children={<span id="rank-num" style={{"color":idx<3?colorList[idx]:"black"}}>{idx+1}</span>}/>
                 </div>
-                {idx==4&&!isMore&&<span className="more-btn" onClick={onClick}>더보기</span>}
+                {idx==9&&!isMore&&<span className="more-btn" onClick={onClick}>더보기</span>}
                 </>)
                 }
             

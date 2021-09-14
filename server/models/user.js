@@ -8,6 +8,9 @@ module.exports = class User extends Sequelize.Model {
         allowNull: false,
         unique: true,
       },
+      kakaoToken:{
+        type: Sequelize.STRING(100),
+      },
       socialType: {
         type: Sequelize.STRING(30),
         allowNull: true,

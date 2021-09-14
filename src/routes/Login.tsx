@@ -10,12 +10,12 @@ import { useDispatch } from 'react-redux';
 import { setLoggedInfo } from '../modules/user';
 import { useHistory } from 'react-router-dom';
 const Login = (props: any) => {
-  const kauthUrl=`https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_KAKAO_REST_KEY}&redirect_uri=http://192.168.10.8:3000/auth&response_type=code`
+  const kauthUrl=`https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_KAKAO_REST_KEY}&redirect_uri=http://localhost:3000/auth&response_type=code`
   const query = queryString.parse(window.location.search);
   const dispatch= useDispatch();
   const history= useHistory();
  
-  React.useEffect(() => {
+  React.useEffect(() => {  
     if (query.code) {
       getKakaoTokenHandler(query.code.toString());
         
@@ -23,10 +23,11 @@ const Login = (props: any) => {
 
   }, []);
   const getKakaoTokenHandler = async (code:string) => {
+
     const data:any = {
       grant_type: "authorization_code",
       client_id: process.env.REACT_APP_KAKAO_REST_KEY,
-      redirect_uri: "http://192.168.10.8:3000/auth",
+      redirect_uri: "http://localhost:3000/auth",
       code: code
     };
     const queryString = Object.keys(data)
@@ -54,7 +55,7 @@ const Login = (props: any) => {
             access_token: res.data.jwt
           })); 
           //axios.defaults.headers.common["Authorization"] = `${res.data.jwt}`;
-          history.goBack();
+          history.go(-2);
           }
         else {
           window.alert("로그인에 실패하였습니다.");

@@ -26,6 +26,7 @@ router.post('/kakao', async (req, res) => {
       defaults: {
         socialType: 'kakao',
         nickName: userNickName,
+        kakaoToken: req.body.access_token
       },
       attributes: ['id', 'nickName'],
     });
@@ -42,7 +43,7 @@ router.post('/kakao', async (req, res) => {
       }, process.env.JWT_SECRET, {
         issuer: 'bbangsoon',
       });
-
+      await User.update({kakaoToken:req.body.access_token}, {where:{id:user.id}} )
       responseData.jwt = token;
     }
 
@@ -55,4 +56,20 @@ router.post('/kakao', async (req, res) => {
   }
 });
 
+router.post('/logout', async (req, res) => {
+  try{
+    const jwtUser = jwt.verify(req.headers.authorization, process.env.JWT_SECRET, {
+      ignoreExpiration: true,
+    });
+    const user= await User.findOne({where:{id:jwtUser.id},
+    attributes:['kakaoToken']})
+    await kakaoAuth.logout(user.kakaoToken);
+    return res.status(200).json({success:true});
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      error: err.toString(),
+    });
+  }
+});
 module.exports = router;

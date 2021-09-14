@@ -21,4 +21,24 @@ module.exports = {
       );
     });
   },
+  logout(accessToken) {
+    console.log(accessToken);
+    return new Promise((resolve, reject) => {
+      request( 
+        {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+          },
+          url: 'https://kapi.kakao.com/v1/user/logout',
+          method: 'POST',
+        },
+        (error, response, body) => {
+          if (!error && response.statusCode === 200) {
+            resolve(body);
+          }
+          reject(error);
+        }
+      );
+    });
+  },
 };

@@ -4,7 +4,7 @@ module.exports = {
       "username": "root",
       "password": process.env.SEQUELIZE_PASSWORD,
       "database": "bbangsoon",
-      "host": "52.78.91.104",
+      "host": "13.125.17.17",
       "dialect": "mysql",
       "operatorAliases" : false,
       "logging": false

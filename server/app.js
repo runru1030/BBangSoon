@@ -37,7 +37,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 app.get("/", async(req, res)=>{
-    res.send("sucess");
+    res.status(200).json({"sucess":"true"});
 })
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());

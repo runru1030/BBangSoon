@@ -4,14 +4,14 @@ import styled from "styled-components";
 import ImgModal from "../component/ImgModal";
 type review={
     review:{
-    reviewImg:string|null,
-    content:string|null,
-    star:number,
-    nickName: string,
-    date: Date}
+        reviewImg:string|null,
+        content:string|null,
+        star:number,
+        nickName: string,
+        date: Date
+    }
 }
 const ReviewList:React.FC<review> = ({review}) => {
- 
     return (<><List className="list review">
                         {review.reviewImg&&<div className="reviewImg"><ImgModal src={review.reviewImg}  width="200%"/></div>}
                         <div className="star">

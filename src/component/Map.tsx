@@ -5,19 +5,21 @@ import * as React from 'react';
 import { useLocation } from 'react-router-dom';
 
 type locationProps = {
+  //지도 중심 위치
   loc: {
     title: string,
     y: number,
     x: number
   }|null,
   setLoc: any|null,
+  //내 위치
   curLoc: {
     title: string,
     y: number,
     x: number
   },
+  //매장 정보arr
   markerArr: any[],
-
 }
 declare global {
   interface Window {
@@ -26,15 +28,15 @@ declare global {
 }
 const Map: React.FC<locationProps> = ({ loc, setLoc, curLoc, markerArr }) => {
   const location=useLocation();
-  const [mapCenter, setMapcenter] = React.useState({ title: "", lat: loc?.y, lng: loc?.x } as {
+  const [mapCenter, setMapcenter] = React.useState({ title: "", y: loc?.y, x: loc?.x } as {
     title: string,
-    lat: number,
-    lng: number
+    y: number,
+    x: number
   })
   React.useEffect(() => {
     map();
-
   }, [loc, markerArr])
+
   const onClick = () => {
     setLoc(mapCenter)
   }
@@ -52,8 +54,8 @@ const Map: React.FC<locationProps> = ({ loc, setLoc, curLoc, markerArr }) => {
       image: new window.kakao.maps.MarkerImage("curLoc.png", new window.kakao.maps.Size(20, 20), ),
       clickable: true 
     });
-    markerArr.map((el) => {
 
+    markerArr.map((el) => {
       const marker=new window.kakao.maps.Marker({
         map: map,
         position: new window.kakao.maps.LatLng(el.y, el.x),
@@ -78,7 +80,6 @@ const Map: React.FC<locationProps> = ({ loc, setLoc, curLoc, markerArr }) => {
   window.kakao.maps.event.addListener(map, 'click', function(mouseEvent:any) {        
     var latlng = mouseEvent.latLng;
     if(latlng!=marker.getPosition() ){
-      
       overlay.setMap(null);
     }
     
@@ -88,8 +89,7 @@ const Map: React.FC<locationProps> = ({ loc, setLoc, curLoc, markerArr }) => {
       // 지도 중심좌표를 얻어옵니다 
       var center = map.getCenter();
       console.log(center);
-      
-      setMapcenter(({ title: "", lat: center.getLat(), lng: center.getLng() }))
+      setMapcenter(({ title: "", y: center.getLat(), x: center.getLng() }))
     });
     
   }

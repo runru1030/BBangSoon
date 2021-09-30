@@ -1,17 +1,14 @@
-import React, {  EventHandler, useEffect, useRef } from 'react';
+import React, {useEffect, useRef } from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
 const ImgModal :React.FC<any>=({src, width, height})=> {
   const wrapperRef = useRef<HTMLImageElement>(null);
   const [isOpen, setIsOpen]=useState(false);
   const onClick=()=>{
-      console.log("클릭");
-      
       setIsOpen(true);
   }
   useEffect(()=>{
     document.addEventListener('mousedown', handleClickOutside);
-
     return()=>{
       document.removeEventListener('mousedown', handleClickOutside);
     }
@@ -23,24 +20,20 @@ const ImgModal :React.FC<any>=({src, width, height})=> {
     }
     else {
         setIsOpen(true);
-        
     }
   }
+  //img error 처리 func
   const imgError=(event:React.MouseEvent<HTMLImageElement, Event>)=>{
     event.currentTarget.src="logo.png";
     event.currentTarget.width=60;
-
     event.currentTarget.height=60;
   }
     return (<>
     <img src={src} style={{"backgroundColor":"white"}} onError={imgError} onClick={onClick} width={width} height={height} className="img"/>
-    {isOpen&&
-    <Modal>
-        
-    <img ref={wrapperRef} src={src}/>
-    </Modal>}</>);
+    {isOpen&&<Modal><img ref={wrapperRef} src={src}/></Modal>}</>);
     }
 export default ImgModal;
+
 const Modal=styled.div`
 z-index: 9999;
 position: fixed;

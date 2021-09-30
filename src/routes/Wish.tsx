@@ -1,22 +1,32 @@
 import * as React from 'react';
 import Nav from '../component/Nav';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowLeft, faBackspace, faBackward, faBreadSlice, faHeart, faMapMarkerAlt, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faHeart} from '@fortawesome/free-solid-svg-icons';
 import styled from 'styled-components';
 import axios from 'axios';
 import { useState } from 'react';
 import StoreList from '../component/StoreList';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
+type storeObj = {
+  id: number,
+  storeName: string | null,
+  reviewCnt: number | null,
+  avgStar: number | null,
+}
 const Wish = () => {
-  const [storeArr, setStoreArr] = useState<any[]>([])
   const { userObj } = useSelector((state: any) => ({ userObj: state.user.userObj, }))
   const { isLoggedin } = useSelector((state: any) => ({
     isLoggedin: state.user.isLoggedin,
 }))
   const history=useHistory();
+
+  const [storeArr, setStoreArr] = useState<storeObj[]>([])
+
   React.useEffect(() => {
+    //로그인 처리
     !isLoggedin&&history.push("/auth");
+
     axios.get(`/user/wishArr/${userObj.id}`).then(res => {
         setStoreArr(res.data)
     })
@@ -28,7 +38,6 @@ const Wish = () => {
           <FontAwesomeIcon icon={faHeart} color="#f89573"/>
       </Header>
         {storeArr.map((store:any)=><StoreList store={store}/>)}
-      
       <Nav />
     </div>)
 }

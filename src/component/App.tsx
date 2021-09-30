@@ -1,38 +1,29 @@
 import axios from 'axios';
 import * as React from 'react';
 import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { setLocationInfo, setLoggedInfo } from '../modules/user';
 import AppRouter from './Router';
-type pos = {
-  si: string,
-  gu: string,
-  dong: string,
-  latitude: number,
-  longitude: number,
-  detail: string
-}
-
+//위치 GPS, loding 화면
 const App=()=>{
   const loding = sessionStorage.getItem("loding") || "";
   const [isLoding, setIsLoding] = useState<boolean>(loding == "false" ? false : true);
-  
-  const location = useSelector((state:any)=> state.user.location)
-  const isToken= window.localStorage.getItem("token")
-  const token= isToken?JSON.parse(window.localStorage.getItem("token")||"").access_token:null;
+  const token= JSON.parse(window.localStorage.getItem("token")||"null")?.access_token;
   const dispatch= useDispatch();
   React.useEffect(() => {
+    //Randing : Loding view
     if (isLoding == true) {
       sessionStorage.setItem("loding", "false")
       setTimeout(() => {
         setIsLoding(false);
       }, 3000)
     }
+    //자동 Login 
     if(token){
       axios.defaults.headers.common["Authorization"] = `${token}`;
       sendJwtTokenToServer();
     }
-    //gps
+    //GPS
     navigator.geolocation.getCurrentPosition((position) => {
       axios.get(`https://dapi.kakao.com/v2/local/geo/coord2address.json`, {
         headers: { Authorization: `KakaoAK ${process.env.REACT_APP_KAKAO_REST_KEY}` },
@@ -50,11 +41,10 @@ const App=()=>{
       )
     });
   }, [])
-  //자동로그인
+  //자동 login func
   const sendJwtTokenToServer = () => {
     axios.post('/auth/kakao')
       .then(res => {
-        
         if ( res.status == 200) {
           const user=res.data.user;
           dispatch(setLoggedInfo(user, true));

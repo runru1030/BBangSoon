@@ -1,18 +1,11 @@
-import { faBook, faBreadSlice, faHeart, faHome, faMapMarkerAlt, faPeopleArrows, faPersonBooth, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faBook, faBreadSlice, faHeart, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useState } from 'react';
-import { useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 const Nav = () => {
     const history = useHistory();
     const location = useLocation();
-
-    const { isLoggedin } = useSelector((state: any) => ({
-        isLoggedin: state.user.isLoggedin,
-    }))
     const onClickSurr = () => {
         history.push("/surrounding");
     }
@@ -21,7 +14,6 @@ const Nav = () => {
     }
     const onClickWish = () => {
         history.push("/wish")
-        //isLoggedin ? history.push("/wish") : history.push("/auth");
     }
     const onClickFeed = () => {
         history.push("/feed")
@@ -53,7 +45,6 @@ const Nav = () => {
 export default Nav;
 
 const BottomNav = styled.div`
-
 position: fixed;
 bottom: 0;
 display:flex;
@@ -68,8 +59,7 @@ background-color: white;
 div{
     display:flex;
     flex-direction:column;
-    align-items: center;
-    
+    align-items: center;  
 }
 #icon{
     font-size: large;

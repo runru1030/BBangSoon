@@ -1,4 +1,4 @@
-import { faBreadSlice, faGlobe, faHeart, faMapMarkerAlt, faPhoneAlt, faPlus} from "@fortawesome/free-solid-svg-icons";
+import { faBreadSlice, faGlobe, faHeart, faMapMarkerAlt, faPhoneAlt, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import React from "react"
@@ -9,26 +9,45 @@ import styled from "styled-components";
 import Grid from "../component/Grid";
 import Map from "../component/Map";
 import Nav from "../component/Nav";
-import ImgModal from "../component/ImgModal";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import ReviewList from "../component/ReviewList";
+import { setStoreInfo } from "../modules/store";
+type storeObj = {
+    id: number,
+    address: string | null,
+    storeName: string | null,
+    telephone: string | null,
+    site: string|null,
+    x: number ,
+    y: number ,
+    reviewCnt: number | null,
+    avgStar: number | null,
+    Reviews: [] | null,
+    Visits: [] | null,
+    Wishes: [] | null,
+    StoreImgs:any[]|null,
+    Menus:[]|null,
+}
 const Store = () => {
-    const storeInfo:any = useSelector((state:any)=>state.store.storeObj)
-    const [store, setStore] = useState<any>(storeInfo);
-    const [reviewImg, setReviewImg]=useState(null);
-    const history= useHistory();
+    const history = useHistory();
+    const dispatch = useDispatch();
     const { userObj, isLoggedin } = useSelector((state: any) => ({
         userObj: state.user.userObj,
         isLoggedin: state.user.isLoggedin,
-      }))
-    const location = window.localStorage.getItem("location")?JSON.parse(window.localStorage.getItem("location")||""):
-    {si: "서울",
-    gu: "",
-    dong: "",
-    latitude: 37.5283169,
-    longitude: 126.9294254,
-    detail: ""};
+    }))
+    const storeInfo: storeObj = useSelector((state: any) => state.store.storeObj);
+    const location = useSelector((state: any) => state.user.location);
+
+    const [store, setStore] = useState<storeObj>(storeInfo);
+    const [reviewImg, setReviewImg] = useState(null);
+    /*   const location = window.localStorage.getItem("location")?JSON.parse(window.localStorage.getItem("location")||""):
+      {si: "서울",
+      gu: "",
+      dong: "",
+      latitude: 37.5283169,
+      longitude: 126.9294254,
+      detail: ""}; */
     const [curLoc, setCurLoc] = React.useState({ title: "", y: location.y, x: location.x } as {
         title: string,
         y: number,
@@ -40,24 +59,45 @@ const Store = () => {
         menu: false,
         review: false,
     })
-    const [isWrite, setIsWrite]=useState(false);
-    const [newReview, setNewReview]=useState({
-        content:"",
-        star:0,
-        attach:"",
-        nickName:"익명",
-    } as {content:string,
-    star:number,
-    attach:any,
-    nickName:string})
-    
-    const [isVisit, setIsVisit] = useState(store.Visits?.findIndex((i:any) => i.UserId == userObj.id) != -1);
-    const [isWish, setIsWish] = useState(store.Wishes?.findIndex((i:any) => i.UserId == userObj.id) != -1);
+
+    const [isWrite, setIsWrite] = useState(false);
+    const [newReview, setNewReview] = useState({
+        content: "",
+        star: 0,
+        attach: "",
+        nickName: "익명",
+    } as {
+        content: string,
+        star: number,
+        attach: any,
+        nickName: string
+    })
+
+    const [isVisit, setIsVisit] = useState(store.Visits?.findIndex((i: any) => i.UserId == userObj.id) != -1);
+    const [isWish, setIsWish] = useState(store.Wishes?.findIndex((i: any) => i.UserId == userObj.id) != -1);
+    useEffect(() => {
+        axios.post(`/store/${storeInfo.id}`).then(res => {
+            setStore(res.data);
+        })
+
+        //크롤링시, 정보 update
+        if (!storeInfo.Reviews) {
+            const update = setInterval(() => {
+                axios.post(`/store/${storeInfo.id}`).then(res => {
+                    setStore(res.data);
+                })
+            }, 2000);
+            return () => {
+                clearInterval(update);
+            }
+        }
+    }, [])
+
     const onClickWrite = () => {
-        setIsWrite(prev=>!prev);
+        setIsWrite(prev => !prev);
     }
-    const onClickStar = (idx:string) => {
-        setNewReview({...newReview, star:parseInt(idx)});
+    const onClickStar = (idx: string) => {
+        setNewReview({ ...newReview, star: parseInt(idx) });
     }
     const onClick = (label: string) => {
         setIsOpen({
@@ -67,121 +107,91 @@ const Store = () => {
             review: false,
             [label]: true
         })
-        if(!isOpen.review){
-            isLoggedin?setIsWrite(false):history.push("/auth")
+        if (!isOpen.review) {
+            isLoggedin ? setIsWrite(false) : history.push("/auth")
         }
     }
-    const onSubmit=(event:any)=>{
+    const onSubmit = (event: any) => {
         event.preventDefault();
         const formData = new FormData();
-        formData.append('reviewImg', reviewImg||"");
-        formData.append('content',newReview.content);
-        formData.append('nickName',newReview.nickName);
+        formData.append('reviewImg', reviewImg || "");
+        formData.append('content', newReview.content);
+        formData.append('nickName', newReview.nickName);
         formData.append('star', newReview.star.toString());
         formData.append('UserId', userObj.id);
-        axios.post(`/store/review/${store.id}`,formData).then(res=>{
+        axios.post(`/store/review/${store.id}`, formData).then(res => {
             setStore(res.data);
-            window.localStorage.setItem("store", JSON.stringify({...store, ...res.data}))
-           
+            dispatch(setStoreInfo(res.data));
         })
         setNewReview({
-            content:"",
-            star:0,
-            attach:"",
-            nickName:"익명",
+            content: "",
+            star: 0,
+            attach: "",
+            nickName: "익명",
         })
         setReviewImg(null);
         setIsWrite(false);
     }
-    const onFileChange=(e:any)=>{
+    const onFileChange = (e: any) => {
         const { target: { files } } = e;
         const theFile = files[0];
         setReviewImg(files[0])
-        
+
         const reader = new FileReader();
         reader.onloadend = (finishedEvent) => {
-            setNewReview({...newReview,attach:finishedEvent.target?.result||""})
+            setNewReview({ ...newReview, attach: finishedEvent.target?.result || "" })
         };
         reader.readAsDataURL(theFile);
     }
-    useEffect(()=>{
-        console.log(store.Visits?.findIndex((i:any) => i.UserId == userObj.id) != -1);
-        
-        axios.post(`/store/${storeInfo.id}`).then(res=>{
-            setStore(res.data);
-        })
-        if(!storeInfo.Reviews){
-            const update = setInterval(()=>{
-                axios.post(`/store/${storeInfo.id}`).then(res=>{
-                    setStore(res.data);
-                })
-            },2000);
-            return ()=>{
-                clearInterval(update);
-            }
-            
-    }
-    },[])
-    const onClickFeature=(id:string)=>{
-        if(!isLoggedin){
+    /* wish & visit click */
+    const onClickFeature = (id: string) => {
+        if (!isLoggedin) {
             history.push("/auth");
         }
-        else{
-        if(id=="visit"){
-            isVisit?
-            axios.delete(`/user/visit/${userObj.id}/${store.id}`).then(res=>{
-                res.data.success&&setIsVisit(false);
-            })
-            :
-            axios.get(`/user/visit/${userObj.id}/${store.id}`).then(res=>{
-                res.data.success&&setIsVisit(true);
-            })
+        else {
+            if (id == "visit") {
+                isVisit ?
+                    axios.delete(`/user/visit/${userObj.id}/${store.id}`).then(res => res.data.success && setIsVisit(false))
+                    :
+                    axios.get(`/user/visit/${userObj.id}/${store.id}`).then(res => res.data.success && setIsVisit(true))
+            }
+            else {
+                isWish ?
+                    axios.delete(`/user/wish/${userObj.id}/${store.id}`).then(res => res.data.success && setIsWish(false))
+                    :
+                    axios.get(`/user/wish/${userObj.id}/${store.id}`).then(res => res.data.success && setIsWish(true))
+            }
         }
-        else{
-            isWish?
-            
-            axios.delete(`/user/wish/${userObj.id}/${store.id}`).then(res=>{
-                res.data.success&&setIsWish(false);
-            })
-            :
-            axios.get(`/user/wish/${userObj.id}/${store.id}`).then(res=>{
-                res.data.success&&setIsWish(true);
-            })
-
-        }}
-    }  
+    }
     return (<>
-    <Header >
-        <span id="storeName">{store.storeName}</span>
-        <div>
-        <span>{store.reviewCnt}</span>
-        <span id="small">리뷰</span>
-        </div>
-        <div>
-        <span>{store.avgStar?.toFixed(1)}</span>
-        <span id="small">평점</span>
-        </div>
-            <FontAwesomeIcon onClick={()=>onClickFeature("visit")} icon={faBreadSlice} color={isVisit? "#e2c26e": "#bfbfbf"} id="visit"/>
-            <FontAwesomeIcon onClick={()=>onClickFeature("wish")}icon={faHeart}  color={isWish? "#f89573": "#bfbfbf"} id="wish"/>
-    </Header>
-        <div className="store">
-        
-
-            {!store.Reviews||store.Reviews.length<storeInfo.reviewCnt&&<Loding>
-                <img width="50%" src="loding.gif"/>
-                <span>외부 사이트로부터 데이터를 가져오는 중 입니다</span>
-                </Loding>}
-
-            <div className="img-viewer">
-                {store.StoreImgs?.length==1&&<Grid imgArr={[{url: store.StoreImgs[0].imageUrl}]}/>}
-                {store.StoreImgs?.length==2&&<Grid imgArr={[{url: store.StoreImgs[0].imageUrl},{url: store.StoreImgs[1].imageUrl}]}/>}
-                {store.StoreImgs?.length==3&&<Grid imgArr={[{url: store.StoreImgs[0].imageUrl}, {url: store.StoreImgs[1].imageUrl}, {url: store.StoreImgs[2].imageUrl}]}/>}
-                {store.StoreImgs?.length==0&&<div className="non-img">
-                    <img src="bread.png" width="40%"/>
-                    <span>{storeInfo.storeName}</span>
-                    </div>}
-                
+        <Header >
+            <span id="storeName">{store.storeName}</span>
+            <div>
+                <span>{store.reviewCnt}</span>
+                <span id="small">리뷰</span>
             </div>
+            <div>
+                <span>{store.avgStar?.toFixed(1)}</span>
+                <span id="small">평점</span>
+            </div>
+            <FontAwesomeIcon onClick={() => onClickFeature("visit")} icon={faBreadSlice} color={isVisit ? "#e2c26e" : "#bfbfbf"} id="visit" />
+            <FontAwesomeIcon onClick={() => onClickFeature("wish")} icon={faHeart} color={isWish ? "#f89573" : "#bfbfbf"} id="wish" />
+        </Header>
+        <div className="store">
+            {!store.Reviews || store.Reviews.length < (storeInfo.reviewCnt||0) && <Loding>
+                <img width="50%" src="loding.gif" />
+                <span>외부 사이트로부터 데이터를 가져오는 중 입니다</span>
+            </Loding>}
+            <div className="img-viewer">
+                {store.StoreImgs?.length == 1 && <Grid imgArr={[{ url: store.StoreImgs[0].imageUrl }]} />}
+                {store.StoreImgs?.length == 2 && <Grid imgArr={[{ url: store.StoreImgs[0].imageUrl }, { url: store.StoreImgs[1].imageUrl }]} />}
+                {store.StoreImgs?.length == 3 && <Grid imgArr={[{ url: store.StoreImgs[0].imageUrl }, { url: store.StoreImgs[1].imageUrl }, { url: store.StoreImgs[2].imageUrl }]} />}
+                {store.StoreImgs?.length == 0 && <div className="non-img">
+                    <img src="bread.png" width="40%" />
+                    <span>{storeInfo.storeName}</span>
+                </div>}
+            </div>
+            {/* store info view */}
             <div>
                 <Label onClick={(event) => onClick("detail")} style={isOpen.detail ? { "color": "#46A6FF" } : undefined}>상세정보</Label>
                 {isOpen.detail && <Container className="detail">
@@ -193,27 +203,28 @@ const Store = () => {
                         <span id="label"><FontAwesomeIcon icon={faPhoneAlt} /></span>
                         <a href={"tel:" + storeInfo.telephone}>{storeInfo.telephone}</a>
                     </div>
-                    {store.site&&<div>
+                    {store.site && <div>
                         <span id="label"><FontAwesomeIcon icon={faGlobe} /></span>
-                        <a href={"https://"+store.site}>{store.site}</a>
+                        <a href={"https://" + store.site}>{store.site}</a>
                     </div>}
                 </Container>}
             </div>
+            {/* store's map view */}
             <div>
                 <Label onClick={(event) => onClick("map")} style={isOpen.map ? { "color": "#46A6FF" } : undefined}>지도
-                {isOpen.map&&<div className="navi-wrapper">
-                    <a href={"https://map.kakao.com/link/roadview/" + storeInfo.id} id="navi"><img src="kakaoMap.png" width="20px"/><span>길찾기</span></a>
+                    {isOpen.map && <div className="navi-wrapper">
+                        <a href={"https://map.kakao.com/link/roadview/" + storeInfo.id} id="navi"><img src="kakaoMap.png" width="20px" /><span>길찾기</span></a>
                     </div>}
                 </Label>
                 {isOpen.map && <div className="map">
                     <Map loc={{
-                        title: store.storeName,
+                        title: store.storeName||"",
                         y: store.y,
                         x: store.x,
-                    }} setLoc={null} curLoc={curLoc} markerArr={[{...store, place_name: store.storeName, address_name: store.address}]} />
+                    }} setLoc={null} curLoc={curLoc} markerArr={[{ ...store, place_name: store.storeName, address_name: store.address }]} />
                 </div>}
             </div>
-            
+            {/* store's menu view */}
             <div>
                 <Label onClick={(event) => onClick("menu")} style={isOpen.menu ? { "color": "#46A6FF" } : undefined}>메뉴</Label>
                 {isOpen.menu && <div>
@@ -223,39 +234,35 @@ const Store = () => {
                     </Label>)}
                 </div>}
             </div>
+            {/* store's review view */}
             <div className="review-wrapper">
                 <Label onClick={(event) => onClick("review")} style={isOpen.review ? { "color": "#46A6FF" } : undefined}>
                     <span>리뷰</span>
-                    <span onClick={onClickWrite} id="side">{isWrite?"취소":"작성하기"}</span>
-                    </Label>
-                {isWrite&&<>
+                    <span onClick={onClickWrite} id="side">{isWrite ? "취소" : "작성하기"}</span>
+                </Label>
+                {/* writing review's form */}
+                {isWrite && <>
                     <form onSubmit={onSubmit} className="review-form">
-                        {newReview.attach&&<img src={newReview.attach} width="60%"/>}
-                    <span id="star">
-                                <FontAwesomeIcon id="1" icon={faBreadSlice} onClick={(event)=>onClickStar(event.currentTarget.id)} color={newReview.star >= 1 ? "#e2c26e" : "#cabfa3"} />
-                                <FontAwesomeIcon id="2" icon={faBreadSlice} onClick={(event)=>onClickStar(event.currentTarget.id)} color={newReview.star >= 2 ? "#e2c26e" : "#cabfa3"} />
-                                <FontAwesomeIcon id="3" icon={faBreadSlice} onClick={(event)=>onClickStar(event.currentTarget.id)} color={newReview.star >= 3 ? "#e2c26e" : "#cabfa3"} />
-                                <FontAwesomeIcon id="4" icon={faBreadSlice} onClick={(event)=>onClickStar(event.currentTarget.id)} color={newReview.star >= 4 ? "#e2c26e" : "#cabfa3"} />
-                                <FontAwesomeIcon id="5" icon={faBreadSlice} onClick={(event)=>onClickStar(event.currentTarget.id)} color={newReview.star >= 5 ? "#e2c26e" : "#cabfa3"} />
+                        {newReview.attach && <img src={newReview.attach} width="60%" />}
+                        <span id="star">
+                            <FontAwesomeIcon id="1" icon={faBreadSlice} onClick={(event) => onClickStar(event.currentTarget.id)} color={newReview.star >= 1 ? "#e2c26e" : "#cabfa3"} />
+                            <FontAwesomeIcon id="2" icon={faBreadSlice} onClick={(event) => onClickStar(event.currentTarget.id)} color={newReview.star >= 2 ? "#e2c26e" : "#cabfa3"} />
+                            <FontAwesomeIcon id="3" icon={faBreadSlice} onClick={(event) => onClickStar(event.currentTarget.id)} color={newReview.star >= 3 ? "#e2c26e" : "#cabfa3"} />
+                            <FontAwesomeIcon id="4" icon={faBreadSlice} onClick={(event) => onClickStar(event.currentTarget.id)} color={newReview.star >= 4 ? "#e2c26e" : "#cabfa3"} />
+                            <FontAwesomeIcon id="5" icon={faBreadSlice} onClick={(event) => onClickStar(event.currentTarget.id)} color={newReview.star >= 5 ? "#e2c26e" : "#cabfa3"} />
                             <span id="small">{newReview.star}</span>
                             <div className="wrapper">
-                                    <label htmlFor="file">
-                                        <FontAwesomeIcon icon={faPlus}/>
-                                    </label>
-                                    <label htmlFor="submit" id="sbm-btn">
-                                        <span>작성</span>
-                                    </label>
-                        </div>
-                    
-                            </span>
-                        <TextareaAutosize id="content" placeholder="최대 300자 / 이미지 최대 1장" value={newReview.content} onChange={(event)=>setNewReview({...newReview, content:event.target.value.substring(0, 300)})} />
-                        <input id="file" type="file" style={{"display": "none"}} onChange={onFileChange}/>
-                        
-                        <input id="submit" type="submit" value="제출" style={{"display": "none"}}/>
+                                <label htmlFor="file"><FontAwesomeIcon icon={faPlus} /></label>
+                                <label htmlFor="submit" id="sbm-btn"><span>작성</span></label>
+                            </div>
+                        </span>
+                        <TextareaAutosize id="content" placeholder="최대 300자 / 이미지 최대 1장" value={newReview.content} onChange={(event) => setNewReview({ ...newReview, content: event.target.value.substring(0, 300) })} />
+                        <input id="file" type="file" style={{ "display": "none" }} onChange={onFileChange} />
+                        <input id="submit" type="submit" value="제출" style={{ "display": "none" }} />
                     </form>
                 </>}
                 {isOpen.review && store.Reviews && <div>
-                    {store.Reviews.map((review: any) => <ReviewList review={review}/>)}
+                    {store.Reviews.map((review: any) => <ReviewList review={review} />)}
                 </div>}
             </div>
             <Nav />
@@ -316,7 +323,7 @@ font-size: medium;
 padding: 15px;
 border-top: solid thin #dddddd;
 `
-const Loding= styled.div`
+const Loding = styled.div`
 width: 100%;
 height: 100vh;
 display: flex;

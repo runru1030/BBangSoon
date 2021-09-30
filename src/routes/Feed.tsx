@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Nav from '../component/Nav';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowLeft, faBackspace, faBackward, faBreadSlice, faMapMarkerAlt, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faBreadSlice } from '@fortawesome/free-solid-svg-icons';
 import styled from 'styled-components';
 import axios from 'axios';
 import { useState } from 'react';
@@ -10,71 +10,68 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 import { setLoggedInfo } from '../modules/user';
 const Feed = () => {
-  const [reviewArr, setReviewArr] = useState<any[]>([])
-  const [visitId, setVisitId] = useState<any[]>([])
-  const [visitArr, setVisitArr] = useState<any[]>([])
   const { userObj } = useSelector((state: any) => ({ userObj: state.user.userObj, }))
-  const [isDetail, setIsDetail] = useState<boolean>(false);
-  const [isDetailVisit, setIsDetailVisit] = useState<boolean>(false);
-  const [review, setReview] = useState<any>({});
-  const [store, setStore] = useState<any>({});
   const { isLoggedin } = useSelector((state: any) => ({
     isLoggedin: state.user.isLoggedin,
   }))
-  const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const history = useHistory();
   const dispatch = useDispatch();
+
+  const [reviewArr, setReviewArr] = useState<any[]>([])     //유저의 리뷰arr
+  const [DetailReview, setDetailReview] = useState<any>({});// one of reviewArr
+  const [store, setStore] = useState<any>({});              // DetailReview's store
+
+  const [visitId, setVisitId] = useState<any[]>([])   //유저의 순례리스트 매장 ID 
+  const [visitArr, setVisitArr] = useState<any[]>([]) //
+
+  const [isDetailReview, setIsDetailReview] = useState<boolean>(false);
+  const [isDetailVisit, setIsDetailVisit] = useState<boolean>(false);
+  const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
+
   React.useEffect(() => {
+    //로그인 처리
     !isLoggedin && history.push("/auth");
+
     axios.get(`/user/feed/${userObj.id}`).then(res => {
       setReviewArr(res.data.Reviews)
       setVisitId(res.data.Visits.map((it: any) => (it.StoreId)))
-      console.log(res.data.Visits.map((it: any) => (it.StoreId)));
-
     })
   }, [])
+
   const onClicName = () => {
-    setIsOpenModal(true);
-  }
-  const onClick = (review: any | null) => {
-    if (!isDetail) {
-      axios.post(`/store/${review.StoreId}`).then(res => setStore(res.data))
-      setIsDetail(true);
-      setReview(review)
-    }
-    else {
-      setIsDetail(false)
-    }
-  }
-  const onClickVisit = () => {
-    setIsDetail(false);
-    axios.post(`/store/list`, visitId)
-      .then(res => {
-        setVisitArr(res.data)
-        console.log(res.data);
-
-      })
-    setIsDetailVisit(true);
-  }
-  const onClickFeed = () => {
-    setIsDetailVisit(false);
-    setIsDetail(false)
-
   }
   const onClickLogout = () => {
-    let token = JSON.parse(window.localStorage.getItem("token") || "");
-    axios.post("/auth/logout", {
-      Headers: { 'Authorization': `${token?.access_token}` }
-    }).then(res => {
+    axios.post("/auth/logout").then(res => {
       if (res.status == 200) {
         dispatch(setLoggedInfo(userObj, false));
         window.localStorage.removeItem("token");
         history.push("/")
       }
-
     })
-
   }
+  const onClickReview = (review: any | null) => {
+    if (!isDetailReview) {
+      axios.post(`/store/${review.StoreId}`).then(res => setStore(res.data))
+      setIsDetailReview(true);
+      setDetailReview(review)
+    }
+    else {
+      setIsDetailReview(false)
+    }
+  }
+  const onClickVisit = () => {
+    setIsDetailReview(false);
+    axios.post(`/store/list`, visitId)
+      .then(res => {
+        setVisitArr(res.data)
+      })
+    setIsDetailVisit(true);
+  }
+  const onClickFeed = () => {
+    setIsDetailVisit(false);
+    setIsDetailReview(false)
+  }
+
   const wrapperRef = React.useRef<HTMLImageElement>(null);
   React.useEffect(() => {
     document.addEventListener('mousedown', handleClickOutside);
@@ -96,12 +93,10 @@ const Feed = () => {
   return (
     <div className="feed container">
       <Header className="row-container">
-        {isDetail &&
-          <span id="back" onClick={onClick}><FontAwesomeIcon icon={faArrowLeft} /></span>}
+        {isDetailReview && <span id="back" onClick={onClickReview}><FontAwesomeIcon icon={faArrowLeft} /></span>}
         <span onClick={onClicName}>{userObj.nickName}</span>
         {isOpenModal && <div className="logout-modal" onClick={onClickLogout} ref={wrapperRef}>로그아웃</div>}
         <div className="row-container content" >
-
           <div className="col-container" onClick={onClickFeed} >
             <span id="bold">{reviewArr.length}</span>
             <span>일지</span>
@@ -113,38 +108,39 @@ const Feed = () => {
         </div>
       </Header>
 
-      {!isDetail ? <><Label>{isDetailVisit ? "순례 리스트" : "방문 일지"}</Label>
-        {isDetailVisit ? <>{visitArr.map((store: any) => <StoreList store={store} />)}</> : <Grid>
-          {reviewArr.map((review: any) => <div onClick={() => onClick(review)}>
-            {review.reviewImg ? <div><img src={review.reviewImg} /></div> : <div><img src="bread.png" width="40%" /></div>
-            }
-
-          </div>)}
-        </Grid>}
+      {!isDetailReview ? <>
+        <Label>{isDetailVisit ? "순례 리스트" : "방문 일지"}</Label>
+        {isDetailVisit ?
+          /* 순례 리스트 page */
+          <>{visitArr.map((store: any) => <StoreList store={store} />)}</>
+          :
+          /* 일지 page */
+          <Grid>
+            {reviewArr.map((review: any) => <div onClick={() => onClickReview(review)}>
+              {review.reviewImg ? <div><img src={review.reviewImg} /></div> : <div><img src="bread.png" width="40%" /></div>}</div>)}
+          </Grid>
+        }
         <Nav />
-      </> :
+      </>
+        :
+        /* detail review page */
         <Detail className="review-detail">
           <StoreList store={store} />
-          {review.reviewImg && <div className="img-wrapper"><img src={review.reviewImg} /></div>}
+          {DetailReview.reviewImg && <div className="img-wrapper"><img src={DetailReview.reviewImg} /></div>}
           <div className="col-container content">
-
             <div className="top-wrapper row-container">
               <span id="star" className="row-container">
-                <FontAwesomeIcon icon={faBreadSlice} color={review.star >= 1 ? "#e2c26e" : "#cabfa3"} />
-                <FontAwesomeIcon icon={faBreadSlice} color={review.star >= 2 ? "#e2c26e" : "#cabfa3"} />
-                <FontAwesomeIcon icon={faBreadSlice} color={review.star >= 3 ? "#e2c26e" : "#cabfa3"} />
-                <FontAwesomeIcon icon={faBreadSlice} color={review.star >= 4 ? "#e2c26e" : "#cabfa3"} />
-                <FontAwesomeIcon icon={faBreadSlice} color={review.star >= 5 ? "#e2c26e" : "#cabfa3"} />
+                <FontAwesomeIcon icon={faBreadSlice} color={DetailReview.star >= 1 ? "#e2c26e" : "#cabfa3"} />
+                <FontAwesomeIcon icon={faBreadSlice} color={DetailReview.star >= 2 ? "#e2c26e" : "#cabfa3"} />
+                <FontAwesomeIcon icon={faBreadSlice} color={DetailReview.star >= 3 ? "#e2c26e" : "#cabfa3"} />
+                <FontAwesomeIcon icon={faBreadSlice} color={DetailReview.star >= 4 ? "#e2c26e" : "#cabfa3"} />
+                <FontAwesomeIcon icon={faBreadSlice} color={DetailReview.star >= 5 ? "#e2c26e" : "#cabfa3"} />
               </span>
-              <span id="date">{new Date(review.date).getFullYear()}.{new Date(review.date).getMonth() + 1}.{new Date(review.date).getDate()}</span>
+              <span id="date">{new Date(DetailReview.date).getFullYear()}.{new Date(DetailReview.date).getMonth() + 1}.{new Date(DetailReview.date).getDate()}</span>
             </div>
-            <div className="top-wrapper">{review.content}</div>
-
+            <div className="top-wrapper">{DetailReview.content}</div>
           </div>
-
-
         </Detail>
-
       }
     </div>)
 }

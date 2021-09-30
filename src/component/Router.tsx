@@ -6,41 +6,40 @@ import Login from "../routes/Login";
 import Main from "../routes/Main";
 import Store from "../routes/Store";
 import StoreImg from "../routes/StoreImg";
-import Surrounding from "../routes/Surrounding";
+import StoreMap from "../routes/StoreMap";
 import Wish from "../routes/Wish";
 
 type AppProps = {
-    isLoding:boolean,
+    isLoding: boolean,
 }
-const AppRouter: React.FC<AppProps> = ({ isLoding}) => {
+const AppRouter: React.FC<AppProps> = ({ isLoding }) => {
     return (
         <Router>
-
             <Switch>
-                {isLoding?
-                <Route exact path="/">
-                <Loding />
-            </Route>
-                :<Route exact path="/">
-                    <Main />
-                </Route>}
-                <Route exact path="/surrounding">
-                    <Surrounding />
+                {isLoding ?
+                    <Route exact path="/">
+                        <Loding />
+                    </Route>
+                    : <Route exact path="/">
+                        <Main />
+                    </Route>}
+                <Route exact path="/storemap">
+                    <StoreMap />
                 </Route>
                 <Route exact path="/store">
                     <Store />
                 </Route>
                 <Route exact path="/store/image">
-                    <StoreImg/>
+                    <StoreImg />
                 </Route>
                 <Route exact path="/auth">
-                    <Login/>
+                    <Login />
                 </Route>
                 <Route exact path="/feed">
-                    <Feed/>
+                    <Feed />
                 </Route>
                 <Route exact path="/wish">
-                    <Wish/>
+                    <Wish />
                 </Route>
             </Switch>
         </Router>

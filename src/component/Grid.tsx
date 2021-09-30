@@ -1,12 +1,10 @@
-import React, { useState } from 'react'
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTimes } from "@fortawesome/free-solid-svg-icons";
-import { useEffect } from 'react';
+import React from 'react'
 import ImgModal from './ImgModal';
 import { useHistory } from 'react-router-dom';
 const Grid: React.FC<any> =({imgArr}) => {
   const history=useHistory();
-  const onClick=()=>{
+
+  const onClickStoreImage=()=>{
     history.push("/store/image");
   }
   return (
@@ -27,7 +25,7 @@ const Grid: React.FC<any> =({imgArr}) => {
             {imgArr.map((it:any, index:number) => {
               if (index == 0) return <div className="item1">
               <ImgModal src={it.url} height="100%"/></div>
-              if (index == 2) return <div onClick={onClick}>
+              if (index == 2) return <div onClick={onClickStoreImage}>
                       <span>더보기</span>
                       <img className="plus-img" height="100%" src={it.url} />
                     </div>

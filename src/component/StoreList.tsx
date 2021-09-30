@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBreadSlice, faMapMarkerAlt, faRedo, faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
-import Map from '../component/Map';
-import Nav from '../component/Nav';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
@@ -21,7 +19,7 @@ const StoreList: React.FC<any> = ({store, children}) => {
             y:store.y,
             reviewCnt:store.reviewCnt,
             avgStar:store.avgStar,}))
-
+        //DB에 없을 경우, 크롤링
         axios.post("/storeCrawl", store).then(res=>
             {
                 if(res.data){
@@ -38,7 +36,6 @@ const StoreList: React.FC<any> = ({store, children}) => {
         {children}
         <span id="storeName">{store.place_name?store.place_name:store.storeName}</span>
         <div className="row-container">
-            
             <div>
             <span>{store.avgStar==null?<FontAwesomeIcon icon={faSpinner}/>:store.reviewCnt}</span>
             <span id="small">리뷰</span>

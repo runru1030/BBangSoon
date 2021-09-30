@@ -12,7 +12,8 @@ type img={
 }
 const StoreImg = () => {
     const storeInfo = useSelector((state:any)=>state.store.storeObj)
-    const [storeImgArr, setStoreImgArr] = useState<any>([]);
+    const [storeImgArr, setStoreImgArr] = useState<img[]>([]);
+
     useEffect(()=>{
         axios.post(`/store/image/${storeInfo.id}`).then(res=>{
             setStoreImgArr(res.data);
@@ -38,14 +39,9 @@ const StoreImg = () => {
             <div>
                 <Label style={ { "color": "#46A6FF" } }>사진 <span id="side">{"총 "+storeImgArr.length+"장"}</span></Label>
                 <div className="grid">
-                {storeImgArr.map((img:img)=>
-                    <div>
-                    <ImgModal src={img.imageUrl} width="100%"/></div>
-                )}
+                {storeImgArr.map((img:img)=><div><ImgModal src={img.imageUrl} width="100%"/></div>)}
                 </div>
-                
             </div>
-           
             </div>
             <Nav />
         </div>

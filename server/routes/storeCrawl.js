@@ -6,6 +6,7 @@ const router = express.Router();
 router.post('/', async (req, res) => {
   try {
     let { id, place_name, road_address_name, phone, place_url, x, y } = req.body;
+    console.log(id);
     const [storeData, created] = await Store.findOrCreate({
       where: { id: id },
       attributes: ['storeName', 'address', 'telephone', 'id', 'site'],
@@ -14,7 +15,7 @@ router.post('/', async (req, res) => {
         storeName: place_name,
         address: road_address_name,
         telephone: phone,
-        local:road_address_name.split(" ")[0],
+        local:road_address_name?.split(" ")[0],
         x:x,
         y:y
       },

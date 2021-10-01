@@ -1,6 +1,8 @@
 import React from 'react'
 import ImgModal from './ImgModal';
 import { useHistory } from 'react-router-dom';
+import styled from 'styled-components';
+
 const Grid: React.FC<any> =({imgArr}) => {
   const history=useHistory();
 
@@ -16,12 +18,12 @@ const Grid: React.FC<any> =({imgArr}) => {
           </div>
         }
         {imgArr.length == 2 &&
-          <div className="grid-container">
+          <GridContainer>
             {imgArr.map((it:any) => <div><ImgModal src={it.url} height="100%"/></div>)}
-          </div>
+          </GridContainer>
         }
         {imgArr.length == 3 &&
-          <div className="grid-container">
+          <GridContainer>
             {imgArr.map((it:any, index:number) => {
               if (index == 0) return <div className="item1">
               <ImgModal src={it.url} height="100%"/></div>
@@ -32,9 +34,42 @@ const Grid: React.FC<any> =({imgArr}) => {
               else return <div><ImgModal src={it.url} height="100%"/></div>
             })}
 
-          </div>}
+          </GridContainer>}
       </div>
     </>
   )
 }
 export default Grid;
+const GridContainer=styled.div`
+  display: grid;
+  width: 100vw;
+  height: 100vw;
+  grid-template-columns: 50% 50%;
+  column-gap: 3px;
+row-gap: 3px;
+  cursor: pointer;
+
+>div{
+  display: flex;
+  background-color: white;
+  overflow: hidden;
+  justify-content: center;
+  align-items: center;
+}
+span{
+  z-index: 999;
+  color: white;
+  position: absolute;
+  font-size: large;
+}
+.plus-img{
+  opacity: 50%;
+}
+.item1{
+  grid-row-start: 1;
+  grid-row-end: 3;
+}
+img{
+  object-fit: cover;
+}
+`

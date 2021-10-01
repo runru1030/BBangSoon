@@ -236,39 +236,6 @@ input[type=text]{
   align-items: center;
   justify-content: center;
 }
-.grid-container{
-  display: grid;
-  width: 100vw;
-  height: 100vw;
-  grid-template-columns: 50% 50%;
-  column-gap: 3px;
-row-gap: 3px;
-  cursor: pointer;
-}
-.grid-container >div{
-  display: flex;
-  background-color: white;
-  overflow: hidden;
-  justify-content: center;
-  align-items: center;
-}
-.grid-container span{
-  z-index: 999;
-  color: white;
-  position: absolute;
-  font-size: large;
-}
-.grid-container .plus-img{
-  opacity: 50%;
-}
-.grid-container .item1{
-  grid-row-start: 1;
-  grid-row-end: 3;
-}
-.grid-container img{
-
-  object-fit: cover;
-}
 .grid{
   display: grid;
   width: 100%;

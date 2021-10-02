@@ -1,40 +1,46 @@
-import React, {useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
-const ImgModal :React.FC<any>=({src, width, height})=> {
-  const wrapperRef = useRef<HTMLImageElement>(null);
-  const [isOpen, setIsOpen]=useState(false);
-  const onClick=()=>{
-      setIsOpen(true);
+type props = {
+  src: string,
+  width: string | undefined,
+}
+const ImgModal: React.FC<props | any> = ({ src, width, height }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const onClick = () => {
+    setIsOpen(true);
   }
-  useEffect(()=>{
-    document.addEventListener('mousedown', handleClickOutside);
-    return()=>{
-      document.removeEventListener('mousedown', handleClickOutside);
-    }
+  /* img error 처리 func */
+  const imgError = (event: React.MouseEvent<HTMLImageElement, Event>) => {
+    event.currentTarget.src = "logo.png";
+    event.currentTarget.width = 60;
+    event.currentTarget.height = 60;
+  }
 
-  })
-  const handleClickOutside=(event:any)=>{
+  const wrapperRef = useRef<HTMLImageElement>(null);
+  /* 외부영역 클릭 감지 */
+  const handleClickOutside = (event: any) => {
     if (wrapperRef && !wrapperRef.current?.contains(event.target)) {
-        setIsOpen(false);
+      setIsOpen(false);
     }
     else {
-        setIsOpen(true);
+      setIsOpen(true);
     }
   }
-  //img error 처리 func
-  const imgError=(event:React.MouseEvent<HTMLImageElement, Event>)=>{
-    event.currentTarget.src="logo.png";
-    event.currentTarget.width=60;
-    event.currentTarget.height=60;
-  }
-    return (<>
-    <img src={src} style={{"backgroundColor":"white"}} onError={imgError} onClick={onClick} width={width} height={height} className="img"/>
-    {isOpen&&<Modal><img ref={wrapperRef} src={src}/></Modal>}</>);
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
     }
+  })
+
+  return (<>
+    <img src={src} style={{ "backgroundColor": "white" }} onError={imgError} onClick={onClick} width={width} height={height} className="img" />
+    {isOpen && <Modal><img ref={wrapperRef} src={src} /></Modal>}</>);
+}
 export default ImgModal;
 
-const Modal=styled.div`
+const Modal = styled.div`
 z-index: 9999;
 position: fixed;
 top: 0;

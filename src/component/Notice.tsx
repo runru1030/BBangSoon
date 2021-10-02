@@ -1,4 +1,4 @@
-import { faBreadSlice} from "@fortawesome/free-solid-svg-icons";
+import { faBreadSlice } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Notice = () => {

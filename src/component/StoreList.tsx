@@ -6,36 +6,35 @@ import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setStoreInfo } from '../modules/store';
-const StoreList: React.FC<any> = ({store, children}) => {
-    const history= useHistory();
-    const dispatch= useDispatch();
+const StoreList: React.FC<any> = ({ store, children }) => {
+    const history = useHistory();
+    const dispatch = useDispatch();
     const onClick = () => {
         dispatch(setStoreInfo({
-            id:store.id,
-            address:store.road_address_name?store.road_address_name:store.address_name,
-            storeName:store.place_name, 
-            telephone:store.phone,
-            x:store.x,
-            y:store.y,
-            place_url:store.place_url,
-            reviewCnt:store.reviewCnt,
-            avgStar:store.avgStar,
+            id: store.id,
+            address: store.road_address_name ? store.road_address_name : store.address_name,
+            storeName: store.place_name,
+            telephone: store.phone,
+            x: store.x,
+            y: store.y,
+            place_url: store.place_url,
+            reviewCnt: store.reviewCnt,
+            avgStar: store.avgStar,
         }))
-        //DB에 없을 경우, 크롤링
         history.push("/store");
     }
- 
+
     return (<Store onClick={onClick}>
         {children}
-        <span id="storeName">{store.place_name?store.place_name:store.storeName}</span>
+        <span id="storeName">{store.place_name ? store.place_name : store.storeName}</span>
         <div className="row-container">
             <div>
-            <span>{store.avgStar==null?<FontAwesomeIcon icon={faSpinner}/>:store.reviewCnt}</span>
-            <span id="small">리뷰</span>
+                <span>{store.avgStar == null ? <FontAwesomeIcon icon={faSpinner} /> : store.reviewCnt}</span>
+                <span id="small">리뷰</span>
             </div>
             <div>
-            <span>{store.avgStar==null?<FontAwesomeIcon icon={faSpinner}/>:store.avgStar.toFixed(1)}</span>
-            <span id="small">평점</span>
+                <span>{store.avgStar == null ? <FontAwesomeIcon icon={faSpinner} /> : store.avgStar.toFixed(1)}</span>
+                <span id="small">평점</span>
             </div>
         </div>
     </Store>);

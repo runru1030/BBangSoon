@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMapMarkerAlt, faSearch } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
@@ -7,38 +6,58 @@ import Nav from '../component/Nav';
 import styled from 'styled-components';
 import StoreList from '../component/StoreList';
 import { useSelector } from 'react-redux';
-type marker = {
-    title: string,
-    lat: number,
-    lng: number,
-    address: string,
-    url: string
-}
+import { useEffect, useState } from 'react';
+
 const StoreMap = () => {
+    /* location */
     const location = useSelector((state: any) => state.user.location)
-
-    const [markerArr, setMarkerArr] = React.useState<any[]>([]);
-    const [loc, setLoc] = React.useState({ title: "", y: location.y, x: location.x } as {
+    const [loc, setLoc] = useState({ title: "", y: location.y, x: location.x } as {
         title: string,
         y: number,
         x: number,
-    });
-    const [curLoc, setCurLoc] = React.useState({ title: "", y: location.y, x: location.x } as {
+    }); //지도 중심 좌표
+    const [curLoc, setCurLoc] = useState({ title: "", y: location.y, x: location.x } as {
         title: string,
         y: number,
         x: number,
-    });
+    }); //내 위치 좌표
 
-    const [isOpen, setIsOpen] = React.useState<boolean>(false);     //검색창 open
-    const [search, setSearch] = React.useState<string>("");         //위치 검색어
-    const [addressList, setAddressList] = React.useState<any[]>([]);//위치 검색 결과 arr
+    /* 지도 결과 */
+    const [markerArr, setMarkerArr] = useState<any[]>([]);
+    const [isEnd, setIsEnd] = useState<boolean>();
+    const [curpage, setCurPage] = useState<number>(1);
+    const onClickNext = () => {
+        getStoreApi(curpage + 1);
+    }
 
-    const [isEnd, setIsEnd] = React.useState<boolean>();
-    const [curpage, setCurPage] = React.useState<number>(1);
+    /* search */
+    const [isOpen, setIsOpen] = useState<boolean>(false);     //검색창 open
+    const [search, setSearch] = useState<string>("");         //위치 검색어
+    const [addressList, setAddressList] = useState<any[]>([]);//위치 검색 결과 arr
+    const onClickSearch = () => {
+        setIsOpen(true);
+    }
+    const onSubmit = (event: React.FormEvent) => {
+        event.preventDefault();
+        axios.get(`https://dapi.kakao.com/v2/local/search/keyword.json?query=${search}`, {
+            headers: { Authorization: `KakaoAK ${process.env.REACT_APP_KAKAO_REST_KEY}` },
+            params: { size: 15 }
+        }).then(res => {
+            setAddressList(res.data.documents)
+        })
+        setIsOpen(false);
+    }
+    const onClickResult = (id: number) => {
+        setLoc({ title: addressList[id].place_name, y: addressList[id].y, x: addressList[id].x })
+        setSearch(addressList[id].place_name)
+        setAddressList([]);
+    }
 
-    React.useEffect(() => {
+    useEffect(() => {
         getStoreApi(1);
-    }, [loc])
+    }, [loc]);
+
+    //store 지도 검색 API
     const getStoreApi = (page: number) => {
         axios.get(`https://dapi.kakao.com/v2/local/search/keyword.json?query=디저트`, {
             headers: { Authorization: `KakaoAK ${process.env.REACT_APP_KAKAO_REST_KEY}` },
@@ -61,13 +80,13 @@ const StoreMap = () => {
             }
             setMarkerArr(arr);
             axios.post("/store/list", arr.map((store: any) => ({ id: store.id }))).then(res => {
-                setMarkerArr(arr.map((store: any, idx: number) => ({ ...store, ...res.data[idx] })))
-                arr = arr.map((store: any, idx: number) => ({ ...store, ...res.data[idx] }))
+                setMarkerArr(arr.map((store: any, idx: number) => ({ ...store, ...res.data[idx] })));
+                arr = arr.map((store: any, idx: number) => ({ ...store, ...res.data[idx] }));
                 arr.forEach(async (element: any, i: number) => {
                     if (element.avgStar == null) {
                         await axios.post("/storeCrawl/count", { id: element.id, url: element.place_url }).then(res => {
                             arr[i] = { ...arr[i], ...res.data };
-                            setMarkerArr([...arr])
+                            setMarkerArr([...arr]);
                         })
                     }
                 });
@@ -75,34 +94,9 @@ const StoreMap = () => {
         })
     }
 
-    const onClickSearch = () => {
-        setIsOpen(true);
-    }
-    const onClick = (id: any) => {
-        setLoc({ title: addressList[id].place_name, y: addressList[id].y, x: addressList[id].x })
-        setSearch(addressList[id].place_name)
-        setAddressList([]);
-    }
-
-    const onClickNext = () => {
-        getStoreApi(curpage + 1);
-    }
-    const onSubmit = (event: React.FormEvent) => {
-        event.preventDefault();
-        axios.get(`https://dapi.kakao.com/v2/local/search/keyword.json?query=${search}`, {
-            headers: { Authorization: `KakaoAK ${process.env.REACT_APP_KAKAO_REST_KEY}` },
-            params: { size: 15 }
-        }).then(res => {
-            setAddressList(res.data.documents)
-        })
-        setIsOpen(false);
-    }
-
     return (<div className="surrounding">
         <Header>
-            <div>
-                <FontAwesomeIcon icon={faMapMarkerAlt} /> 빵 지도
-            </div>
+            <div><FontAwesomeIcon icon={faMapMarkerAlt} /> 빵 지도</div>
             <span onClick={onClickSearch}>위치 검색</span>
         </Header>
         <div>
@@ -127,7 +121,7 @@ const StoreMap = () => {
                 :
                 /* search result Arr */
                 <div>{addressList.map((it: any, idx: number) =>
-                    <List id={"" + idx} onClick={(event) => onClick(event.currentTarget.id)}>{it.place_name}</List>)}
+                    <List id={"" + idx} onClick={(event) => onClickResult(parseInt(event.currentTarget.id))}>{it.place_name}</List>)}
                 </div>}
         </div>
         <Nav />

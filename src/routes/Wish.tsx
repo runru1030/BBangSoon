@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHeart} from '@fortawesome/free-solid-svg-icons';
 import styled from 'styled-components';
 import axios from 'axios';
-import { useState } from 'react';
+import { useState ,useEffect} from 'react';
 import StoreList from '../component/StoreList';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
@@ -15,15 +15,13 @@ type storeObj = {
   avgStar: number | null,
 }
 const Wish = () => {
-  const { userObj } = useSelector((state: any) => ({ userObj: state.user.userObj, }))
-  const { isLoggedin } = useSelector((state: any) => ({
-    isLoggedin: state.user.isLoggedin,
-}))
   const history=useHistory();
+  const { userObj } = useSelector((state: any) => ({ userObj: state.user.userObj, }))
+  const { isLoggedin } = useSelector((state: any) => ({isLoggedin: state.user.isLoggedin}))
 
   const [storeArr, setStoreArr] = useState<storeObj[]>([])
 
-  React.useEffect(() => {
+  useEffect(() => {
     //로그인 처리
     !isLoggedin&&history.push("/auth");
 

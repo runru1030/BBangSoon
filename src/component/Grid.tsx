@@ -3,10 +3,10 @@ import ImgModal from './ImgModal';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 
-const Grid: React.FC<any> =({imgArr}) => {
-  const history=useHistory();
+const Grid: React.FC<any> = ({ imgArr }) => {
+  const history = useHistory();
 
-  const onClickStoreImage=()=>{
+  const onClickStoreImage = () => {
     history.push("/store/image");
   }
   return (
@@ -14,24 +14,24 @@ const Grid: React.FC<any> =({imgArr}) => {
       <div className="grid-wrapper" >
         {imgArr.length == 1 &&
           <div className="single-grid-container">
-            <ImgModal src={imgArr[0].url} width="100%"/>
+            <ImgModal src={imgArr[0].url} width="100%" height="100%" />
           </div>
         }
         {imgArr.length == 2 &&
           <GridContainer>
-            {imgArr.map((it:any) => <div><ImgModal src={it.url} height="100%"/></div>)}
+            {imgArr.map((it: any) => <div><ImgModal src={it.url} height="100%" /></div>)}
           </GridContainer>
         }
         {imgArr.length == 3 &&
           <GridContainer>
-            {imgArr.map((it:any, index:number) => {
+            {imgArr.map((it: any, index: number) => {
               if (index == 0) return <div className="item1">
-              <ImgModal src={it.url} height="100%"/></div>
+                <ImgModal src={it.url} height="100%" /></div>
               if (index == 2) return <div onClick={onClickStoreImage}>
-                      <span>더보기</span>
-                      <img className="plus-img" height="100%" src={it.url} />
-                    </div>
-              else return <div><ImgModal src={it.url} height="100%"/></div>
+                <span>더보기</span>
+                <img className="plus-img" height="100%" src={it.url} />
+              </div>
+              else return <div><ImgModal src={it.url} height="100%" /></div>
             })}
 
           </GridContainer>}
@@ -40,7 +40,7 @@ const Grid: React.FC<any> =({imgArr}) => {
   )
 }
 export default Grid;
-const GridContainer=styled.div`
+const GridContainer = styled.div`
   display: grid;
   width: 100vw;
   height: 100vw;

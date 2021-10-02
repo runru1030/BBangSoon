@@ -4,51 +4,23 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeft, faBreadSlice } from '@fortawesome/free-solid-svg-icons';
 import styled from 'styled-components';
 import axios from 'axios';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import StoreList from '../component/StoreList';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 import { setLoggedInfo } from '../modules/user';
 const Feed = () => {
-  const { userObj } = useSelector((state: any) => ({ userObj: state.user.userObj, }))
-  const { isLoggedin } = useSelector((state: any) => ({
-    isLoggedin: state.user.isLoggedin,
-  }))
   const history = useHistory();
   const dispatch = useDispatch();
+  const { userObj } = useSelector((state: any) => ({ userObj: state.user.userObj, }))
+  const { isLoggedin } = useSelector((state: any) => ({isLoggedin: state.user.isLoggedin}))
 
   const [reviewArr, setReviewArr] = useState<any[]>([])     //유저의 리뷰arr
+
+  /* 방문 일지 */
+  const [isDetailReview, setIsDetailReview] = useState<boolean>(false);
   const [DetailReview, setDetailReview] = useState<any>({});// one of reviewArr
   const [store, setStore] = useState<any>({});              // DetailReview's store
-
-  const [visitId, setVisitId] = useState<any[]>([])   //유저의 순례리스트 매장 ID 
-  const [visitArr, setVisitArr] = useState<any[]>([]) //
-
-  const [isDetailReview, setIsDetailReview] = useState<boolean>(false);
-  const [isDetailVisit, setIsDetailVisit] = useState<boolean>(false);
-  const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
-
-  React.useEffect(() => {
-    //로그인 처리
-    !isLoggedin && history.push("/auth");
-
-    axios.get(`/user/feed/${userObj.id}`).then(res => {
-      setReviewArr(res.data.Reviews)
-      setVisitId(res.data.Visits.map((it: any) => (it.StoreId)))
-    })
-  }, [])
-
-  const onClicName = () => {
-  }
-  const onClickLogout = () => {
-    axios.post("/auth/logout").then(res => {
-      if (res.status == 200) {
-        dispatch(setLoggedInfo(userObj, false));
-        window.localStorage.removeItem("token");
-        history.push("/")
-      }
-    })
-  }
   const onClickReview = (review: any | null) => {
     if (!isDetailReview) {
       axios.post(`/store/${review.StoreId}`).then(res => setStore(res.data))
@@ -59,6 +31,11 @@ const Feed = () => {
       setIsDetailReview(false)
     }
   }
+
+  /* 순례 리스트 */
+  const [isDetailVisit, setIsDetailVisit] = useState<boolean>(false);
+  const [visitId, setVisitId] = useState<any[]>([])   //유저의 순례리스트 매장 ID 
+  const [visitArr, setVisitArr] = useState<any[]>([]) //
   const onClickVisit = () => {
     setIsDetailReview(false);
     axios.post(`/store/list`, visitId)
@@ -67,35 +44,61 @@ const Feed = () => {
       })
     setIsDetailVisit(true);
   }
-  const onClickFeed = () => {
-    setIsDetailVisit(false);
-    setIsDetailReview(false)
-  }
-
+  
+  /* Logout */
+  const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const wrapperRef = React.useRef<HTMLImageElement>(null);
-  React.useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    }
-
-  })
+  const onClicName = () => {
+    setIsOpenModal(true);
+  }
+  const onClickLogout = () => {
+    axios.post("/auth/logout").then(res => {
+      if (res.status == 200) {
+        dispatch(setLoggedInfo(userObj, false));
+        window.localStorage.removeItem("token");
+        history.push("/")
+      }
+    })
+  }  
+  //외부영역 클릭 감지
   const handleClickOutside = (event: any) => {
     if (wrapperRef && !wrapperRef.current?.contains(event.target)) {
       setIsOpenModal(false);
     }
     else {
       setIsOpenModal(true);
-
     }
   }
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+  })
+
+
+  useEffect(() => {
+    //로그인 처리
+    !isLoggedin && history.push("/auth");
+    axios.get(`/user/feed/${userObj.id}`).then(res => {
+      setReviewArr(res.data.Reviews)
+      setVisitId(res.data.Visits.map((it: any) => (it.StoreId)))
+    })
+  }, [])
+
+  const onClickFeed = () => {
+    setIsDetailVisit(false);
+    setIsDetailReview(false)
+  }
+
+  
   return (
     <div className="feed container">
       <Header className="row-container">
         {isDetailReview && <span id="back" onClick={onClickReview}><FontAwesomeIcon icon={faArrowLeft} /></span>}
         <span onClick={onClicName}>{userObj.nickName}</span>
         {isOpenModal && <div className="logout-modal" onClick={onClickLogout} ref={wrapperRef}>로그아웃</div>}
+        
         <div className="row-container content" >
           <div className="col-container" onClick={onClickFeed} >
             <span id="bold">{reviewArr.length}</span>
@@ -117,7 +120,7 @@ const Feed = () => {
           /* 일지 page */
           <Grid>
             {reviewArr.map((review: any) => <div onClick={() => onClickReview(review)}>
-              {review.reviewImg ? <div><img src={review.reviewImg} /></div> : <div><img src="bread.png" width="40%" /></div>}</div>)}
+              {review.reviewImg ? <div className="container"><img src={review.reviewImg} /></div> : <div className="container"><img src="bread.png" id="bread" /></div>}</div>)}
           </Grid>
         }
         <Nav />
@@ -186,7 +189,7 @@ background-color: white;
 padding: 10px 20px;
 top: 0px;
 border-bottom: solid thin #eeeeee;
-  color: #6f6f6f;
+color: #6f6f6f;
 .col-container{
   justify-content: center;
   align-items: center;
@@ -247,5 +250,9 @@ display: grid;
 img{
   width: 40vw;
   object-fit: cover;
-}`
+}
+#bread{
+  width: 50%;
+}
+`
 

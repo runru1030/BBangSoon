@@ -7,7 +7,7 @@ const Nav = () => {
     const history = useHistory();
     const location = useLocation();
     const onClickSurr = () => {
-        history.push("/surrounding");
+        history.push("/storemap");
     }
     const onClickHome = () => {
         history.push("/");
@@ -24,7 +24,7 @@ const Nav = () => {
             <span>홈</span>
         </div>
         <div id="surrounding" onClick={onClickSurr}>
-            <FontAwesomeIcon id="icon" icon={faMapMarkerAlt} color={location.pathname == "/surrounding" ? "#46A6FF" : "#6f6f6f"} />
+            <FontAwesomeIcon id="icon" icon={faMapMarkerAlt} color={location.pathname == "/storemap" ? "#46A6FF" : "#6f6f6f"} />
             <span>빵 지도</span>
         </div>
 

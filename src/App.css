@@ -31,6 +31,79 @@ a{
   flex-direction: column;
   justify-content: center;
 }
+/* Notice */
+.notice-container{
+  font-size: medium;
+  font-weight: lighter;
+  justify-content: center;
+  height: 100vh;
+  overflow: hidden;
+  align-items: flex-start;
+}
+.notice-container .phone-view{
+  flex: 0.35;
+  margin-top: 100px;
+  align-items: center;
+}
+.notice-container .text-view{
+  flex: 0.7;
+  align-items: center;
+}
+.notice-container .notice-part{
+  width: 90%;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 30px;
+  color: #636363;
+  margin-left: 10px;
+}
+.notice-container .wrapper{
+  width: 90%;
+  border-radius: 20px;
+  box-shadow: -10px 5px 30px 10px #46a6ff18;
+  margin-top:50px;
+  padding-bottom: 100px;
+  display: flex;
+  align-items: center;
+}
+.rounding-img{
+  border-radius: 15px;
+  width: 25%;
+  padding: 5px 0;
+  box-shadow: -5px 10px 10px 10px #00000017;
+  overflow: hidden;
+  justify-content: center;
+}
+.rounding-img img{
+  width: 100%;
+}
+.notice-container .text-view .list{
+  gap: 30px;
+  margin-top: 50px;
+  margin-bottom: 30px;
+  justify-content: center;
+  padding: 10px 20px;
+  border-bottom: solid thin #46A6FF;
+  border-top: solid thin #46A6FF;
+}
+.notice-container .text-view .text-part{
+  font-size: small;
+  color: #9e9e9e;
+  width: 70%;
+  margin-left: 50px;
+  margin-bottom: 30px;
+}
+.notice-container .text-view .text-part p:nth-child(2){
+  margin-left: 50px;
+}
+.notice-container .text-view .list #icon{
+  margin-right: 5px;
+}
+.notice-container .text-view .prototype-view{
+  width: 85%;
+  justify-content: center;
+}
+
 .reviewRank #rank-num{
   font-size: large;
   margin-left: 20px;
@@ -84,20 +157,6 @@ input[type=text]{
   text-align: center;
   width: 100%;
 }
-.re-search-btn{
-  color: #46A6FF;
-  display: flex;
-  align-items: center;
-  background-color: white;
-  position: absolute;
-  z-index: 999;
-  font-size: small;
-  padding: 5px 10px;
-  border-radius: 20px;
-  margin-left: 50%;
-  transform: translate(-50%, 10px);
-  gap: 5px;
-}
 .surrounding form{
   position: absolute;
   width: 100%;
@@ -115,30 +174,31 @@ input[type=text]{
   align-items: center;
 }
 .store .map{
-  width: 100%;
-  padding: 0;
-  font-size: medium;
   border-top: solid thin #dddddd;
-  background-color: teal;
 }
 .detail > div{
   display: flex;
-  margin: 15px 0;
+  padding: 10px 5px;
   align-items: center;
+  font-weight: lighter;
+  font-size: small;
+  border-top: solid thin #eeeeee;
+}
+.detail > div:nth-child(1){
+  border: none;
 }
 .detail #label{
-  color: #7e7e7e;
+  color: #b3b3b3;
   margin-right: 10px;
   font-size: large;
 }
 #navi{
   margin-right: 5px;
-  background-color: #FAE100;
+  border: solid thin #FAE100;
   border-radius: 25px;
-  padding: 5px 10px;
-  padding-right: 15px;
+  padding: 3px 10px;
   display: flex;
-  align-content: center;
+  align-items: center;
   font-size: small;
   gap: 5px;
   color: black;
@@ -151,7 +211,7 @@ input[type=text]{
 }
 .list #tit{
   color: #636363;
-  font-weight: bold;
+  font-weight: lighter;
 }
 .list #price{
   flex: 1;
@@ -273,11 +333,12 @@ input[type=text]{
 .non-img span{
   margin-top: 30px;
 }
-.reviewRank-wrapper{
+.main-wrapper{
   width: 100%;
   margin-right:0;
+  margin-bottom: 100px;
 }
-.reviewRank-wrapper .more-btn{
+.main-wrapper .more-btn{
   align-items: center;
   width: 100%;
   text-align: center;

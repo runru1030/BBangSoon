@@ -8,6 +8,7 @@ type storeObj={
     telephone:string|null,
     x:number|null,
     y:number|null,
+    place_url:string|null,
     reviewCnt:number|null,
     avgStar:number|null,
 }

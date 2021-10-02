@@ -5,20 +5,21 @@ const { Store, Menu, Review, StoreImg, sequelize, Count, Visit, Wish } = require
 const router = express.Router();
 router.post('/', async (req, res) => {
   try {
-    let { id, place_name, road_address_name, phone, place_url, x, y } = req.body;
-    console.log(id);
+    let { id, storeName, address, telephone, place_url, x, y } = req.body;
+
     const [storeData, created] = await Store.findOrCreate({
       where: { id: id },
       attributes: ['storeName', 'address', 'telephone', 'id', 'site'],
       defaults: {
         id: id,
-        storeName: place_name,
-        address: road_address_name,
-        telephone: phone,
-        local:road_address_name?.split(" ")[0],
+        storeName: storeName,
+        address: address,
+        telephone: telephone,
+        local:address?.split(" ")[0],
         x:x,
         y:y
       },
+      order: [[Review, 'date', 'DESC']],
       include: [{
         model: Menu,
         attributes: ['tit', 'price'],
@@ -30,6 +31,7 @@ router.post('/', async (req, res) => {
       {
         model: StoreImg,
         attributes: ['imageUrl'],
+        limit:3,
       },
       {
         model: Visit,
@@ -46,7 +48,7 @@ router.post('/', async (req, res) => {
       crw.getStore();
       crw.getReview();
       crw.getImg();
-      return res.status(200).json(null);
+      return res.status(200).json(storeData);
     }
     else {
       return res.status(200).json(storeData);

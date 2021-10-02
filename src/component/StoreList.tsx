@@ -13,23 +13,16 @@ const StoreList: React.FC<any> = ({store, children}) => {
         dispatch(setStoreInfo({
             id:store.id,
             address:store.road_address_name?store.road_address_name:store.address_name,
-            storeName:store.place_name,
+            storeName:store.place_name, 
             telephone:store.phone,
             x:store.x,
             y:store.y,
+            place_url:store.place_url,
             reviewCnt:store.reviewCnt,
-            avgStar:store.avgStar,}))
+            avgStar:store.avgStar,
+        }))
         //DB에 없을 경우, 크롤링
-        axios.post("/storeCrawl", store).then(res=>
-            {
-                if(res.data){
-                    dispatch(setStoreInfo({url:store.place_url ,
-                        reviewCnt:store.reviewCnt,
-                        avgStar:store.avgStar,...res.data }))
-                }
-                history.push("/store");
-            })
-        
+        history.push("/store");
     }
  
     return (<Store onClick={onClick}>

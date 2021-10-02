@@ -9,7 +9,7 @@ router.post('/', async (req, res) => {
 
     const [storeData, created] = await Store.findOrCreate({
       where: { id: id },
-      attributes: ['storeName', 'address', 'telephone', 'id', 'site'],
+      attributes: ['storeName', 'address', 'telephone', 'id', 'site', 'x', 'y'],
       defaults: {
         id: id,
         storeName: storeName,

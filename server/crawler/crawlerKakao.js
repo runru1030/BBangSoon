@@ -1,7 +1,7 @@
 const puppeteer = require("puppeteer");
 const { Cluster } = require('puppeteer-cluster');
-const { Count, Menu, Review, StoreImg, Store, sequelize } = require('../models');
-const Op = sequelize.Op;
+const { Count, Menu, Review, StoreImg, Store, sequelize, Sequelize } = require('../models');
+const Op = Sequelize.Op;
 async function crawlerKakao({ id, url }) {
     const cluster = await Cluster.launch({
         concurrency: Cluster.CONCURRENCY_CONTEXT, // use one browser per worker
@@ -20,12 +20,12 @@ async function crawlerKakao({ id, url }) {
             };
             const browser = await puppeteer.launch({
                 headless: false,
-                args: ["--window-size=1920,1080", "--disable-notifications"],
+                args: ['--no-sandbox', '--disable-setuid-sandbox',"--window-size=1920,1080", "--disable-notifications" ,'--disable-dev-shm-usage'],
             });
-            const page = await browser.newPage();
+            const page = await browser.newPage();/* 
             await page.setUserAgent(
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.125 Safari/537.36"
-            );
+            ); */
             await page.setViewport({
                 width: 1080,
                 height: 1080,

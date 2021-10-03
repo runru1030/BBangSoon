@@ -8,13 +8,15 @@ import styled from "styled-components";
 import Grid from "../component/Grid";
 import Map from "../component/Map";
 import Nav from "../component/Nav";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import ReviewList from "../component/ReviewList";
 import ReviewForm from "../component/ReviewForm";
+import { setStoreInfo } from "../modules/store";
 
 const Store = () => {
     const history = useHistory();
+    const dispatch = useDispatch();
     const { userObj, isLoggedin } = useSelector((state: any) => ({
         userObj: state.user.userObj,
         isLoggedin: state.user.isLoggedin,
@@ -24,11 +26,10 @@ const Store = () => {
     const [curLoc, setCurLoc] = React.useState<loc>({ title: "", y: location.y, x: location.x });   //내 위치
 
     const storeInfo: storeObj = useSelector((state: any) => state.store.storeObj);
-    const [store, setStore] = useState<storeObj>(storeInfo);    
 
     /* wish & visit */
-    const [isVisit, setIsVisit] = useState(store.Visits?store.Visits.findIndex((i: any) => i.UserId == userObj.id) != -1:false);
-    const [isWish, setIsWish] = useState(store.Wishes?store.Wishes.findIndex((i: any) => i.UserId == userObj.id) != -1:false);
+    const [isVisit, setIsVisit] = useState(storeInfo.Visits ? storeInfo.Visits.findIndex((i: any) => i.UserId == userObj.id) != -1 : false);
+    const [isWish, setIsWish] = useState(storeInfo.Wishes ? storeInfo.Wishes.findIndex((i: any) => i.UserId == userObj.id) != -1 : false);
     const onClickFeature = (id: string) => {
         if (!isLoggedin) {
             history.push("/auth");
@@ -36,19 +37,19 @@ const Store = () => {
         else {
             if (id == "visit") {
                 isVisit ?
-                    axios.delete(`/user/visit/${userObj.id}/${store.id}`).then(res => res.data.success && setIsVisit(false))
+                    axios.delete(`/user/visit/${userObj.id}/${storeInfo.id}`).then(res => res.data.success && setIsVisit(false))
                     :
-                    axios.get(`/user/visit/${userObj.id}/${store.id}`).then(res => res.data.success && setIsVisit(true))
+                    axios.get(`/user/visit/${userObj.id}/${storeInfo.id}`).then(res => res.data.success && setIsVisit(true))
             }
             else {
                 isWish ?
-                    axios.delete(`/user/wish/${userObj.id}/${store.id}`).then(res => res.data.success && setIsWish(false))
+                    axios.delete(`/user/wish/${userObj.id}/${storeInfo.id}`).then(res => res.data.success && setIsWish(false))
                     :
-                    axios.get(`/user/wish/${userObj.id}/${store.id}`).then(res => res.data.success && setIsWish(true))
+                    axios.get(`/user/wish/${userObj.id}/${storeInfo.id}`).then(res => res.data.success && setIsWish(true))
             }
         }
     }
-  
+
     /* 아코디언 feature */
     const [isOpen, setIsOpen] = useState({
         map: false,
@@ -75,14 +76,14 @@ const Store = () => {
 
     /* store 정보 REST API*/
     useEffect(() => {
-        
+
         axios.post(`/storeCrawl`, storeInfo).then(res => {
-            setStore(res.data);
-            
+            dispatch(setStoreInfo({ ...storeInfo, ...res.data }));
+
         })
         const update = setInterval(() => {
             axios.post(`/storeCrawl`, storeInfo).then(res => {
-                setStore(res.data);
+                dispatch(setStoreInfo({ ...storeInfo, ...res.data }));
             })
         }, 10000);
         return () => {
@@ -92,7 +93,7 @@ const Store = () => {
 
     return (<>
         <Header >
-            <span id="storeName">{store.storeName}</span>
+            <span id="storeName">{storeInfo.storeName}</span>
             <div>
                 <span>{storeInfo.reviewCnt}</span>
                 <span id="small">리뷰</span>
@@ -104,19 +105,19 @@ const Store = () => {
             <FontAwesomeIcon onClick={() => onClickFeature("visit")} icon={faBreadSlice} color={isVisit ? "#e2c26e" : "#bfbfbf"} id="visit" />
             <FontAwesomeIcon onClick={() => onClickFeature("wish")} icon={faHeart} color={isWish ? "#f89573" : "#bfbfbf"} id="wish" />
         </Header>
-        
+
         <div className="store">
             {/* 크롤링 로딩 view */
-            (!store.Reviews || store.Reviews.length == 0) && <Loding>
-                <img width="50%" src="loding.gif" />
-                <span>외부 사이트로부터 데이터를 가져오는 중 입니다</span>
-            </Loding>}
+                (!storeInfo.Reviews || storeInfo.Reviews.length == 0) && <Loding>
+                    <img width="50%" src="loding.gif" />
+                    <span>외부 사이트로부터 데이터를 가져오는 중 입니다</span>
+                </Loding>}
             {/* store Image view */}
             <div className="img-viewer">
-                {store.StoreImgs?.length == 1 && <Grid imgArr={[{ url: store.StoreImgs[0].imageUrl }]} />}
-                {store.StoreImgs?.length == 2 && <Grid imgArr={[{ url: store.StoreImgs[0].imageUrl }, { url: store.StoreImgs[1].imageUrl }]} />}
-                {store.StoreImgs?.length == 3 && <Grid imgArr={[{ url: store.StoreImgs[0].imageUrl }, { url: store.StoreImgs[1].imageUrl }, { url: store.StoreImgs[2].imageUrl }]} />}
-                {store.StoreImgs?.length == 0 && <div className="non-img">
+                {storeInfo.StoreImgs?.length == 1 && <Grid imgArr={[{ url: storeInfo.StoreImgs[0].imageUrl }]} />}
+                {storeInfo.StoreImgs?.length == 2 && <Grid imgArr={[{ url: storeInfo.StoreImgs[0].imageUrl }, { url: storeInfo.StoreImgs[1].imageUrl }]} />}
+                {storeInfo.StoreImgs?.length == 3 && <Grid imgArr={[{ url: storeInfo.StoreImgs[0].imageUrl }, { url: storeInfo.StoreImgs[1].imageUrl }, { url: storeInfo.StoreImgs[2].imageUrl }]} />}
+                {storeInfo.StoreImgs?.length == 0 && <div className="non-img">
                     <img src="bread.png" width="40%" />
                     <span>{storeInfo.storeName}</span>
                 </div>}
@@ -127,15 +128,15 @@ const Store = () => {
                 {isOpen.detail && <Container className="detail">
                     <div>
                         <span id="label"><FontAwesomeIcon icon={faMapMarkerAlt} /></span>
-                        <span>{store.address}</span>
+                        <span>{storeInfo.address}</span>
                     </div>
                     <div>
                         <span id="label"><FontAwesomeIcon icon={faPhoneAlt} /></span>
-                        <a href={"tel:" + store.telephone}>{store.telephone}</a>
+                        <a href={"tel:" + storeInfo.telephone}>{storeInfo.telephone}</a>
                     </div>
-                    {store.site && <div>
+                    {storeInfo.site && <div>
                         <span id="label"><FontAwesomeIcon icon={faGlobe} /></span>
-                        <a href={"https://" + store.site}>{store.site}</a>
+                        <a href={"https://" + storeInfo.site}>{storeInfo.site}</a>
                     </div>}
                 </Container>}
             </div>
@@ -144,23 +145,23 @@ const Store = () => {
                 <Label onClick={(event) => onClick("map")} style={isOpen.map ? { "color": "#46A6FF" } : undefined}>지도
                     {isOpen.map && <div className="navi-wrapper">
                         <a href={"https://map.kakao.com/link/roadview/" + storeInfo.id} id="navi">
-                            <FontAwesomeIcon icon={faMapMarkerAlt} color="#46A6FF"/>
+                            <FontAwesomeIcon icon={faMapMarkerAlt} color="#46A6FF" />
                             <span>길찾기</span></a>
                     </div>}
                 </Label>
                 {isOpen.map && <div className="map">
                     <Map loc={{
-                        title: store.storeName||"",
-                        y: store.y,
-                        x: store.x,
-                    }} setLoc={null} curLoc={curLoc} markerArr={[{ ...store, place_name: store.storeName, address_name: store.address }]} />
+                        title: storeInfo.storeName || "",
+                        y: storeInfo.y,
+                        x: storeInfo.x,
+                    }} setLoc={null} curLoc={curLoc} markerArr={[{ ...storeInfo, place_name: storeInfo.storeName, address_name: storeInfo.address }]} />
                 </div>}
             </div>
             {/* store's menu view */}
             <div>
                 <Label onClick={(event) => onClick("menu")} style={isOpen.menu ? { "color": "#46A6FF" } : undefined}>메뉴</Label>
                 {isOpen.menu && <div>
-                    {store.Menus?.map((menu: any) => <Label className="list">
+                    {storeInfo.Menus?.map((menu: any) => <Label className="list">
                         <span id="tit">{menu.tit}</span>
                         <span id="price">{menu.price}</span>
                     </Label>)}
@@ -173,9 +174,9 @@ const Store = () => {
                     <span onClick={onClickWrite} id="side">{isWrite ? "취소" : "작성하기"}</span>
                 </Label>
                 {/* writing review's form */}
-                {isWrite &&<ReviewForm storeId={store.id} setIsWrite={setIsWrite} setStore={setStore}/>}
-                {isOpen.review && store.Reviews && <div>
-                    {store.Reviews.map((review: any) => <ReviewList review={review} userId={userObj.id}/>)}
+                {isWrite && <ReviewForm storeId={storeInfo.id} setIsWrite={setIsWrite} />}
+                {isOpen.review && storeInfo.Reviews && <div>
+                    {storeInfo.Reviews.map((review: any) => <ReviewList review={review} userId={userObj.id} />)}
                 </div>}
             </div>
             <Nav />
@@ -188,18 +189,18 @@ type storeObj = {
     address: string | null,
     storeName: string | null,
     telephone: string | null,
-    site: string|null,
-    x: number ,
-    y: number ,
+    site: string | null,
+    x: number,
+    y: number,
     reviewCnt: number | null,
     avgStar: number | null,
     Reviews: [] | null,
     Visits: [] | null,
     Wishes: [] | null,
-    StoreImgs:any[]|null,
-    Menus:[]|null,
+    StoreImgs: any[] | null,
+    Menus: [] | null,
 }
-type loc={
+type loc = {
     title: string,
     y: number,
     x: number,

@@ -3,13 +3,16 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import TextareaAutosize from 'react-textarea-autosize';
 import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setStoreInfo } from "../modules/store";
 type props = {
     storeId: number,
-    setStore: React.Dispatch<React.SetStateAction<storeObj>>
     setIsWrite: React.Dispatch<React.SetStateAction<boolean>>
 }
-const ReviewForm: React.FC<props> = ({ storeId, setIsWrite, setStore }) => {
+const ReviewForm: React.FC<props> = ({ storeId, setIsWrite }) => {
+    const dispatch =useDispatch();
+
+    const storeInfo: storeObj = useSelector((state: any) => state.store.storeObj);
     const { userObj } = useSelector((state: any) => ({
         userObj: state.user.userObj,
         isLoggedin: state.user.isLoggedin,
@@ -35,7 +38,7 @@ const ReviewForm: React.FC<props> = ({ storeId, setIsWrite, setStore }) => {
         formData.append('star', newReview.star.toString());
         formData.append('UserId', userObj.id);
         axios.post(`/store/review/${storeId}`, formData).then(res => {
-            setStore(res.data);
+            dispatch(setStoreInfo({...storeInfo,...res.data}));
         })
         setNewReview({
             content: "",

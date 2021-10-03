@@ -1,21 +1,20 @@
 import * as React from 'react';
 import Nav from '../component/Nav';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowLeft, faBreadSlice } from '@fortawesome/free-solid-svg-icons';
+import { faBreadSlice } from '@fortawesome/free-solid-svg-icons';
 import styled from 'styled-components';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 import StoreList from '../component/StoreList';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
-import { setLoggedInfo } from '../modules/user';
+import { setLoggedInfo, setUserInfo } from '../modules/user';
 import { setReviewInfo } from '../modules/review';
 const Feed = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const { userObj } = useSelector((state: any) => ({ userObj: state.user.userObj, }))
   const { isLoggedin } = useSelector((state: any) => ({ isLoggedin: state.user.isLoggedin }))
-
   const [reviewArr, setReviewArr] = useState<any[]>([])     //유저의 리뷰arr
 
   /* 방문 일지 */
@@ -50,6 +49,42 @@ const Feed = () => {
       }
     })
   }
+
+  /* 닉네임 변경 */
+  const [editNick, setEditNick] = useState<boolean>(false);
+  const [newNick, setNewNick] = useState({ nickName: "", valid: false, error: "" } as { nickName: string, valid: boolean, error: string });
+  const onClickEditNick = () => {
+    setEditNick(prev => !prev);
+  }
+  const onChangeNick = (event: React.ChangeEvent<HTMLInputElement>) => {
+    let valNick = /\s/g;
+    if (valNick.test(event.target.value)) {
+      setNewNick({ nickName: event.target.value, valid: false, error: "사용 불가" });
+    }
+    else {
+      setNewNick({ nickName: event.target.value, valid: true, error: "사용 가능" });
+    }
+  }
+  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    try {
+      if (newNick.nickName == "" || !newNick.valid) {
+        throw new Error("조건을 확인 해주세요.");
+      }
+      axios.patch(`/user/nickName/${userObj.id}/${newNick.nickName}`).then((res) => {
+        res.status == 200 && dispatch(setUserInfo({ ...userObj, nickName: newNick.nickName }));
+        setEditNick(false);
+        setNewNick({ nickName: "", valid: false, error: "" });
+      });
+    }
+    catch (error: unknown) {
+
+      if (error instanceof Error) {
+        alert(error.message);
+      }
+    }
+  }
+
   //외부영역 클릭 감지
   const handleClickOutside = (event: any) => {
     if (wrapperRef && !wrapperRef.current?.contains(event.target)) {
@@ -82,84 +117,54 @@ const Feed = () => {
   return (
     <div className="feed container">
       <Header className="row-container"><>
-            <span onClick={onClicName}>{userObj.nickName}</span>
-            {isOpenModal && 
-            <div className="logout-modal" ref={wrapperRef}>
-              <span onClick={onClickLogout} >로그아웃</span>
-              <span>닉네임 변경</span>
-              </div>}
+        <span onClick={onClicName}>{userObj.nickName}</span>
+        {isOpenModal &&
+          <div className="logout-modal" ref={wrapperRef}>
+            <span onClick={onClickLogout} >로그아웃</span>
+            <span onClick={onClickEditNick}>닉네임 변경</span>
+          </div>}
 
-            <div className="row-container content" >
-              <div className="col-container" onClick={onClickFeed} >
-                <span id="bold">{reviewArr.length}</span>
-                <span>일지</span>
-              </div>
-              <div className="row-container visit" onClick={onClickVisit} >
-                <span><FontAwesomeIcon icon={faBreadSlice} color="#e2c26e" /></span>
-                <span id="text">{visitId.length}</span>
-              </div>
-            </div>
-          </>
+        <div className="row-container content" >
+          <div className="col-container" onClick={onClickFeed} >
+            <span id="bold">{reviewArr.length}</span>
+            <span>일지</span>
+          </div>
+          <div className="row-container visit" onClick={onClickVisit} >
+            <span><FontAwesomeIcon icon={faBreadSlice} color="#e2c26e" /></span>
+            <span id="text">{visitId.length}</span>
+          </div>
+        </div>
+      </>
       </Header>
+      {/* 닉네임 변경 form*/}
+      {editNick && <Form className="container" valid={newNick.valid}>
+        <div className="col-container wrapper">
+          <img src="bread.png" width="50px" />
+          <span>닉네임 변경</span>
+          <form className="col-container" onSubmit={onSubmit}>
+            {<span id="valid">{newNick.error}</span>}
+            <input type="text" value={newNick.nickName} onChange={onChangeNick} placeholder={userObj.nickName + "(10자 이하, 공백불가)"} maxLength={10} />
+            <div className="row-container">
+              <input type="submit" value="수정" />
+              <span onClick={onClickEditNick} id="quit">취소</span></div>
+          </form>
+        </div>
+      </Form>}
       <Label>{isDetailVisit ? "순례 리스트" : "방문 일지"}</Label>
-        {isDetailVisit ?
-          /* 순례 리스트 page */
-          <>{visitArr.map((store: any) => <StoreList store={store} />)}</>
-          :
-          /* 일지 page */
-          <Grid>
-            {reviewArr.map((review: any) => <div onClick={() => onClickReview(review)}>
-              {review.reviewImg ? <div className="container"><img src={review.reviewImg} /></div> : <div className="container"><img src="bread.png" id="bread" /></div>}</div>)}
-          </Grid>
-        }
-        <Nav />
+      {isDetailVisit ?
+        /* 순례 리스트 page */
+        <>{visitArr.map((store: any) => <StoreList store={store} />)}</>
+        :
+        /* 일지 page */
+        <Grid>
+          {reviewArr.map((review: any) => <div onClick={() => onClickReview(review)}>
+            {review.reviewImg ? <div className="container"><img src={review.reviewImg} /></div> : <div className="container"><img src="bread.png" id="bread" /></div>}</div>)}
+        </Grid>
+      }
+      <Nav />
     </div>)
 }
 export default Feed;
-const Detail = styled.div`
-width: 100%;
-.img-wrapper{
-  width: 100vw;
-  height: 100vw;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.img-wrapper img{
-  width: 100%;
-  object-fit: cover;
-}
-.content{
-  padding: 15px;
-  font-weight: lighter;
-}
-.content #date{
-  font-size: small;
-  color: #636363;
-}
-#del-btn{
-    margin-left: 10px;
-    font-size: small;
-    color: #aaaaaa;
-}
-#star{
-  gap: 5px;
-  margin-right: 10px;
-  font-size: large;
-    background-color: #f3ecdc;
-    padding: 5px 10px;
-    border-radius: 5px;
-}
-#date{
-  flex: 1;
-  text-align: end;
-  font-weight: lighter;
-}
-.top-wrapper{
-  margin-bottom: 20px;
-}
-`
 const Header = styled.header`
 width: 90%;
 position: sticky;
@@ -197,7 +202,47 @@ color: #6f6f6f;
   color: white;
   font-size: medium;
 }
+`
 
+const Form = styled.div<{ valid: boolean }>`
+position: absolute;
+z-index: 99;
+background-color: #2b2b2b71;
+width: 100%;
+height: 100vh;
+justify-content: center;
+.wrapper{
+  background-color: white;
+  padding: 30px 50px;
+  align-items: center;
+  border-radius: 20px;
+  border:solid thin #46A6FF;
+}
+form{
+  margin-top: 30px;
+  align-items: center;
+  input[type=text]{
+    width: 100%;
+    border:${props => props.valid ? `solid thin #46A6FF` : `solid thin #ff5c46`};
+    border-radius: 5px;
+    margin-bottom: 30px;
+  }
+  input[type=submit]{
+    all: unset;
+    color: #46A6FF;
+  }
+  >div{
+    gap:20px;
+  }
+  #quit{
+    color: grey;
+  }
+  #valid{
+    color:${props => props.valid ? `#46A6FF` : `#ff5c46`};
+    font-size: small;
+    margin-bottom: 20px;
+  }
+}
 `
 const Label = styled.div`
 font-size: medium;

@@ -1,6 +1,7 @@
 import * as React from "react";
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import Feed from "../routes/Feed";
+import Review from "../routes/Review";
 import Loding from "../routes/Loding";
 import Login from "../routes/Login";
 import Main from "../routes/Main";
@@ -37,6 +38,9 @@ const AppRouter: React.FC<AppProps> = ({ isLoding }) => {
                 </Route>
                 <Route exact path="/feed">
                     <Feed />
+                </Route>
+                <Route exact path="/feed/review">
+                    <Review />
                 </Route>
                 <Route exact path="/wish">
                     <Wish />

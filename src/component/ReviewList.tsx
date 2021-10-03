@@ -17,7 +17,7 @@ type review = {
 }
 const ReviewList: React.FC<review> = ({ review, userId }) => {
     const onClickDel=()=>{
-        axios.delete(`/store/review/${review.id}`)
+        axios.delete(`/store/review/${review.id}`);
     }
     return (<><List className="list review">
         {review.reviewImg && <div className="reviewImg"><ImgModal src={review.reviewImg} width="200%" /></div>}

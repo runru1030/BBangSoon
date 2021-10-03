@@ -9,6 +9,7 @@ import StoreList from '../component/StoreList';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 import { setLoggedInfo } from '../modules/user';
+import { setReviewInfo } from '../modules/review';
 const Feed = () => {
   const history = useHistory();
   const dispatch = useDispatch();
@@ -18,18 +19,9 @@ const Feed = () => {
   const [reviewArr, setReviewArr] = useState<any[]>([])     //유저의 리뷰arr
 
   /* 방문 일지 */
-  const [isDetailReview, setIsDetailReview] = useState<boolean>(false);
-  const [DetailReview, setDetailReview] = useState<any>({});// one of reviewArr
-  const [store, setStore] = useState<any>({});              // DetailReview's store
   const onClickReview = (review: any | null) => {
-    if (!isDetailReview) {
-      axios.post(`/store/${review.StoreId}`).then(res => setStore(res.data))
-      setIsDetailReview(true);
-      setDetailReview(review)
-    }
-    else {
-      setIsDetailReview(false)
-    }
+    dispatch(setReviewInfo(review));
+    history.push("/feed/review");
   }
 
   /* 순례 리스트 */
@@ -37,12 +29,10 @@ const Feed = () => {
   const [visitId, setVisitId] = useState<any[]>([])   //유저의 순례리스트 매장 ID 
   const [visitArr, setVisitArr] = useState<any[]>([]) //
   const onClickVisit = () => {
-    setIsDetailReview(false);
     axios.post(`/store/list`, visitId)
       .then(res => {
         setVisitArr(res.data)
       })
-    setIsDetailVisit(true);
   }
 
   /* Logout */
@@ -88,41 +78,30 @@ const Feed = () => {
 
   const onClickFeed = () => {
     setIsDetailVisit(false);
-    setIsDetailReview(false)
-  }
-
-  const onClickDel = () => {
-    axios.delete(`/store/review/${DetailReview.id}`).then(() => {
-      axios.get(`/user/feed/${userObj.id}`).then(res => {
-        setReviewArr(res.data.Reviews)
-        setVisitId(res.data.Visits.map((it: any) => (it.StoreId)))
-      })
-      setIsDetailReview(false);
-    }
-
-    );
   }
   return (
     <div className="feed container">
-      <Header className="row-container">
-        {isDetailReview && <span id="back" onClick={onClickReview}><FontAwesomeIcon icon={faArrowLeft} /></span>}
-        <span onClick={onClicName}>{userObj.nickName}</span>
-        {isOpenModal && <div className="logout-modal" onClick={onClickLogout} ref={wrapperRef}>로그아웃</div>}
+      <Header className="row-container"><>
+            <span onClick={onClicName}>{userObj.nickName}</span>
+            {isOpenModal && 
+            <div className="logout-modal" ref={wrapperRef}>
+              <span onClick={onClickLogout} >로그아웃</span>
+              <span>닉네임 변경</span>
+              </div>}
 
-        <div className="row-container content" >
-          <div className="col-container" onClick={onClickFeed} >
-            <span id="bold">{reviewArr.length}</span>
-            <span>일지</span>
-          </div>
-          <div className="row-container visit" onClick={onClickVisit} >
-            <span><FontAwesomeIcon icon={faBreadSlice} color="#e2c26e" /></span>
-            <span id="text">{visitId.length}</span>
-          </div>
-        </div>
+            <div className="row-container content" >
+              <div className="col-container" onClick={onClickFeed} >
+                <span id="bold">{reviewArr.length}</span>
+                <span>일지</span>
+              </div>
+              <div className="row-container visit" onClick={onClickVisit} >
+                <span><FontAwesomeIcon icon={faBreadSlice} color="#e2c26e" /></span>
+                <span id="text">{visitId.length}</span>
+              </div>
+            </div>
+          </>
       </Header>
-
-      {!isDetailReview ? <>
-        <Label>{isDetailVisit ? "순례 리스트" : "방문 일지"}</Label>
+      <Label>{isDetailVisit ? "순례 리스트" : "방문 일지"}</Label>
         {isDetailVisit ?
           /* 순례 리스트 page */
           <>{visitArr.map((store: any) => <StoreList store={store} />)}</>
@@ -134,28 +113,6 @@ const Feed = () => {
           </Grid>
         }
         <Nav />
-      </>
-        :
-        /* detail review page */
-        <Detail className="review-detail">
-          <StoreList store={store} />
-          {DetailReview.reviewImg && <div className="img-wrapper"><img src={DetailReview.reviewImg} /></div>}
-          <div className="col-container content">
-            <div className="top-wrapper row-container">
-              <span id="star" className="row-container">
-                <FontAwesomeIcon icon={faBreadSlice} color={DetailReview.star >= 1 ? "#e2c26e" : "#cabfa3"} />
-                <FontAwesomeIcon icon={faBreadSlice} color={DetailReview.star >= 2 ? "#e2c26e" : "#cabfa3"} />
-                <FontAwesomeIcon icon={faBreadSlice} color={DetailReview.star >= 3 ? "#e2c26e" : "#cabfa3"} />
-                <FontAwesomeIcon icon={faBreadSlice} color={DetailReview.star >= 4 ? "#e2c26e" : "#cabfa3"} />
-                <FontAwesomeIcon icon={faBreadSlice} color={DetailReview.star >= 5 ? "#e2c26e" : "#cabfa3"} />
-              </span>
-              <span id="date">{new Date(DetailReview.date).getFullYear()}.{new Date(DetailReview.date).getMonth() + 1}.{new Date(DetailReview.date).getDate()}</span>
-              <span onClick={onClickDel} id="del-btn">삭제</span>
-            </div>
-            <div className="top-wrapper">{DetailReview.content}</div>
-          </div>
-        </Detail>
-      }
     </div>)
 }
 export default Feed;

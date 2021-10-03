@@ -35,7 +35,7 @@ router.get('/feed/:id', async (req, res) => {
     let id= req.params.id
     const reviewData = await Review.findAll({
       where: { UserId: id },
-      attributes: ['star', 'content', 'date', 'reviewImg', 'StoreId'],
+      attributes: ['id', 'star', 'content', 'date', 'reviewImg', 'StoreId'],
       order: [['date','DESC']]
     });
     const visitData = await Visit.findAll({

@@ -13,7 +13,7 @@ const Feed = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const { userObj } = useSelector((state: any) => ({ userObj: state.user.userObj, }))
-  const { isLoggedin } = useSelector((state: any) => ({isLoggedin: state.user.isLoggedin}))
+  const { isLoggedin } = useSelector((state: any) => ({ isLoggedin: state.user.isLoggedin }))
 
   const [reviewArr, setReviewArr] = useState<any[]>([])     //유저의 리뷰arr
 
@@ -44,7 +44,7 @@ const Feed = () => {
       })
     setIsDetailVisit(true);
   }
-  
+
   /* Logout */
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const wrapperRef = React.useRef<HTMLImageElement>(null);
@@ -59,7 +59,7 @@ const Feed = () => {
         history.push("/")
       }
     })
-  }  
+  }
   //외부영역 클릭 감지
   const handleClickOutside = (event: any) => {
     if (wrapperRef && !wrapperRef.current?.contains(event.target)) {
@@ -91,14 +91,24 @@ const Feed = () => {
     setIsDetailReview(false)
   }
 
-  
+  const onClickDel = () => {
+    axios.delete(`/store/review/${DetailReview.id}`).then(() => {
+      axios.get(`/user/feed/${userObj.id}`).then(res => {
+        setReviewArr(res.data.Reviews)
+        setVisitId(res.data.Visits.map((it: any) => (it.StoreId)))
+      })
+      setIsDetailReview(false);
+    }
+
+    );
+  }
   return (
     <div className="feed container">
       <Header className="row-container">
         {isDetailReview && <span id="back" onClick={onClickReview}><FontAwesomeIcon icon={faArrowLeft} /></span>}
         <span onClick={onClicName}>{userObj.nickName}</span>
         {isOpenModal && <div className="logout-modal" onClick={onClickLogout} ref={wrapperRef}>로그아웃</div>}
-        
+
         <div className="row-container content" >
           <div className="col-container" onClick={onClickFeed} >
             <span id="bold">{reviewArr.length}</span>
@@ -140,6 +150,7 @@ const Feed = () => {
                 <FontAwesomeIcon icon={faBreadSlice} color={DetailReview.star >= 5 ? "#e2c26e" : "#cabfa3"} />
               </span>
               <span id="date">{new Date(DetailReview.date).getFullYear()}.{new Date(DetailReview.date).getMonth() + 1}.{new Date(DetailReview.date).getDate()}</span>
+              <span onClick={onClickDel} id="del-btn">삭제</span>
             </div>
             <div className="top-wrapper">{DetailReview.content}</div>
           </div>
@@ -164,19 +175,29 @@ width: 100%;
 }
 .content{
   padding: 15px;
+  font-weight: lighter;
 }
 .content #date{
   font-size: small;
   color: #636363;
 }
+#del-btn{
+    margin-left: 10px;
+    font-size: small;
+    color: #aaaaaa;
+}
 #star{
   gap: 5px;
   margin-right: 10px;
   font-size: large;
+    background-color: #f3ecdc;
+    padding: 5px 10px;
+    border-radius: 5px;
 }
 #date{
   flex: 1;
   text-align: end;
+  font-weight: lighter;
 }
 .top-wrapper{
   margin-bottom: 20px;

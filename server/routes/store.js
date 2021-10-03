@@ -87,6 +87,25 @@ router.post('/review/:id', upload.single('reviewImg') , async (req, res) => {
   }
 });
 
+router.delete('/review/:reviewId', async (req, res) => {
+  try {
+    let reviewId= req.params.reviewId;
+    await Review.destroy({
+      where: {
+        id: reviewId,
+      },
+    });
+
+    return res.status(200).json({
+      success: true,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      error: err.toString(),
+    });
+  }
+});
 router.post('/image/:id', async (req, res) => {
   try {
     let id = req.params.id;

@@ -75,8 +75,10 @@ const Store = () => {
 
     /* store 정보 REST API*/
     useEffect(() => {
+        
         axios.post(`/storeCrawl`, storeInfo).then(res => {
             setStore(res.data);
+            
         })
         const update = setInterval(() => {
             axios.post(`/storeCrawl`, storeInfo).then(res => {
@@ -173,7 +175,7 @@ const Store = () => {
                 {/* writing review's form */}
                 {isWrite &&<ReviewForm storeId={store.id} setIsWrite={setIsWrite} setStore={setStore}/>}
                 {isOpen.review && store.Reviews && <div>
-                    {store.Reviews.map((review: any) => <ReviewList review={review} />)}
+                    {store.Reviews.map((review: any) => <ReviewList review={review} userId={userObj.id}/>)}
                 </div>}
             </div>
             <Nav />

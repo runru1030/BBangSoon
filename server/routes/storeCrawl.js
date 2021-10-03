@@ -26,7 +26,7 @@ router.post('/', async (req, res) => {
       },
       {
         model: Review,
-        attributes: ['star', 'content', 'date', 'nickName', 'reviewImg'],
+        attributes: ['id', 'star', 'content', 'date', 'nickName', 'reviewImg','UserId'],
       },
       {
         model: StoreImg,

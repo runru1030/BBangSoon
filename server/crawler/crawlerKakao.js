@@ -19,8 +19,8 @@ async function crawlerKakao({ id, url }) {
                 price: ""
             };
             const browser = await puppeteer.launch({
-                headless: false,
-                args: ['--no-sandbox', '--disable-setuid-sandbox',"--window-size=1920,1080", "--disable-notifications" ,'--disable-dev-shm-usage'],
+                headless: true,
+                args: ['--no-sandbox', '--disable-setuid-sandbox',"--window-size=1920,1080", "--disable-notifications" ,'--disable-dev-shm-usage','--disable-extensions-except=' + this.extensionPathBuildPath, '--load-extension=' + this.extensionPathBuildPath ],
             });
             const page = await browser.newPage();/* 
             await page.setUserAgent(
@@ -75,13 +75,13 @@ async function crawlerKakao({ id, url }) {
     const reviewCrawl = async () => {
         try {
             const browser = await puppeteer.launch({
-                headless: false,
-                args: ["--window-size=1920,1080", "--disable-notifications"],
+                headless: true,
+                args: ['--no-sandbox', '--disable-setuid-sandbox',"--window-size=1920,1080", "--disable-notifications" ,'--disable-dev-shm-usage','--disable-extensions-except=' + this.extensionPathBuildPath, '--load-extension=' + this.extensionPathBuildPath ],
             });
-            const page = await browser.newPage();
+            const page = await browser.newPage();/* 
             await page.setUserAgent(
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.125 Safari/537.36"
-            );
+            ); */
             await page.setViewport({
                 width: 1080,
                 height: 1080,
@@ -151,13 +151,13 @@ async function crawlerKakao({ id, url }) {
     const imgCrawl = async () => {
         try {
             const browser = await puppeteer.launch({
-                headless: false,
-                args: ["--window-size=1920,1080", "--disable-notifications"],
+                headless: true,
+                args: ['--no-sandbox', '--disable-setuid-sandbox',"--window-size=1920,1080", "--disable-notifications" ,'--disable-dev-shm-usage','--disable-extensions-except=' + this.extensionPathBuildPath, '--load-extension=' + this.extensionPathBuildPath ],
             });
-            const page = await browser.newPage();
+            const page = await browser.newPage();/* 
             await page.setUserAgent(
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.125 Safari/537.36"
-            );
+            ); */
             await page.setViewport({
                 width: 1080,
                 height: 1080,
@@ -197,13 +197,13 @@ async function crawlerKakao({ id, url }) {
     const countCrawl = async () => {
         try {
             const browser = await puppeteer.launch({
-                headless: false,
-                args: ["--window-size=1920,1080", "--disable-notifications"],
+                headless: true,
+                args: ['--no-sandbox', '--disable-setuid-sandbox',"--window-size=1920,1080", "--disable-notifications" ,'--disable-dev-shm-usage','--disable-extensions-except=' + this.extensionPathBuildPath, '--load-extension=' + this.extensionPathBuildPath ],
             });
-            const page = await browser.newPage();
+            const page = await browser.newPage();/* 
             await page.setUserAgent(
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.125 Safari/537.36"
-            );
+            ); */
             await page.setViewport({
                 width: 1080,
                 height: 1080,

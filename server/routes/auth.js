@@ -4,7 +4,7 @@ const { User, Review } = require('../models');
 const kakaoAuth = require('../utils/KakaoAuth');
 
 const router = express.Router();
-
+/* Create user or Read user */
 router.post('/kakao', async (req, res) => {
   try{
     let userEmail = "";
@@ -55,7 +55,7 @@ router.post('/kakao', async (req, res) => {
     });
   }
 });
-
+/* logout user */
 router.post('/logout', async (req, res) => {
   try{
     const jwtUser = jwt.verify(req.headers.authorization, process.env.JWT_SECRET, {

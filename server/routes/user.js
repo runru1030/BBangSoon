@@ -2,18 +2,20 @@ const express = require('express');
 const { User, Review, StoreImg, Visit, Wish, Store, Sequelize, sequelize } = require('../models');
 const Op = Sequelize.Op;
 const router = express.Router();
+/* user's wish list */
 router.get('/wishArr/:userId', async (req, res) => {
   try {
     let userId = req.params.userId;
     const wishData = await Wish.findAll({
       where: { UserId: userId },
       order: [['createdAt', 'DESC']],
+      attributes:[],
       include: {
         model: Store,
         attributes: ['id'],
       }
     });
-    const idArr = wishData.map(it => it.Store.id)
+    const idArr = wishData.map(it => it.Store.id);
     const storeArr = await Store.findAll({
       where: { id: { [Op.in]: idArr } },
       attributes: ['id', 'storeName', [sequelize.fn('count', sequelize.col('Reviews.star')), 'reviewCnt'],
@@ -30,16 +32,17 @@ router.get('/wishArr/:userId', async (req, res) => {
     });
   }
 });
-router.get('/feed/:id', async (req, res) => {
+/* user's reivew & visit_list*/
+router.get('/feed/:userId', async (req, res) => {
   try {
-    let id = req.params.id
+    let userId = req.params.userId
     const reviewData = await Review.findAll({
-      where: { UserId: id },
+      where: { UserId: userId },
       attributes: ['id', 'star', 'content', 'date', 'reviewImg', 'StoreId'],
       order: [['date', 'DESC']]
     });
     const visitData = await Visit.findAll({
-      where: { UserId: id },
+      where: { UserId: userId },
       attributes: ['StoreId'],
       order: [['createdAt', 'DESC']]
     });
@@ -54,6 +57,7 @@ router.get('/feed/:id', async (req, res) => {
     });
   }
 });
+/* Add visit_list */
 router.get('/visit/:userId/:storeId', async (req, res) => {
   try {
     let userId = req.params.userId
@@ -70,6 +74,7 @@ router.get('/visit/:userId/:storeId', async (req, res) => {
     });
   }
 });
+/* Delete visit_list */
 router.delete('/visit/:userId/:storeId', async (req, res) => {
   try {
     let userId = req.params.userId
@@ -80,7 +85,6 @@ router.delete('/visit/:userId/:storeId', async (req, res) => {
         StoreId: storeId,
       },
     });
-
     return res.status(200).json({
       success: true,
     });
@@ -91,7 +95,7 @@ router.delete('/visit/:userId/:storeId', async (req, res) => {
     });
   }
 });
-
+/* Add wish_list */
 router.get('/wish/:userId/:storeId', async (req, res) => {
   try {
     let userId = req.params.userId
@@ -108,6 +112,7 @@ router.get('/wish/:userId/:storeId', async (req, res) => {
     });
   }
 });
+/* Delete wish_list */
 router.delete('/wish/:userId/:storeId', async (req, res) => {
   try {
     let userId = req.params.userId
@@ -129,6 +134,7 @@ router.delete('/wish/:userId/:storeId', async (req, res) => {
     });
   }
 });
+/* Edit user's nickName */
 router.patch("/nickName/:id/:new", async (req, res) => {
   try {
     let userId = req.params.id;

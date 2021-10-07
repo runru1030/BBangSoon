@@ -1,8 +1,11 @@
 const express = require('express');
 const crawlerKakao = require('../crawler/crawlerKakao');
 const { Store, Menu, Review, StoreImg, sequelize, Count, Visit, Wish } = require('../models');
+const util = require('util'); 
+const EventEmitter = require('events').EventEmitter;
 
 const router = express.Router();
+/* Store's data ? post : crawling */
 router.post('/', async (req, res) => {
   try {
     let { id, storeName, address, telephone, place_url, x, y } = req.body;
@@ -15,7 +18,7 @@ router.post('/', async (req, res) => {
         storeName: storeName,
         address: address,
         telephone: telephone,
-        local:address?.split(" ")[0],
+        local:address&&address.split(" ")[0],
         x:x,
         y:y
       },
@@ -42,7 +45,8 @@ router.post('/', async (req, res) => {
         attributes:  ['UserId']
       }
       ]
-    })
+    });
+    /*crawling */
     if (created) {
       const crw = (await crawlerKakao({ id: id, url: place_url }));
       crw.getStore();
@@ -62,82 +66,29 @@ router.post('/', async (req, res) => {
     });
   }
 });
-router.post('/list', async (req, res) => {
-  try {
-    const storeArr = req.body;
-    const resultArr = []
-    await storeArr.forEach(async (element, idx) => {
-      await Review.findAll({
-        where: { StoreId: element.id },
-        attributes: [[sequelize.fn('count', sequelize.col('star')), 'reviewCnt'], [sequelize.fn('avg', sequelize.col('star')), 'avgStar']],
-
-      }).then(async result => {
-        const reviewData = result.map(res => res.dataValues)[0];
-        resultArr[idx] = reviewData;
-        if (reviewData.avgStar == null) {
-          await Count.findOne({
-            where: { id: element.id },
-            attributes: ['reviewCnt', 'avgStar']
-          }).then(async res => {
-            console.log(res);
-            if (!res) {
-              const crw = (await crawlerKakao({ id: element.id, url: element.url }));
-              await crw.getcnt().then(async res => { resultArr[idx] = res });
-            }
-            else {
-              resultArr[idx] = res.dataValues;
-            }
-          })
-        }
-        if (idx == storeArr.length - 1) {
-          return res.status(200).json(resultArr)
-        }
-      });
-    });
-
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json({
-      success: false,
-      error: err.toString(),
-    });
-  }
-});
+/* store's review_count & average star */
 router.post('/count', async (req, res) => {
   try {
     const store = req.body;
     var reviewData;
-    await Review.findAll({
-      where: { StoreId: store.id },
-      attributes: [[sequelize.fn('count', sequelize.col('star')), 'reviewCnt'], [sequelize.fn('avg', sequelize.col('star')), 'avgStar']],
-
-    }).then(async result => {
-      if (result.map(res => res.dataValues)[0].avgStar == null) {
-        await Count.findOne({
-          where: { id: store.id },
-          attributes: ['reviewCnt', 'avgStar']
-        }).then(async res => {
-          console.log(res);
-          if (!res) {
-            const crw = (await crawlerKakao({ id: store.id, url: store.url }));
-            await crw.getcnt().then(async res => { 
-              reviewData=res
-            });
-          }
-          else {
-            reviewData=res.dataValues;
-          }
-        })
-
+    await Count.findOne({
+      where: { id: store.id },
+      attributes: ['reviewCnt', 'avgStar']
+    }).then(async res => {
+      if (!res) {
+        util.inherits(crawlerKakao, EventEmitter); 
+        const crw = (await crawlerKakao({ id: store.id, url: store.url }));
+        crw.setMaxListeners(50);
+        await crw.getcnt().then(async res => { 
+          reviewData=res
+        });
       }
-      else{
-        reviewData=result.map(res => res.dataValues)[0];
+      else {
+        reviewData=res.dataValues;
       }
     })
-    console.log(reviewData);
     return res.status(200).json(reviewData);
   } catch (err) {
-    console.log(err);
     return res.status(500).json({
       success: false,
       error: err.toString(),

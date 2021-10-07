@@ -3,9 +3,9 @@ const { Store, Menu, Review, StoreImg , Count, sequelize, Visit, Wish, Sequelize
 const upload = require('../utils/s3');
 const Op = Sequelize.Op;
 const router = express.Router();
+/* Read store_list's review_count & average star */
 router.post('/list', async (req, res) => {
   try {
-    const resultArr=[];
     const storeArr=await Store.findAll({
       where:{id: {[Op.in]:req.body}},
       attributes:['id', 'storeName', [sequelize.fn('count', sequelize.col('Reviews.star')), 'reviewCnt'],
@@ -13,26 +13,24 @@ router.post('/list', async (req, res) => {
       ],
       group:['id'],
       include:{ model:Review}, 
+      order:sequelize.literal("FIELD(Store.id,"+req.body.join(',')+")")
+
     })
+    storeArr.map(async(element, idx) => {
+      if (element.id!=req.body[idx]) {
+         storeArr.splice(idx,0,{id:req.body[idx]});
+       }
+     })
+     return res.status(200).json(storeArr);
     
-    resultArr.map(async(element, idx) => {
-       if (!element.avgStar) {
-          await Count.findOne({
-            where:{id:element.id},
-            attributes:['reviewCnt', 'avgStar']
-          }).then(res=>{
-            storeArr[idx]={...storeArr[idx], ...res.dataValues}
-          })
-        }})
-        return res.status(200).json(storeArr);
   } catch (err) {
-    console.log(err);
     return res.status(500).json({
       success: false,
       error: err.toString(),
     });
   }
 });
+/* Create review */
 router.post('/review/:id', upload.single('reviewImg') , async (req, res) => {
   try {
     let id = req.params.id;
@@ -72,21 +70,17 @@ router.post('/review/:id', upload.single('reviewImg') , async (req, res) => {
       attributes: [[sequelize.fn('count', sequelize.col('star')), 'reviewCnt'],[sequelize.fn('avg', sequelize.col('star')), 'avgStar'] ],
     
     })
-    console.log({
-      ...storeData.dataValues,...count.map(res=>res.dataValues)[0]});
     return res.status(200).json({
       ...storeData.dataValues,...count.map(res=>res.dataValues)[0]});
     
-    
   } catch (err) {
-    console.log(err);
     return res.status(500).json({
       success: false,
       error: err.toString(),
     });
   }
 });
-
+/* Delete reivew */
 router.delete('/review/:reviewId', async (req, res) => {
   try {
     let reviewId= req.params.reviewId;
@@ -106,6 +100,7 @@ router.delete('/review/:reviewId', async (req, res) => {
     });
   }
 });
+/* Read store's image */
 router.post('/image/:id', async (req, res) => {
   try {
     let id = req.params.id;
@@ -117,16 +112,14 @@ router.post('/image/:id', async (req, res) => {
     })
 
     return res.status(200).json(storeImgs);
-   
-    
   } catch (err) {
-    console.log(err);
     return res.status(500).json({
       success: false,
       error: err.toString(),
     });
   }
 });
+/* Read local's stores ranking */
 router.get('/rankReview/:local', async (req, res) => {
   try {
     let local = req.params.local;
@@ -146,16 +139,14 @@ router.get('/rankReview/:local', async (req, res) => {
     })
     
     return res.status(200).json(storeRanking.splice(0, 20));
-   
-    
   } catch (err) {
-    console.log(err);
     return res.status(500).json({
       success: false,
       error: err.toString(),
     });
   }
 });
+/* Read store */
 router.post('/:id', async (req, res) => {
   try {
     let id = req.params.id;
@@ -194,7 +185,6 @@ router.post('/:id', async (req, res) => {
     return res.status(200).json({
       ...storeData.dataValues,...count.map(res=>res.dataValues)[0]});
    
-    
   } catch (err) {
     console.log(err);
     return res.status(500).json({

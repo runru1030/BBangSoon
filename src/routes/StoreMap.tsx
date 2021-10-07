@@ -80,9 +80,11 @@ const StoreMap = () => {
                 arr = [...markerArr, ...arr];
             }
             setMarkerArr(arr);
-            axios.post("/store/list", arr.map((store: any) => ({ id: store.id }))).then(res => {
+            axios.post("/store/list", arr.map((store: any) => store.id)).then(res => {
                 setMarkerArr(arr.map((store: any, idx: number) => ({ ...store, ...res.data[idx] })));
                 arr = arr.map((store: any, idx: number) => ({ ...store, ...res.data[idx] }));
+                console.log(res.data);
+                
                 arr.forEach(async (element: any, i: number) => {
                     if (element.avgStar == null) {
                         await axios.post("/storeCrawl/count", { id: element.id, url: element.place_url }).then(res => {

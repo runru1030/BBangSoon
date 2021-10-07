@@ -8,6 +8,8 @@ import { useState, useEffect } from 'react';
 import StoreList from '../component/StoreList';
 import {  useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
+import StarCmp from '../component/StarCmp';
+import { ReviewCmp } from '../assets/styles/global-style';
 const Review = () => {
   const history = useHistory();
   const { review } = useSelector((state: any) => ({ review: state.review.review, }))
@@ -27,20 +29,14 @@ const Review = () => {
     <Detail className="review-detail">
       <StoreList store={store} />
       {review.reviewImg && <div className="img-wrapper"><img src={review.reviewImg} /></div>}
-      <div className="col-container content">
-        <div className="top-wrapper row-container">
-          <span id="star" className="row-container">
-            <FontAwesomeIcon icon={faBreadSlice} color={review.star >= 1 ? "#e2c26e" : "#cabfa3"} />
-            <FontAwesomeIcon icon={faBreadSlice} color={review.star >= 2 ? "#e2c26e" : "#cabfa3"} />
-            <FontAwesomeIcon icon={faBreadSlice} color={review.star >= 3 ? "#e2c26e" : "#cabfa3"} />
-            <FontAwesomeIcon icon={faBreadSlice} color={review.star >= 4 ? "#e2c26e" : "#cabfa3"} />
-            <FontAwesomeIcon icon={faBreadSlice} color={review.star >= 5 ? "#e2c26e" : "#cabfa3"} />
-          </span>
+      <ReviewCmp className="col-container">
+      <div className="row-container wrapper">
+            <StarCmp reviewStar={review.star}/>
           <span id="date">{new Date(review.date).getFullYear()}.{new Date(review.date).getMonth() + 1}.{new Date(review.date).getDate()}</span>
-          <span onClick={onClickDel} id="del-btn">삭제</span>
+          <span onClick={onClickDel} id="del-btn2">삭제</span>
         </div>
-        <div className="top-wrapper">{review.content}</div>
-      </div>
+        <span id="content">{review.content}</span>
+      </ReviewCmp>
       <Nav/>
     </Detail>
   )
@@ -60,34 +56,15 @@ width: 100%;
   width: 100%;
   object-fit: cover;
 }
-.content{
-  padding: 15px;
-  font-weight: lighter;
-}
-.content #date{
-  font-size: small;
-  color: #636363;
-}
-#del-btn{
+#del-btn2{
     margin-left: 10px;
     font-size: small;
     color: #aaaaaa;
-}
-#star{
-  gap: 5px;
-  margin-right: 10px;
-  font-size: large;
-    background-color: #f3ecdc;
-    padding: 5px 10px;
-    border-radius: 5px;
 }
 #date{
   flex: 1;
   text-align: end;
   font-weight: lighter;
-}
-.top-wrapper{
-  margin-bottom: 20px;
 }
 `
 

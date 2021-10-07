@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 import { setLoggedInfo, setUserInfo } from '../modules/user';
 import { setReviewInfo } from '../modules/review';
+import { Grid, Header, Label } from '../assets/styles/global-style';
 const Feed = () => {
   const history = useHistory();
   const dispatch = useDispatch();
@@ -32,6 +33,7 @@ const Feed = () => {
       .then(res => {
         setVisitArr(res.data)
       })
+    setIsDetailVisit(true);
   }
 
   /* Logout */
@@ -55,6 +57,7 @@ const Feed = () => {
   const [newNick, setNewNick] = useState({ nickName: "", valid: false, error: "" } as { nickName: string, valid: boolean, error: string });
   const onClickEditNick = () => {
     setEditNick(prev => !prev);
+    setIsOpenModal(false);
   }
   const onChangeNick = (event: React.ChangeEvent<HTMLInputElement>) => {
     let valNick = /\s/g;
@@ -115,14 +118,14 @@ const Feed = () => {
     setIsDetailVisit(false);
   }
   return (
-    <div className="feed container">
+    <div className="feed">
       <Header className="row-container"><>
         <span onClick={onClicName}>{userObj.nickName}</span>
         {isOpenModal &&
-          <div className="logout-modal" ref={wrapperRef}>
+          <Modal className="col-container" ref={wrapperRef}>
             <span onClick={onClickLogout} >로그아웃</span>
             <span onClick={onClickEditNick}>닉네임 변경</span>
-          </div>}
+          </Modal>}
 
         <div className="row-container content" >
           <div className="col-container" onClick={onClickFeed} >
@@ -150,13 +153,13 @@ const Feed = () => {
           </form>
         </div>
       </Form>}
-      <Label>{isDetailVisit ? "순례 리스트" : "방문 일지"}</Label>
+      <Label path={"feed"}>{isDetailVisit ? "순례 리스트" : "방문 일지"}</Label>
       {isDetailVisit ?
         /* 순례 리스트 page */
         <>{visitArr.map((store: any) => <StoreList store={store} />)}</>
         :
         /* 일지 page */
-        <Grid>
+        <Grid isFeed={true}>
           {reviewArr.map((review: any) => <div onClick={() => onClickReview(review)}>
             {review.reviewImg ? <div className="container"><img src={review.reviewImg} /></div> : <div className="container"><img src="bread.png" id="bread" /></div>}</div>)}
         </Grid>
@@ -165,44 +168,6 @@ const Feed = () => {
     </div>)
 }
 export default Feed;
-const Header = styled.header`
-width: 90%;
-position: sticky;
-background-color: white;
-padding: 10px 20px;
-top: 0px;
-border-bottom: solid thin #eeeeee;
-color: #6f6f6f;
-.col-container{
-  justify-content: center;
-  align-items: center;
-  font-size: x-small;
-}
-.row-container{
-  gap: 10px;
-}
-#bold{
-  font-weight: bold;
-  font-size: large;
-}
-.content{
-  flex: 1;
-  justify-content: flex-end;
-}
-.visit{
-  margin-left: 20px;
-  font-size: x-large;
-  align-items: center;
-  margin-bottom: 5px;
-}
-.visit #text{
-  position: absolute;
-  right: 20px;
-  transform: translate(-100%);
-  color: white;
-  font-size: medium;
-}
-`
 
 const Form = styled.div<{ valid: boolean }>`
 position: absolute;
@@ -210,22 +175,24 @@ z-index: 99;
 background-color: #2b2b2b71;
 width: 100%;
 height: 100vh;
-justify-content: center;
+
 .wrapper{
+  margin-top: 200px;
   background-color: white;
   padding: 30px 50px;
   align-items: center;
   border-radius: 20px;
-  border:solid thin #46A6FF;
+  border:solid thin ${props=>props.theme.color.blue};
 }
 form{
   margin-top: 30px;
   align-items: center;
   input[type=text]{
     width: 100%;
-    border:${props => props.valid ? `solid thin #46A6FF` : `solid thin #ff5c46`};
+    border:solid thin ${props => props.valid ? props.theme.color.blue : props.theme.color.red};
     border-radius: 5px;
     margin-bottom: 30px;
+    padding: 10px 15px;
   }
   input[type=submit]{
     all: unset;
@@ -238,44 +205,22 @@ form{
     color: grey;
   }
   #valid{
-    color:${props => props.valid ? `#46A6FF` : `#ff5c46`};
+    color:${props => props.valid ? props.theme.color.blue : props.theme.color.red};
     font-size: small;
     margin-bottom: 20px;
   }
 }
 `
-const Label = styled.div`
+const Modal=styled.div`
+padding: 10px 15px;
+gap: 10px;
+border: solid thin ${props=> props.theme.color.blue};
+position: absolute;
+background-color: white;
+margin-left: 60px;
+margin-top: 30px;
+border-radius: 5px;
 font-size: medium;
-padding: 15px;
-display: flex;
-align-items: center;
-justify-content: center;
-border-bottom: solid thin #eeeeee;
-width: 90%;
-`
-const Grid = styled.div`
-display: grid;
-  width: 100%;
-  height: 100%;
-  grid-template-columns: repeat(3, 33vw);
-  grid-auto-rows: 33vw;
-  gap: 1px;
-  >div{
-  width: 100%;
-  height: 100%;
-  display: flex;
-  background-color: white;
-  overflow: hidden;
-  justify-content: center;
-  align-items: center;
-  border: solid thin #e9e9e9;
-}
-img{
-  width: 40vw;
-  object-fit: cover;
-}
-#bread{
-  width: 50%;
-}
-`
+font-weight: lighter;`
+
 

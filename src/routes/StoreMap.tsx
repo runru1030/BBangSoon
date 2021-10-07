@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import StoreList from '../component/StoreList';
 import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
+import { Header, SearchForm } from '../assets/styles/global-style';
 
 const StoreMap = () => {
     /* location */
@@ -35,7 +36,7 @@ const StoreMap = () => {
     const [search, setSearch] = useState<string>("");         //위치 검색어
     const [addressList, setAddressList] = useState<any[]>([]);//위치 검색 결과 arr
     const onClickSearch = () => {
-        setIsOpen(true);
+        setIsOpen(prev=> !prev);
     }
     const onSubmit = (event: React.FormEvent) => {
         event.preventDefault();
@@ -97,27 +98,27 @@ const StoreMap = () => {
     return (<div className="surrounding">
         <Header>
             <div><FontAwesomeIcon icon={faMapMarkerAlt} /> 빵 지도</div>
-            <span onClick={onClickSearch}>위치 검색</span>
+            <span onClick={onClickSearch} id="search">위치 검색</span>
         </Header>
         <div>
             {isOpen &&
                 /* 검색창 */
-                <form onSubmit={onSubmit}>
+                <SearchForm onSubmit={onSubmit} isAbs={true} className="container">
                     <input type="text" value={search} placeholder="위치 검색" onChange={(event) => setSearch(event.target.value)} />
                     <input type="submit" id="search" style={{ "display": "none" }} />
                     <label htmlFor="search" id="search-btn">
                         <FontAwesomeIcon icon={faSearch} />
                     </label>
-                </form>}
+                </SearchForm>}
             {addressList.length == 0 ?
                 /* map view */
                 <><Map loc={loc} setLoc={setLoc} curLoc={curLoc} markerArr={markerArr} />
-                    <div className="scroll-list">
+                    <ScrollDiv className="col-container">
                         {markerArr.map((store) =>
                             <StoreList store={store} />
                         )}
-                        {!isEnd && <button className="more-btn" onClick={onClickNext}>더 보기</button>}
-                    </div></>
+                        {!isEnd && <MoreBtn className="more-btn" onClick={onClickNext}>더 보기</MoreBtn>}
+                    </ScrollDiv></>
                 :
                 /* search result Arr */
                 <div>{addressList.map((it: any, idx: number) =>
@@ -128,30 +129,26 @@ const StoreMap = () => {
     </div>);
 }
 export default StoreMap;
-const Header = styled.header`
-position: sticky;
-display: flex;
-align-items: center;
-padding: 10px 20px;
-top: 0px;
-font-size: medium;
-border-bottom: solid thin #e9e9e9;
-background-color: white;
-color:#6f6f6f;
-span{
-    font-size: x-small;
-    font-weight: normal;
-    flex: 1;
-    text-align: end;
-    color: #46A6FF;
-    
-}
-`
+
 const List = styled.div`
 width: 100%;
 display: flex;
 align-items: center;
 padding: 20px;
 height: 30px;
-border-top: solid thin #eeeeee;
+border-top: ${props=>`solid thin`+props.theme.color.border_grey};
 `
+const MoreBtn=styled.button`
+ all: unset;
+  color: #46A6FF;
+  text-align: center;
+  width: 100%;
+`
+const ScrollDiv=styled.div`
+  overflow: scroll;
+  padding-bottom: 100px;
+  width: 100%;
+  height:100%;
+  max-height: 100vh;
+  overflow: auto;
+  `

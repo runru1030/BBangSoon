@@ -2,8 +2,10 @@ import React from 'react'
 import ImgModal from './ImgModal';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-
-const Grid: React.FC<any> = ({ imgArr }) => {
+type props={
+  imgArr:{url:string}[]
+}
+const Grid: React.FC<props> = ({ imgArr }) => {
   const history = useHistory();
 
   const onClickStoreImage = () => {

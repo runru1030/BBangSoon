@@ -47,7 +47,7 @@ display: flex;
 align-items: center;
 padding: 20px 0px;
 height: 30px;
-border-top: solid thin #eeeeee;
+border-top: ${props=>`solid thin`+props.theme.color.border_grey};
 #storeName{
     flex: 1;
     margin-left: 20px;

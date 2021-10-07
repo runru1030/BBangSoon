@@ -94,27 +94,44 @@ const Map: React.FC<locationProps> = ({ loc, setLoc, curLoc, markerArr }) => {
   return (<>
     {location.pathname == "/storemap" && 
     <ReSearchBtn onClick={onClickReSearch}><FontAwesomeIcon icon={faRedo} /><span>현 위치 검색</span></ReSearchBtn>}
-    <div id="map" style={{
+    <MapDiv id="map" style={{
       width: '100%',
       height: '300px',
-      zIndex: 99
+      zIndex: 1
     }
     }>
 
-    </div></>);
+    </MapDiv></>);
 }
 export default Map;
 const ReSearchBtn= styled.div`
-color: #46A6FF;
+color:${props=>props.theme.color.blue};
 display: flex;
 align-items: center;
 background-color: white;
 position: absolute;
-z-index: 999;
+z-index: 9;
 font-size: small;
 padding: 5px 10px;
 border-radius: 20px;
 margin-left: 50%;
 transform: translate(-50%, 10px);
 gap: 5px;
+`
+const MapDiv=styled.div`
+#info{
+  font-size: small;
+  border: solid #dcdcdc;
+  border: solid #46A6FF;
+  background-color: rgb(255, 255, 255);
+  padding: 5px 10px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  transform: translate(40%, -130%);
+  box-shadow: 2px 2px 2px 2px #46a6ff33;
+}
+#info > span:nth-child(1){
+  color: #46A6FF;
+}
 `

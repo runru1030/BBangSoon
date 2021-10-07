@@ -22,8 +22,8 @@ const Store = styled.div`
 display: flex;
 align-items: center;
 padding: 35px 0;
-border-bottom: solid thin #eeeeee;
-border-right: solid thin #eeeeee;
+border-bottom: ${props=>`solid thin`+props.theme.color.border_grey};
+border-right: ${props=>`solid thin`+props.theme.color.border_grey};
 font-weight: lighter;
 `
 
@@ -35,7 +35,7 @@ const GridContainer = styled.div`
   column-gap: 3px;
 row-gap: 3px;
   cursor: pointer;
-border-top: solid thin #eeeeee;
+border-top: ${props=>`solid thin`+props.theme.color.border_grey};
 >div{
   display: flex;
   background-color: white;

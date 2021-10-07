@@ -13,6 +13,7 @@ import { useHistory } from "react-router-dom";
 import ReviewList from "../component/ReviewList";
 import ReviewForm from "../component/ReviewForm";
 import { setStoreInfo } from "../modules/store";
+import { Header, Label } from '../assets/styles/global-style';
 
 const Store = () => {
     const history = useHistory();
@@ -70,8 +71,7 @@ const Store = () => {
     /* 리뷰 작성 */
     const [isWrite, setIsWrite] = useState(false);
     const onClickWrite = () => {
-        isLoggedin ? setIsWrite(false) : history.push("/auth")
-        setIsWrite(prev => !prev);
+        isLoggedin ? setIsWrite(prev => !prev) : history.push("/auth");
     }
 
     /* store 정보 REST API*/
@@ -94,11 +94,11 @@ const Store = () => {
     return (<>
         <Header >
             <span id="storeName">{storeInfo.storeName}</span>
-            <div>
+            <div className="wrapper">
                 <span>{storeInfo.reviewCnt}</span>
                 <span id="small">리뷰</span>
             </div>
-            <div>
+            <div className="wrapper">
                 <span>{storeInfo.avgStar?.toFixed(1)}</span>
                 <span id="small">평점</span>
             </div>
@@ -106,7 +106,7 @@ const Store = () => {
             <FontAwesomeIcon onClick={() => onClickFeature("wish")} icon={faHeart} color={isWish ? "#f89573" : "#bfbfbf"} id="wish" />
         </Header>
 
-        <div className="store">
+        <div>
             {/* 크롤링 로딩 view */
                 (!storeInfo.Reviews || storeInfo.Reviews.length == 0) && <Loding>
                     <img width="50%" src="loding.gif" />
@@ -114,18 +114,18 @@ const Store = () => {
                 </Loding>}
             {/* store Image view */}
             <div className="img-viewer">
-                {storeInfo.StoreImgs?.length == 1 && <Grid imgArr={[{ url: storeInfo.StoreImgs[0].imageUrl }]} />}
-                {storeInfo.StoreImgs?.length == 2 && <Grid imgArr={[{ url: storeInfo.StoreImgs[0].imageUrl }, { url: storeInfo.StoreImgs[1].imageUrl }]} />}
-                {storeInfo.StoreImgs?.length == 3 && <Grid imgArr={[{ url: storeInfo.StoreImgs[0].imageUrl }, { url: storeInfo.StoreImgs[1].imageUrl }, { url: storeInfo.StoreImgs[2].imageUrl }]} />}
-                {storeInfo.StoreImgs?.length == 0 && <div className="non-img">
+                {(!storeInfo.StoreImgs||storeInfo.StoreImgs.length==0)? <NomImg className="non-img container">
                     <img src="bread.png" width="40%" />
                     <span>{storeInfo.storeName}</span>
-                </div>}
+                </NomImg>
+                :
+                <Grid imgArr={storeInfo.StoreImgs.map(img=>({url: img.imageUrl}))}/>
+                }
             </div>
             {/* store info view */}
             <div>
-                <Label onClick={(event) => onClick("detail")} style={isOpen.detail ? { "color": "#46A6FF" } : undefined}>상세정보</Label>
-                {isOpen.detail && <Container className="detail">
+                <Label onClick={(event) => onClick("detail")} style={isOpen.detail ? { "color": "#46A6FF" } : undefined} path="">상세정보</Label>
+                {isOpen.detail && <DetailDiv className="col-container">
                     <div>
                         <span id="label"><FontAwesomeIcon icon={faMapMarkerAlt} /></span>
                         <span>{storeInfo.address}</span>
@@ -138,16 +138,18 @@ const Store = () => {
                         <span id="label"><FontAwesomeIcon icon={faGlobe} /></span>
                         <a href={"https://" + storeInfo.site}>{storeInfo.site}</a>
                     </div>}
-                </Container>}
+                </DetailDiv>}
             </div>
             {/* store's map view */}
             <div>
-                <Label onClick={(event) => onClick("map")} style={isOpen.map ? { "color": "#46A6FF" } : undefined}>지도
-                    {isOpen.map && <div className="navi-wrapper">
+                <Label onClick={(event) => onClick("map")} style={isOpen.map ? { "color": "#46A6FF" } : undefined} path="">지도
+                    {isOpen.map && 
+                    <Navi className="navi-wrapper">
                         <a href={"https://map.kakao.com/link/roadview/" + storeInfo.id} id="navi">
                             <FontAwesomeIcon icon={faMapMarkerAlt} color="#46A6FF" />
-                            <span>길찾기</span></a>
-                    </div>}
+                            <span>길찾기</span>
+                        </a>
+                    </Navi>}
                 </Label>
                 {isOpen.map && <div className="map">
                     <Map loc={{
@@ -159,17 +161,17 @@ const Store = () => {
             </div>
             {/* store's menu view */}
             <div>
-                <Label onClick={(event) => onClick("menu")} style={isOpen.menu ? { "color": "#46A6FF" } : undefined}>메뉴</Label>
+                <Label onClick={(event) => onClick("menu")} style={isOpen.menu ? { "color": "#46A6FF" } : undefined} path="">메뉴</Label>
                 {isOpen.menu && <div>
-                    {storeInfo.Menus?.map((menu: any) => <Label className="list">
+                    {storeInfo.Menus?.map((menu: any) => <Label path="">
                         <span id="tit">{menu.tit}</span>
                         <span id="price">{menu.price}</span>
                     </Label>)}
                 </div>}
             </div>
             {/* store's review view */}
-            <div className="review-wrapper">
-                <Label onClick={(event) => onClick("review")} style={isOpen.review ? { "color": "#46A6FF" } : undefined}>
+            <div>
+                <Label onClick={(event) => onClick("review")} style={isOpen.review ? { "color": "#46A6FF" } : undefined} path="">
                     <span>리뷰</span>
                     <span onClick={onClickWrite} id="side">{isWrite ? "취소" : "작성하기"}</span>
                 </Label>
@@ -205,58 +207,6 @@ type loc = {
     y: number,
     x: number,
 }
-const Header = styled.header`
-position: sticky;
-z-index:999;
-top: 0;
-width: 100%;
-background-color: white;
-display: flex;
-align-items: center;
-justify-content: center;
-padding: 10px 20px ;
-gap: 10px;
-border-bottom: solid thin #eeeeee;
-box-sizing: border-box;
-#storeName{
-    flex: 0.7;
-}
-div{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-size: large;
-    margin-top: 10px;
-    color: #636363;
-}
-div>#small{
-    font-size: xx-small;
-}
-div, #visit{
-    flex: 0.1;
-}
-
-`
-const Label = styled.div`
-width: 90%;
-font-size: medium;
-padding: 15px;
-border-top: solid thin #eeeeee;
-  display: flex;
-  align-items: center;
-span{
-    flex:1;
-}
-#side{
-    flex: 0.2;
-}
-`
-const Container = styled.div`
-width: 90%;
-font-size: medium;
-padding: 15px;
-border-top: solid thin #eeeeee;
-`
 const Loding = styled.div`
 width: 100%;
 height: 100vh;
@@ -272,5 +222,49 @@ img{
 }
 span{
     margin-top: 50px;
+}
+`
+const DetailDiv=styled.div`
+div{
+  padding: 15px;
+  font-weight: lighter;
+  font-size: small;
+    border-top: ${props=>`solid thin`+props.theme.color.border_grey};
+}
+& > div:nth-child(1){
+  border: none;
+}
+#label{
+  color: #b3b3b3;
+  margin-right: 10px;
+  font-size: large;
+}
+`
+const Navi= styled.div`
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  #navi{
+  margin-right: 5px;
+  border: solid thin #FAE100;
+  border-radius: 25px;
+  padding: 3px 10px;
+  display: flex;
+  align-items: center;
+  font-size: small;
+  gap: 5px;
+  color: black;
+  transform: translate(10px);
+}
+`
+const NomImg=styled.div`
+width: 100%;
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+padding: 30px 0;
+span{
+margin-top: 30px;
 }
 `

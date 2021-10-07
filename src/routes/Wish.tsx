@@ -1,13 +1,12 @@
-import * as React from 'react';
 import Nav from '../component/Nav';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHeart} from '@fortawesome/free-solid-svg-icons';
-import styled from 'styled-components';
 import axios from 'axios';
 import { useState ,useEffect} from 'react';
 import StoreList from '../component/StoreList';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
+import { Header } from '../assets/styles/global-style';
 type storeObj = {
   id: number,
   storeName: string | null,
@@ -30,22 +29,13 @@ const Wish = () => {
     })
   }, [])
   return (
-    <div className="feed container">
+    <div className="feed">
       <Header className="row-container">
-        <span id="">위시리스트</span>
           <FontAwesomeIcon icon={faHeart} color="#f89573"/>
+        <span id="">관심 매장</span>
       </Header>
         {storeArr.map((store:any)=><StoreList store={store}/>)}
       <Nav />
     </div>)
 }
 export default Wish;
-const Header = styled.header`
-width: 90%;
-position: sticky;
-padding: 20px 20px;
-top: 0px;
-border-bottom: solid thin #e9e9e9;
-color: #6f6f6f;
-gap: 10px;
-`

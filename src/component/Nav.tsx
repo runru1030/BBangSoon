@@ -54,7 +54,7 @@ gap:20%;
 align-items:center;
 justify-content: center;
 padding: 10px 0;
-border-top: solid thin #eeeeee;
+border-top: ${props=>`solid thin`+props.theme.color.border_grey};
 background-color: white;
 div{
     display:flex;

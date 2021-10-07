@@ -1,12 +1,10 @@
-import { faBreadSlice} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import { useEffect } from "react";
 import { useState } from "react";
-import styled from "styled-components";
 import Nav from "../component/Nav";
 import ImgModal from "../component/ImgModal";
 import { useSelector } from "react-redux";
+import { Grid, Header, Label } from '../assets/styles/global-style';
 type img={
     imageUrl:string
 }
@@ -24,23 +22,22 @@ const StoreImg = () => {
         <div className="store">
         <Header >
         <span id="storeName">{storeInfo.storeName}</span>
-        <div>
+        <div className="wrapper">
         <span>{storeInfo.reviewCnt}</span>
         <span id="small">리뷰</span>
         </div>
-        <div>
+        <div className="wrapper">
         <span>{storeInfo.avgStar.toFixed(1)}</span>
         <span id="small">평점</span>
         </div>
-            <FontAwesomeIcon icon={faBreadSlice} color={ "#e2c26e"} id="visit"/>
     </Header>
 
-    <div className="store-img"> 
+    <div className="col-container"> 
             <div>
-                <Label style={ { "color": "#46A6FF" } }>사진 <span id="side">{"총 "+storeImgArr.length+"장"}</span></Label>
-                <div className="grid">
-                {storeImgArr.map((img:img)=><div><ImgModal src={img.imageUrl} width="100%"/></div>)}
-                </div>
+                <Label path="storeImg" style={ { "color": "#46A6FF" } }>사진 <span id="side">{"총 "+storeImgArr.length+"장"}</span></Label>
+                <Grid isFeed={false}>
+                {storeImgArr.map((img:img)=><div className="container"><ImgModal src={img.imageUrl} width="100%"/></div>)}
+                </Grid>
             </div>
             </div>
             <Nav />
@@ -48,45 +45,3 @@ const StoreImg = () => {
     </>)
 }
 export default StoreImg;
-
-const Header = styled.header`
-position: sticky;
-top: 5px;
-background-color: white;
-display: flex;
-align-items: center;
-justify-content: center;
-padding: 20px;
-height: 30px;
-gap: 10px;
-border-bottom: solid thin #eeeeee;
-#storeName{
-    flex: 0.7;
-}
-div{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-size: large;
-    margin-top: 10px;
-    color: #636363;
-}
-div>#small{
-    font-size: xx-small;
-}
-div, #visit{
-    flex: 0.1;
-}
-
-`
-const Label = styled.div`
-width: 90%;
-font-size: medium;
-padding: 15px;
-border-top: solid thin #dddddd;
-  display: flex;
-  align-items: center;
-
-#side{
-    flex: 1;
-}`

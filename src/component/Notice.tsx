@@ -1,9 +1,10 @@
 import { faBreadSlice } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import styled from "styled-components";
 
 const Notice = () => {
   return (<>
-    <div className="row-container notice-container">
+    <NoticeDiv className="row-container">
       <div className="col-container phone-view">
         <div className="row-container notice-part">
           <img src="logo.png" width="15%" />
@@ -42,7 +43,79 @@ const Notice = () => {
 
       </div>
 
-    </div>
+    </NoticeDiv>
   </>)
 }
 export default Notice;
+const NoticeDiv=styled.div`
+  font-size: medium;
+  font-weight: lighter;
+  justify-content: center;
+  height: 100vh;
+  overflow: hidden;
+  align-items: flex-start;
+.phone-view{
+  flex: 0.35;
+  margin-top: 100px;
+  align-items: center;
+}
+.text-view{
+  flex: 0.7;
+  align-items: center;
+}
+.notice-part{
+  width: 90%;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 30px;
+  color: #636363;
+  margin-left: 10px;
+}
+.wrapper{
+  width: 90%;
+  border-radius: 20px;
+  box-shadow: -10px 5px 30px 10px #46a6ff18;
+  margin-top:50px;
+  padding-bottom: 100px;
+  display: flex;
+  align-items: center;
+}
+.rounding-img{
+  border-radius: 15px;
+  width: 25%;
+  padding: 5px 0;
+  box-shadow: -5px 10px 10px 10px #00000017;
+  overflow: hidden;
+  justify-content: center;
+}
+.rounding-img img{
+  width: 100%;
+}
+.text-view .list{
+  gap: 30px;
+  margin-top: 50px;
+  margin-bottom: 30px;
+  justify-content: center;
+  padding: 10px 20px;
+  border-bottom: solid thin #46A6FF;
+  border-top: solid thin #46A6FF;
+}
+.text-view .text-part{
+  font-size: small;
+  color: #9e9e9e;
+  width: 70%;
+  margin-left: 50px;
+  margin-bottom: 30px;
+}
+.text-view .text-part p:nth-child(2){
+  margin-left: 50px;
+}
+.text-view .list #icon{
+  margin-right: 5px;
+}
+.text-view .prototype-view{
+  width: 85%;
+  justify-content: center;
+}
+
+`

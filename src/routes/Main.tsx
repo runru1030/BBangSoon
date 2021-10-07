@@ -8,6 +8,7 @@ import { useState, useEffect } from 'react';
 import StoreList from '../component/StoreList';
 import { useSelector } from 'react-redux';
 import LocList from '../component/LocList';
+import { Header, Label, SearchForm } from '../assets/styles/global-style';
 const Main = () => {
     /* location */
     const location = useSelector((state: any) => state.user.location);
@@ -83,54 +84,52 @@ const Main = () => {
     }
 
     return (
-        <div className="main container">
+        <MainCt className="main">
             <Header><FontAwesomeIcon icon={faMapMarkerAlt} onClick={onClickLoc} /> {location?.si}</Header>
             {changeSi ?
                 <LocList setChangeSi={setChangeSi} />
                 :
-                <><form onSubmit={onSubmit}>
+                <><SearchForm isAbs={false} onSubmit={onSubmit} className="container">
                         <input type="text" value={search} onChange={onChange} placeholder="매장 검색" />
                         <input type="submit" id="search" style={{ "display": "none" }} />
                         <label htmlFor="search" id="search-btn"><FontAwesomeIcon icon={faSearch} /></label>
-                    </form>
+                    </SearchForm>
 
                     {resultArr.length == 0 ?
-                        <div className="col-container main-wrapper">
-                            <Label>랭킹</Label>
+                        <div className="col-container wrapper">
+                            <Label path={"main"}>랭킹</Label>
                             {reviewRank.map((store: any, idx: number) => (idx < 10 || (isMore)) && <><div className="row-container reviewRank">
-                                <StoreList store={store} children={<span id="rank-num" style={{ "color": idx < 3 ? colorList[idx] : "black" }}>{idx + 1}</span>} />
+                                <StoreList store={store} children={<RankNum id="rank-num" style={{ "color": idx < 3 ? colorList[idx] : "black" }}>{idx + 1}</RankNum>} />
                             </div>
                                 {idx == 9 && !isMore && <span className="more-btn" onClick={onClickMore}>더보기</span>}
                             </>)}
                         </div>
                         :
-                        <div className="main-wrapper">
+                        <div className="wrapper">
                             {resultArr.map((result: any) => <StoreList store={result} />)}
                             {!isEnd && <button className="more-btn" onClick={onClickNext}>더 보기</button>}
                         </div>}</>
             }
             <Nav />
-        </div>)
+        </MainCt>)
 }
 export default Main;
-
-const Header = styled.header`
-width: 90%;
-position: sticky;
-padding: 10px 20px;
-top: 0px;
-color: #6f6f6f;
-background-color: white;
+const RankNum =styled.span`
+  font-size: large;
+  margin-left: 20px;
 `
-const Label = styled.div`
-font-size: medium;
-padding: 15px;
-display: flex;
-align-items: center;
-span{
-    flex:1;
+const MainCt=styled.div`
+.wrapper{
+  width: 100%;
+  margin-right:0;
+  margin-bottom: 100px;
 }
-#side{
-    flex: 0.2;
-}
-`
+.wrapper .more-btn{
+  align-items: center;
+  width: 100%;
+  text-align: center;
+  flex: 1;
+  border-top: ${props=>`solid thin`+props.theme.color.border_grey};
+  padding: 10px 0;
+  font-size: small;
+}`

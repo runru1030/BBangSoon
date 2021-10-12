@@ -1,11 +1,12 @@
 import React, { useEffect, useRef } from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
-type props = {
+interface props {
   src: string,
-  width: string | undefined,
+  width?: string,
+  height?: string
 }
-const ImgModal: React.FC<props | any> = ({ src, width, height }) => {
+const ImgModal: React.FC<props> = ({ src, width, height }) => {
   const [isOpen, setIsOpen] = useState(false);
   const onClick = () => {
     setIsOpen(true);
@@ -19,8 +20,8 @@ const ImgModal: React.FC<props | any> = ({ src, width, height }) => {
 
   const wrapperRef = useRef<HTMLImageElement>(null);
   /* 외부영역 클릭 감지 */
-  const handleClickOutside = (event: any) => {
-    if (wrapperRef && !wrapperRef.current?.contains(event.target)) {
+  const handleClickOutside = (event: MouseEvent) => {
+    if (wrapperRef && !wrapperRef.current?.contains(event.target as Node)) {
       setIsOpen(false);
     }
     else {

@@ -19,23 +19,23 @@ if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(naviga
   ReactDOM.render(
     <React.StrictMode>
       <ThemeProvider theme={theme}>
-      <Provider store={store}>
-        <PersistGate persistor={persistor}>
-          <GlobalStyle/>
-          <App />
-        </PersistGate>
-      </Provider>
+        <Provider store={store}>
+          <PersistGate persistor={persistor}>
+            <GlobalStyle />
+            <App />
+          </PersistGate>
+        </Provider>
       </ThemeProvider>
     </React.StrictMode>,
     document.getElementById('root')
   )
 }
-else {  
+else {
   ReactDOM.render(
     <ThemeProvider theme={theme}>
-    <GlobalStyle/>
-    <Notice/>
-      </ThemeProvider>
+      <GlobalStyle />
+      <Notice />
+    </ThemeProvider>
     ,
     document.getElementById('root')
   )

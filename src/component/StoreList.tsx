@@ -1,20 +1,35 @@
 import * as React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
-import axios from 'axios';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setStoreInfo } from '../modules/store';
-const StoreList: React.FC<any> = ({ store, children }) => {
+export interface StoreType {
+    id: number,
+    road_address_name?: string,
+    address_name?: string,
+    place_name: string,
+    phone?: string,
+    x?: number,
+    y?: number,
+    place_url?: string,
+    reviewCnt?: number,
+    avgStar?: number,
+}
+interface StoreListProps {
+    store: StoreType,
+    children?: HTMLElement | React.ReactElement
+}
+const StoreList: React.FC<StoreListProps> = ({ store, children }) => {
     const history = useHistory();
     const dispatch = useDispatch();
     const onClick = () => {
         dispatch(setStoreInfo({
             id: store.id,
-            address: store.road_address_name ? store.road_address_name : store.address_name,
-            storeName: store.place_name,
-            telephone: store.phone,
+            address_name: store.road_address_name ? store.road_address_name : store.address_name,
+            place_name: store.place_name,
+            phone: store.phone,
             x: store.x,
             y: store.y,
             place_url: store.place_url,
@@ -26,7 +41,7 @@ const StoreList: React.FC<any> = ({ store, children }) => {
 
     return (<Store onClick={onClick}>
         {children}
-        <span id="storeName">{store.place_name ? store.place_name : store.storeName}</span>
+        <span id="storeName">{store.place_name}</span>
         <div className="row-container">
             <div>
                 <span>{store.avgStar == null ? <FontAwesomeIcon icon={faSpinner} /> : store.reviewCnt}</span>
@@ -47,7 +62,7 @@ display: flex;
 align-items: center;
 padding: 20px 0px;
 height: 30px;
-border-top: ${props=>`solid thin`+props.theme.color.border_grey};
+border-top: ${props => `solid thin` + props.theme.color.border_grey};
 #storeName{
     flex: 1;
     margin-left: 20px;

@@ -5,30 +5,40 @@ import { faBreadSlice } from '@fortawesome/free-solid-svg-icons';
 import styled from 'styled-components';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
-import StoreList from '../component/StoreList';
+import StoreList, { StoreType } from '../component/StoreList';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 import { setLoggedInfo, setUserInfo } from '../modules/user';
 import { setReviewInfo } from '../modules/review';
 import { Grid, Header, Label } from '../assets/styles/global-style';
-const Feed = () => {
+import { RootState } from '../modules';
+
+export interface reviewType{
+  id: number,
+  star: number,
+  content: string,
+  date: Date,
+  reviewImg: string | null,
+  StoreId: number
+}
+const Feed: React.FC = () => {
   const history = useHistory();
   const dispatch = useDispatch();
-  const { userObj } = useSelector((state: any) => ({ userObj: state.user.userObj, }))
-  const { isLoggedin } = useSelector((state: any) => ({ isLoggedin: state.user.isLoggedin }))
-  const [reviewArr, setReviewArr] = useState<any[]>([])     //유저의 리뷰arr
+  const { userObj } = useSelector((state: RootState) => ({ userObj: state.user.userObj, }))
+  const { isLoggedin } = useSelector((state: RootState) => ({ isLoggedin: state.user.isLoggedin }))
+  const [reviewArr, setReviewArr] = useState<reviewType[]>([])     //유저의 리뷰arr
 
   /* 방문 일지 */
-  const onClickReview = (review: any | null) => {
+  const onClickReview = (review: reviewType) => {
     dispatch(setReviewInfo(review));
     history.push("/feed/review");
   }
 
   /* 순례 리스트 */
-  const [isDetailVisit, setIsDetailVisit] = useState<boolean>(false);
-  const [visitId, setVisitId] = useState<any[]>([])   //유저의 순례리스트 매장 ID 
-  const [visitArr, setVisitArr] = useState<any[]>([]) //
-  const onClickVisit = () => {
+  const [isDetailVisit, setIsDetailVisit] = useState(false);
+  const [visitId, setVisitId] = useState<number[]>([])   //유저의 순례리스트 매장 ID 
+  const [visitArr, setVisitArr] = useState<StoreType[]>([]) //
+  const onClickVisit = (): void => {
     axios.post(`/store/list`, visitId)
       .then(res => {
         setVisitArr(res.data)
@@ -37,7 +47,7 @@ const Feed = () => {
   }
 
   /* Logout */
-  const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
+  const [isOpenModal, setIsOpenModal] = useState(false);
   const wrapperRef = React.useRef<HTMLImageElement>(null);
   const onClicName = () => {
     setIsOpenModal(true);
@@ -53,7 +63,7 @@ const Feed = () => {
   }
 
   /* 닉네임 변경 */
-  const [editNick, setEditNick] = useState<boolean>(false);
+  const [editNick, setEditNick] = useState(false);
   const [newNick, setNewNick] = useState({ nickName: "", valid: false, error: "" } as { nickName: string, valid: boolean, error: string });
   const onClickEditNick = () => {
     setEditNick(prev => !prev);
@@ -81,7 +91,6 @@ const Feed = () => {
       });
     }
     catch (error: unknown) {
-
       if (error instanceof Error) {
         alert(error.message);
       }
@@ -89,8 +98,8 @@ const Feed = () => {
   }
 
   //외부영역 클릭 감지
-  const handleClickOutside = (event: any) => {
-    if (wrapperRef && !wrapperRef.current?.contains(event.target)) {
+  const handleClickOutside = (event: MouseEvent) => {
+    if (wrapperRef && !wrapperRef.current?.contains(event.target as Node)) {
       setIsOpenModal(false);
     }
     else {
@@ -110,7 +119,7 @@ const Feed = () => {
     !isLoggedin && history.push("/auth");
     axios.get(`/user/feed/${userObj.id}`).then(res => {
       setReviewArr(res.data.Reviews)
-      setVisitId(res.data.Visits.map((it: any) => (it.StoreId)))
+      setVisitId(res.data.Visits.map((it: { StoreId: number }) => (it.StoreId)))
     })
   }, [])
 
@@ -156,11 +165,11 @@ const Feed = () => {
       <Label path={"feed"}>{isDetailVisit ? "순례 리스트" : "방문 일지"}</Label>
       {isDetailVisit ?
         /* 순례 리스트 page */
-        <>{visitArr.map((store: any) => <StoreList store={store} />)}</>
+        <>{visitArr.map((store: StoreType) => <StoreList store={store} />)}</>
         :
         /* 일지 page */
         <Grid isFeed={true}>
-          {reviewArr.map((review: any) => <div onClick={() => onClickReview(review)}>
+          {reviewArr.map((review: reviewType) => <div onClick={() => onClickReview(review)}>
             {review.reviewImg ? <div className="container"><img src={review.reviewImg} /></div> : <div className="container"><img src="bread.png" id="bread" /></div>}</div>)}
         </Grid>
       }
@@ -182,7 +191,7 @@ height: 100vh;
   padding: 30px 50px;
   align-items: center;
   border-radius: 20px;
-  border:solid thin ${props=>props.theme.color.blue};
+  border:solid thin ${props => props.theme.color.blue};
 }
 form{
   margin-top: 30px;
@@ -211,10 +220,10 @@ form{
   }
 }
 `
-const Modal=styled.div`
+const Modal = styled.div`
 padding: 10px 15px;
 gap: 10px;
-border: solid thin ${props=> props.theme.color.blue};
+border: solid thin ${props => props.theme.color.blue};
 position: absolute;
 background-color: white;
 margin-left: 60px;

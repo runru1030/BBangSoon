@@ -1,8 +1,9 @@
 import { faBreadSlice } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React from "react";
 import styled from "styled-components";
 
-const Notice = () => {
+const Notice: React.FC = () => {
   return (<>
     <NoticeDiv className="row-container">
       <div className="col-container phone-view">
@@ -47,7 +48,7 @@ const Notice = () => {
   </>)
 }
 export default Notice;
-const NoticeDiv=styled.div`
+const NoticeDiv = styled.div`
   font-size: medium;
   font-weight: lighter;
   justify-content: center;

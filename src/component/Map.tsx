@@ -1,23 +1,24 @@
-
 import { faRedo } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
+import { StoreState } from '../routes/Store';
 
-type locationProps = {
+interface locationProps {
   //지도 중심 위치
-  loc: loc,
-  setLoc: React.Dispatch<React.SetStateAction<loc>>|null,
+  loc: StoreState["loc"],
+  setLoc: React.Dispatch<React.SetStateAction<StoreState["loc"]>> | null,
   //내 위치
-  curLoc: loc,
+  curLoc: StoreState["loc"],
   //매장 정보arr
-  markerArr: any[],
-}
-type loc = {
-  title: string,
-  y: number,
-  x: number
+  markerArr: {
+    x?: number,
+    y?: number,
+    title?: string,
+    place_name?: string,
+    address_name?: string
+  }[],
 }
 declare global {
   interface Window {
@@ -26,19 +27,17 @@ declare global {
 }
 const Map: React.FC<locationProps> = ({ loc, setLoc, curLoc, markerArr }) => {
   const location = useLocation();
-  const [mapCenter, setMapcenter] = useState<loc>({ title: "", y: loc.y, x: loc.x });
+  const [mapCenter, setMapcenter] = useState<StoreState["loc"]>({ title: "", y: loc.y, x: loc.x });
   useEffect(() => {
-    console.log(loc);
-    
     map();
   }, [loc, markerArr])
 
   const onClickReSearch = () => {
-    setLoc&&setLoc(mapCenter)
+    setLoc && setLoc(mapCenter)
   }
   /* 카카오 지도 생성 */
   const map = () => {
-    let container = document.getElementById('map');
+    let container = document.getElementById('mapContainer');
     let options = {
       center: new window.kakao.maps.LatLng(loc?.y, loc?.x),
       level: 5
@@ -92,20 +91,17 @@ const Map: React.FC<locationProps> = ({ loc, setLoc, curLoc, markerArr }) => {
 
   }
   return (<>
-    {location.pathname == "/storemap" && 
-    <ReSearchBtn onClick={onClickReSearch}><FontAwesomeIcon icon={faRedo} /><span>현 위치 검색</span></ReSearchBtn>}
-    <MapDiv id="map" style={{
+    {location.pathname == "/storemap" &&
+      <ReSearchBtn onClick={onClickReSearch}><FontAwesomeIcon icon={faRedo} /><span>현 위치 검색</span></ReSearchBtn>}
+    <MapDiv id="mapContainer" style={{
       width: '100%',
-      height: '300px',
-      zIndex: 1
-    }
-    }>
+      height: '300px',}}>
 
     </MapDiv></>);
 }
 export default Map;
-const ReSearchBtn= styled.div`
-color:${props=>props.theme.color.blue};
+const ReSearchBtn = styled.div`
+color:${props => props.theme.color.blue};
 display: flex;
 align-items: center;
 background-color: white;
@@ -118,7 +114,7 @@ margin-left: 50%;
 transform: translate(-50%, 10px);
 gap: 5px;
 `
-const MapDiv=styled.div`
+const MapDiv = styled.div`
 #info{
   font-size: small;
   border: solid #dcdcdc;

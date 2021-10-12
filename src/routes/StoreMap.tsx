@@ -4,39 +4,33 @@ import axios from 'axios';
 import Map from '../component/Map';
 import Nav from '../component/Nav';
 import styled from 'styled-components';
-import StoreList from '../component/StoreList';
+import StoreList, { StoreType } from '../component/StoreList';
 import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { Header, SearchForm } from '../assets/styles/global-style';
+import { RootState } from '../modules';
+import { resultState } from './Main';
 
 const StoreMap = () => {
     /* location */
-    const location = useSelector((state: any) => state.user.location)
-    const [loc, setLoc] = useState({ title: "", y: location.y, x: location.x } as {
-        title: string,
-        y: number,
-        x: number,
-    }); //지도 중심 좌표
-    const [curLoc, setCurLoc] = useState({ title: "", y: location.y, x: location.x } as {
-        title: string,
-        y: number,
-        x: number,
-    }); //내 위치 좌표
+    const location = useSelector((state: RootState) => state.user.location)
+    const [loc, setLoc] = useState({ title: "", y: location.y, x: location.x }); //지도 중심 좌표
+    const [curLoc, setCurLoc] = useState({ title: "", y: location.y, x: location.x }); //내 위치 좌표
 
     /* 지도 결과 */
-    const [markerArr, setMarkerArr] = useState<any[]>([]);
+    const [markerArr, setMarkerArr] = useState<StoreType[]>([]);
     const [isEnd, setIsEnd] = useState<boolean>();
-    const [curpage, setCurPage] = useState<number>(1);
+    const [curpage, setCurPage] = useState(1);
     const onClickNext = () => {
         getStoreApi(curpage + 1);
     }
 
     /* search */
-    const [isOpen, setIsOpen] = useState<boolean>(false);     //검색창 open
-    const [search, setSearch] = useState<string>("");         //위치 검색어
-    const [addressList, setAddressList] = useState<any[]>([]);//위치 검색 결과 arr
+    const [isOpen, setIsOpen] = useState(false);     //검색창 open
+    const [search, setSearch] = useState("");         //위치 검색어
+    const [addressList, setAddressList] = useState<resultState[]>([]);//위치 검색 결과 arr
     const onClickSearch = () => {
-        setIsOpen(prev=> !prev);
+        setIsOpen(prev => !prev);
     }
     const onSubmit = (event: React.FormEvent) => {
         event.preventDefault();
@@ -75,17 +69,16 @@ const StoreMap = () => {
             setIsEnd(res.data.meta.is_end);
             setCurPage(page + 1);
 
-            var arr = res.data.documents.filter((it: any) => (it.category_group_code == "CE7" && it.category_name.split(" > ")[2] != "커피전문점") || it.category_name.split(" > ")[1] == "간식");
+            var arr = res.data.documents.filter((it: resultState) => (it.category_group_code == "CE7" && it.category_name.split(" > ")[2] != "커피전문점") || it.category_name.split(" > ")[1] == "간식");
             if (page != 1) {
                 arr = [...markerArr, ...arr];
             }
             setMarkerArr(arr);
-            axios.post("/store/list", arr.map((store: any) => store.id)).then(res => {
-                setMarkerArr(arr.map((store: any, idx: number) => ({ ...store, ...res.data[idx] })));
-                arr = arr.map((store: any, idx: number) => ({ ...store, ...res.data[idx] }));
-                console.log(res.data);
-                
-                arr.forEach(async (element: any, i: number) => {
+            axios.post("/store/list", arr.map((store: resultState) => store.id)).then(res => {
+                setMarkerArr(arr.map((store: resultState, idx: number) => ({ ...store, ...res.data[idx] })));
+                arr = arr.map((store: resultState, idx: number) => ({ ...store, ...res.data[idx] }));
+
+                arr.forEach(async (element: resultState, i: number) => {
                     if (element.avgStar == null) {
                         await axios.post("/storeCrawl/count", { id: element.id, url: element.place_url }).then(res => {
                             arr[i] = { ...arr[i], ...res.data };
@@ -105,7 +98,7 @@ const StoreMap = () => {
         <div>
             {isOpen &&
                 /* 검색창 */
-                <SearchForm onSubmit={onSubmit} isAbs={true} className="container">
+                <SearchForm onSubmit={onSubmit} isAbsolute={true} className="container">
                     <input type="text" value={search} placeholder="위치 검색" onChange={(event) => setSearch(event.target.value)} />
                     <input type="submit" id="search" style={{ "display": "none" }} />
                     <label htmlFor="search" id="search-btn">
@@ -123,7 +116,7 @@ const StoreMap = () => {
                     </ScrollDiv></>
                 :
                 /* search result Arr */
-                <div>{addressList.map((it: any, idx: number) =>
+                <div>{addressList.map((it: resultState, idx: number) =>
                     <List id={"" + idx} onClick={(event) => onClickResult(parseInt(event.currentTarget.id))}>{it.place_name}</List>)}
                 </div>}
         </div>
@@ -138,15 +131,15 @@ display: flex;
 align-items: center;
 padding: 20px;
 height: 30px;
-border-top: ${props=>`solid thin`+props.theme.color.border_grey};
+border-top: ${props => `solid thin` + props.theme.color.border_grey};
 `
-const MoreBtn=styled.button`
+const MoreBtn = styled.button`
  all: unset;
   color: #46A6FF;
   text-align: center;
   width: 100%;
 `
-const ScrollDiv=styled.div`
+const ScrollDiv = styled.div`
   overflow: scroll;
   padding-bottom: 100px;
   width: 100%;

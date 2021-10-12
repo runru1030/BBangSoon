@@ -1,13 +1,12 @@
-import { faBreadSlice } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import styled from "styled-components";
 import { ReviewCmp } from "../assets/styles/global-style";
 import ImgModal from "../component/ImgModal";
+import { RootState } from "../modules";
 import { setStoreInfo } from "../modules/store";
+import { DBStoreType } from "../routes/Store";
 import StarCmp from "./StarCmp";
-type review = {
+export interface reviewProps {
     review: {
         id: number,
         reviewImg: string | null,
@@ -15,13 +14,13 @@ type review = {
         star: number,
         nickName: string,
         date: Date,
-        UserId: number
+        UserId: number,
     },
-    userId: number
+    userId: number,
 }
-const ReviewList: React.FC<review> = ({ review, userId }) => {
+const ReviewList: React.FC<reviewProps> = ({ review, userId }) => {
     const dispatch = useDispatch();
-    const storeInfo: storeObj = useSelector((state: any) => state.store.storeObj);
+    const storeInfo: DBStoreType = useSelector((state: RootState) => state.store.storeObj);
     const onClickDel = () => {
         axios.delete(`/store/review/${review.id}`);
 
@@ -33,7 +32,7 @@ const ReviewList: React.FC<review> = ({ review, userId }) => {
     return (<><ReviewCmp className="list col-container">
         {review.reviewImg && <div className="reviewImg"><ImgModal src={review.reviewImg} width="200%" /></div>}
         <div className="row-container wrapper">
-            <StarCmp reviewStar={review.star}/>
+            <StarCmp reviewStar={review.star} />
             {userId == review.UserId && <span onClick={onClickDel} id="del-btn">삭제</span>}
         </div>
         <span id="content">{review.content}</span>
@@ -45,19 +44,3 @@ const ReviewList: React.FC<review> = ({ review, userId }) => {
     </>)
 }
 export default ReviewList;
-type storeObj = {
-    id: number,
-    address: string | null,
-    storeName: string | null,
-    telephone: string | null,
-    site: string | null,
-    x: number,
-    y: number,
-    reviewCnt: number | null,
-    avgStar: number | null,
-    Reviews: [] | null,
-    Visits: [] | null,
-    Wishes: [] | null,
-    StoreImgs: any[] | null,
-    Menus: [] | null,
-}

@@ -1,14 +1,14 @@
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { setLocationInfo, setLoggedInfo } from '../modules/user';
 import AppRouter from './Router';
 //위치 GPS, loding 화면
-const App = () => {
+const App: React.FC = () => {
   const dispatch = useDispatch();
 
   const loding = sessionStorage.getItem("loding") || "";
-  const [isLoding, setIsLoding] = useState<boolean>(loding == "false" ? false : true);
+  const [isLoding, setIsLoding] = useState(loding == "false" ? false : true);
 
   const token = JSON.parse(window.localStorage.getItem("token") || "null")?.access_token;
   useEffect(() => {

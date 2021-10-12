@@ -1,15 +1,7 @@
+import { reviewType } from "../routes/Feed";
 
 const SET_REVIEW_INFO = 'review/SET_USER_INFO'; 
 
-type review={
-    id:number,
-    reviewImg: string | null,
-    content: string | null,
-    star: number,
-    nickName: string,
-    date: Date,
-    StoreId:number,
-}
 const initialState = {
     review: {
         id:0,
@@ -19,7 +11,7 @@ const initialState = {
         StoreId:0,
     }
   };
-export const setReviewInfo= (review:review) => {
+export const setReviewInfo= (review:reviewType) => {
     return {
         type: SET_REVIEW_INFO,
         review

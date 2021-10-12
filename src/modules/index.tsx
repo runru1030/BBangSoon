@@ -21,3 +21,4 @@ const rootReducer = combineReducers({
 const persistedReducer = persistReducer(persistConfig, rootReducer);	// 추가
 
 export default persistedReducer;
+export type RootState = ReturnType<typeof persistedReducer>;

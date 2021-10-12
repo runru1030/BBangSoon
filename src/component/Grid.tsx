@@ -2,8 +2,8 @@ import React from 'react'
 import ImgModal from './ImgModal';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-type props={
-  imgArr:{url:string}[]
+interface props {
+  imgArr: { url: string }[]
 }
 const Grid: React.FC<props> = ({ imgArr }) => {
   const history = useHistory();
@@ -21,12 +21,12 @@ const Grid: React.FC<props> = ({ imgArr }) => {
         }
         {imgArr.length == 2 &&
           <GridContainer>
-            {imgArr.map((it: any) => <div><ImgModal src={it.url} height="100%" /></div>)}
+            {imgArr.map(it => <div><ImgModal src={it.url} height="100%" /></div>)}
           </GridContainer>
         }
         {imgArr.length == 3 &&
           <GridContainer>
-            {imgArr.map((it: any, index: number) => {
+            {imgArr.map((it, index) => {
               if (index == 0) return <div className="item1">
                 <ImgModal src={it.url} height="100%" /></div>
               if (index == 2) return <div onClick={onClickStoreImage}>

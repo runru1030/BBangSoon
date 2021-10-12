@@ -10,7 +10,7 @@ import StoreImg from "../routes/StoreImg";
 import StoreMap from "../routes/StoreMap";
 import Wish from "../routes/Wish";
 
-type AppProps = {
+interface AppProps {
     isLoding: boolean,
 }
 const AppRouter: React.FC<AppProps> = ({ isLoding }) => {

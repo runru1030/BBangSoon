@@ -2,11 +2,11 @@ const SET_LOGGED_INFO = 'user/SET_LOGGED_INFO'; // 로그인 정보 설정
 const SET_LOCATION_INFO = 'user/SET_LOCATION_INFO'; //위치 정보 설정
 const SET_USER_INFO = 'user/SET_USER_INFO'; 
 
-type userObj={
+interface userObj{
     userId:number,
     nickName:string,
 }
-type location={
+interface location{
     si: string,
     y: number,
     x: number,

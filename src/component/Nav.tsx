@@ -1,40 +1,32 @@
 import { faBook, faBreadSlice, faHeart, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
-const Nav = () => {
+const Nav: React.FC = () => {
     const history = useHistory();
     const location = useLocation();
-    const onClickSurr = () => {
-        history.push("/storemap");
-    }
-    const onClickHome = () => {
-        history.push("/");
-    }
-    const onClickWish = () => {
-        history.push("/wish")
-    }
-    const onClickFeed = () => {
-        history.push("/feed")
+    const onClickNav = (e: React.MouseEvent) => {
+        history.push("/" + e.currentTarget.id);
     }
     return (<><BottomNav>
-        <div id="home" onClick={onClickHome}>
+        <div id="" onClick={onClickNav}>
             <FontAwesomeIcon icon={faBreadSlice} id="icon" color={location.pathname == "/" ? "#e2c26e" : "#6f6f6f"} />
             <span>홈</span>
         </div>
-        <div id="surrounding" onClick={onClickSurr}>
+        <div id="storemap" onClick={onClickNav}>
             <FontAwesomeIcon id="icon" icon={faMapMarkerAlt} color={location.pathname == "/storemap" ? "#46A6FF" : "#6f6f6f"} />
             <span>빵 지도</span>
         </div>
 
-        <div onClick={onClickWish}>
+        <div id="wish" onClick={onClickNav}>
             <FontAwesomeIcon id="icon" icon={faHeart} color={location.pathname == "/wish" ? "#f89573" : "#6f6f6f"} />
-            <span id="mypage">찜</span>
+            <span>관심</span>
         </div>
-        <div onClick={onClickFeed}>
+        <div id="feed" onClick={onClickNav}>
             <FontAwesomeIcon id="icon" icon={faBook} color={location.pathname == "/feed" ? "#46A6FF" : "#6f6f6f"} />
-            <span id="mypage">일지</span>
+            <span>일지</span>
         </div>
     </BottomNav>
     </>
@@ -54,7 +46,7 @@ gap:20%;
 align-items:center;
 justify-content: center;
 padding: 10px 0;
-border-top: ${props=>`solid thin`+props.theme.color.border_grey};
+border-top: ${props => `solid thin` + props.theme.color.border_grey};
 background-color: white;
 div{
     display:flex;

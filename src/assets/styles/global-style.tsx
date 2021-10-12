@@ -111,7 +111,7 @@ box-sizing: border-box;
 }
 
 `
-export const Label = styled.div<{ path: string | undefined }>`
+export const Label = styled.div<{ path?: string  }>`
 font-size: medium;
 padding: 15px;
 display: flex;
@@ -183,10 +183,10 @@ border-top: ${props=>`solid thin`+props.theme.color.border_grey};
 }
 `
 
-export const SearchForm=styled.form<{ isAbs:boolean }>`
+export const SearchForm=styled.form<{ isAbsolute?:boolean }>`
 margin: 20px 0;
 justify-content: center;
-${props=>props.isAbs&&`
+${props=>props.isAbsolute&&`
   width:100%;
   position: absolute;
   z-index: 99;

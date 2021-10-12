@@ -8,7 +8,7 @@ router.post('/list', async (req, res) => {
   try {
     const storeArr=await Store.findAll({
       where:{id: {[Op.in]:req.body}},
-      attributes:['id', 'storeName', [sequelize.fn('count', sequelize.col('Reviews.star')), 'reviewCnt'],
+      attributes:['id', 'place_name', [sequelize.fn('count', sequelize.col('Reviews.star')), 'reviewCnt'],
       [sequelize.fn('avg', sequelize.col('Reviews.star')), 'avgStar'], 
       ],
       group:['id'],
@@ -48,7 +48,7 @@ router.post('/review/:id', upload.single('reviewImg') , async (req, res) => {
     })
     const storeData = await Store.findOne({
       where: { id: id },
-      attributes: ['storeName','address', 'telephone', 'id', 'site', 'x', 'y'],
+      attributes: ['place_name','address_name', 'phone', 'id', 'site', 'x', 'y'],
       order: [[Review, 'date', 'DESC']],
       include: [{
         model: Menu,
@@ -125,7 +125,7 @@ router.get('/rankReview/:local', async (req, res) => {
     let local = req.params.local;
     const storeRanking= await Store.findAll({
       where:[{local:local}],
-      attributes:['id', 'storeName',
+      attributes:['id', 'place_name',
       [sequelize.fn('count', sequelize.col('Reviews.id')), 'reviewCnt'],
       [sequelize.fn('avg', sequelize.col('Reviews.star')), 'avgStar'],
       [sequelize.fn('sum', sequelize.col('Reviews.star')), 'totalStar'],
@@ -152,7 +152,7 @@ router.post('/:id', async (req, res) => {
     let id = req.params.id;
     const storeData = await Store.findOne({
       where: { id: id },
-      attributes: ['storeName','address', 'telephone', 'id', 'site', 'x', 'y'],
+      attributes: ['place_name','address_name', 'phone', 'id', 'site', 'x', 'y'],
       order: [[Review, 'date', 'DESC']],
       include: [{
         model: Menu,

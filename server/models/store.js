@@ -3,15 +3,15 @@ const Sequelize = require('sequelize');
 module.exports = class Store extends Sequelize.Model {
   static init(sequelize) {
     return super.init({
-      storeName: {
+      place_name: {
         type: Sequelize.STRING(45),
         allowNull: false,
       },
-      address: {
+      address_name: {
         type: Sequelize.STRING(50),
         allowNull: false,
       },
-      telephone: {
+      phone: {
         type: Sequelize.STRING(20),
         allowNull: false,
       },

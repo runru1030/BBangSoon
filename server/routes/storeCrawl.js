@@ -8,17 +8,17 @@ const router = express.Router();
 /* Store's data ? post : crawling */
 router.post('/', async (req, res) => {
   try {
-    let { id, storeName, address, telephone, place_url, x, y } = req.body;
+    let { id, place_name, address_name, phone, place_url, x, y } = req.body;
 
     const [storeData, created] = await Store.findOrCreate({
       where: { id: id },
-      attributes: ['storeName', 'address', 'telephone', 'id', 'site', 'x', 'y'],
+      attributes: ['place_name', 'address_name', 'phone', 'id', 'site', 'x', 'y'],
       defaults: {
         id: id,
-        storeName: storeName,
-        address: address,
-        telephone: telephone,
-        local:address&&address.split(" ")[0],
+        place_name: place_name,
+        address_name: address_name,
+        phone: phone,
+        local:address_name&&address_name.split(" ")[0],
         x:x,
         y:y
       },

@@ -18,7 +18,7 @@ router.get('/wishArr/:userId', async (req, res) => {
     const idArr = wishData.map(it => it.Store.id);
     const storeArr = await Store.findAll({
       where: { id: { [Op.in]: idArr } },
-      attributes: ['id', 'storeName', [sequelize.fn('count', sequelize.col('Reviews.star')), 'reviewCnt'],
+      attributes: ['id', 'place_name', [sequelize.fn('count', sequelize.col('Reviews.star')), 'reviewCnt'],
         [sequelize.fn('avg', sequelize.col('Reviews.star')), 'avgStar'],
       ],
       group: ['id'],

@@ -22,7 +22,7 @@ const Review: React.FC<props> = ({ onClick, isOpen }) => {
     const { userObj, isLoggedin } = useSelector((state: RootState) => ({
         userObj: state.user.userObj,
         isLoggedin: state.user.isLoggedin,
-    }))
+    }));
 
     const storeInfo: DBStoreType = useSelector((state: RootState) => state.store.storeObj);
 

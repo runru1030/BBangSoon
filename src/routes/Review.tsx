@@ -15,13 +15,11 @@ const Review: React.FC = () => {
   const onClickDel = () => {
     axios.delete(`/store/review/${review.id}`).then(() => {
       history.push("/feed");
-    }
-    );
+    });
   }
   useEffect(() => {
-    axios.post(`/store/${review.StoreId}`).then(res => setStore(res.data))
-
-  }, [])
+    axios.post(`/store/${review.StoreId}`).then(res => setStore(res.data));
+  }, []);
   return (
     <Container>
       {store != undefined && <StoreList store={store} />}

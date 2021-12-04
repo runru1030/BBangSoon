@@ -20,14 +20,14 @@ export interface reviewType {
 }
 const Feed: React.FC = () => {
   const history = useHistory();
-  const { userObj } = useSelector((state: RootState) => ({ userObj: state.user.userObj, }))
-  const { isLoggedin } = useSelector((state: RootState) => ({ isLoggedin: state.user.isLoggedin }))
-  const [reviewArr, setReviewArr] = useState<reviewType[]>([]) //유저의 리뷰arr
+  const { userObj } = useSelector((state: RootState) => ({ userObj: state.user.userObj, }));
+  const { isLoggedin } = useSelector((state: RootState) => ({ isLoggedin: state.user.isLoggedin }));
+  const [reviewArr, setReviewArr] = useState<reviewType[]>([]); //유저의 리뷰arr
 
   /* 순례 리스트 */
   const [isDetailVisit, setIsDetailVisit] = useState(false);
-  const [visitId, setVisitId] = useState<number[]>([])   //유저의 순례리스트 매장 ID 
-  const [visitArr, setVisitArr] = useState<StoreType[]>([]) //유저의 순례리스트 매장
+  const [visitId, setVisitId] = useState<number[]>([]);  //유저의 순례리스트 매장 ID 
+  const [visitArr, setVisitArr] = useState<StoreType[]>([]); //유저의 순례리스트 매장
 
 
   /* 순례 리스트 */
@@ -45,8 +45,8 @@ const Feed: React.FC = () => {
     //로그인 처리
     !isLoggedin && history.push("/auth");
     axios.get(`/user/feed/${userObj.id}`).then(res => {
-      setReviewArr(res.data.Reviews)
-      setVisitId(res.data.Visits.map((it: { StoreId: number }) => (it.StoreId)))
+      setReviewArr(res.data.Reviews);
+      setVisitId(res.data.Visits.map((it: { StoreId: number }) => (it.StoreId)));
     })
   }, []);
 

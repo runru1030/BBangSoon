@@ -18,7 +18,7 @@ const Search:React.FC<props> = ({setIsOpen, setAddressList}) => {
             headers: { Authorization: `KakaoAK ${process.env.REACT_APP_KAKAO_REST_KEY}` },
             params: { size: 15 }
         }).then(res => {
-            setAddressList(res.data.documents)
+            setAddressList(res.data.documents);
         })
         setIsOpen(false);
     }

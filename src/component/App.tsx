@@ -14,10 +14,10 @@ const App: React.FC = () => {
   useEffect(() => {
     /* Loding view */
     if (isLoding == true) {
-      sessionStorage.setItem("loding", "false")
+      sessionStorage.setItem("loding", "false");
       setTimeout(() => {
         setIsLoding(false);
-      }, 3000)
+      }, 3000);
     }
     /* 자동 로그인 */
     if (token) {
@@ -37,9 +37,8 @@ const App: React.FC = () => {
           si: res.data.documents[0].address.region_1depth_name,
           y: position.coords.latitude,
           x: position.coords.longitude,
-        }))
-      }
-      )
+        }));
+      });
     });
   }, [])
 
@@ -56,7 +55,7 @@ const App: React.FC = () => {
           dispatch(setLoggedInfo(null, false));
           window.localStorage.removeItem("token");
         }
-      })
+      });
   }
   return (<>
     <AppRouter isLoding={isLoding} /></>

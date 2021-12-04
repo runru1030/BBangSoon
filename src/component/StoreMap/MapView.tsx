@@ -13,12 +13,12 @@ interface props{
 }
 const MapView:React.FC<props> = ({markerArr, isEnd, curpage, getStoreApi}) => {
     /* location */
-    const location = useSelector((state: RootState) => state.user.location)
+    const location = useSelector((state: RootState) => state.user.location);
     const [loc, setLoc] = useState({ title: "", y: location.y, x: location.x }); //지도 중심 좌표
     const [curLoc, setCurLoc] = useState({ title: "", y: location.y, x: location.x }); //내 위치 좌표
 
     const onClickNext = () => {
-        getStoreApi(curpage + 1);
+        getStoreApi(curpage);
     }
 
     return (

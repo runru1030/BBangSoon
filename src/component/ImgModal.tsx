@@ -33,7 +33,7 @@ const ImgModal: React.FC<props> = ({ src, width, height }) => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     }
-  })
+  });
 
   return (<>
     <img src={src} style={{ "backgroundColor": "white" }} onError={imgError} onClick={onClick} width={width} height={height} className="img" />

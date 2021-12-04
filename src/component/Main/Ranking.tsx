@@ -27,7 +27,7 @@ const Ranking: React.FC = () => {
     useEffect(() => {
         //위치기준 랭킹 top 20
         axios.get(`/store/rankReview/${location?.si}`).then(res => {
-            setReviewRank(res.data)
+            setReviewRank(res.data);
         })
     }, [location]);
 

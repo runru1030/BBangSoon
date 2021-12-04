@@ -22,7 +22,6 @@ module.exports = {
     });
   },
   logout(accessToken) {
-    console.log(accessToken);
     return new Promise((resolve, reject) => {
       request( 
         {

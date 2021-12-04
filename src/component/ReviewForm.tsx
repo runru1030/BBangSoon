@@ -72,18 +72,18 @@ const ReviewForm: React.FC<props> = ({ storeId, setIsWrite }) => {
     }
 
     return (<>
-        {/* writing review's form */}
         <Form onSubmit={onSubmit} className="col-container">
             {newReview.attach && <img src={newReview.attach + ""} width="60%" />}
-            <span id="star" className="row-container">
-                {Array.from({ length: 5 }, (v, i) => i).map((it) => <FontAwesomeIcon id={it + 1 + ""} icon={faBreadSlice} onClick={onClickStar} color={newReview.star >= (it + 1) ? "#e2c26e" : "#cabfa3"} />)}
-                <span id="number">{newReview.star}</span>
-                <div className="wrapper row-container">
+            <StarContainer className="row-container">
+                {Array.from({ length: 5 }, (v, i) => i).map((it) => 
+                    <FontAwesomeIcon id={it + 1 + ""} icon={faBreadSlice} onClick={onClickStar} color={newReview.star >= (it + 1) ? "#e2c26e" : "#cabfa3"} />)}
+                <span>{newReview.star}</span>
+                <ButtonGroup className="wrapper row-container">
                     <label htmlFor="file"><FontAwesomeIcon icon={faPlus} /></label>
                     <label htmlFor="submit" id="sbm-btn"><span>작성</span></label>
-                </div>
-            </span>
-            <TextareaAutosize id="content" placeholder="최대 300자 / 이미지 최대 1장" value={newReview.content} onChange={(event) => setNewReview({ ...newReview, content: event.target.value.substring(0, 300) })} />
+                </ButtonGroup>
+            </StarContainer>
+            <TextareaAutosize id="textArea" placeholder="최대 300자 / 이미지 최대 1장" value={newReview.content} onChange={(event) => setNewReview({ ...newReview, content: event.target.value.substring(0, 300) })} />
             <input id="file" type="file" style={{ "display": "none" }} onChange={onFileChange} />
             <input id="submit" type="submit" value="제출" style={{ "display": "none" }} />
         </Form>
@@ -91,43 +91,42 @@ const ReviewForm: React.FC<props> = ({ storeId, setIsWrite }) => {
 }
 export default ReviewForm;
 const Form = styled.form`
-width: 90%;
-font-size: medium;
-padding: 15px;
-#star{
-  font-size: xx-large;
-  text-align: center;
-  align-items: center;
-  gap: 3px;
-  margin-top: 30px;
-}
-#star >#number{
-  font-size: x-large;
-  margin-left: 10px;
-  font-weight: bold;
-  color: #e2c26e;
-}
-#content{
-  all: unset;
-  margin-top: 30px;
-  width: 100%;
-  overflow:hidden;
-  resize: none;
-  padding: 10px 4px; 
-  position: relative;
-}
-.wrapper{
-  font-size: small;
-  flex: 1;
-  justify-content: flex-end;
-}
-label{
-  padding: 5px 10px;
-  background-color: #9c9789;
-  color: white;
-}
-#sbm-btn{
-  border-left: white solid thin;
-}
+    width: 90%;
+    font-size: medium;
+    padding: 15px;
+    #textArea{
+        all: unset;
+        margin-top: 30px;
+        width: 100%;
+        overflow:hidden;
+        resize: none;
+        padding: 10px 4px; 
+        position: relative;
+    }
 `
-
+const StarContainer=styled.span`
+    font-size: xx-large;
+    text-align: center;
+    align-items: center;
+    gap: 3px;
+    margin-top: 30px;
+    &>span{
+        font-size: x-large;
+        margin-left: 10px;
+        font-weight: bold;
+        color: #e2c26e;
+    }
+`
+const ButtonGroup=styled.div`
+    font-size: small;
+    flex: 1;
+    justify-content: flex-end;
+    label{
+        padding: 5px 10px;
+        background-color: #9c9789;
+        color: white;
+    }
+    #sbm-btn{
+        border-left: white solid thin;
+    }
+`

@@ -58,8 +58,8 @@ const App: React.FC = () => {
         }
       })
   }
-  return (
-    <AppRouter isLoding={isLoding} />
+  return (<>
+    <AppRouter isLoding={isLoding} /></>
   );
 }
 

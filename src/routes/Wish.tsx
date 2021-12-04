@@ -6,31 +6,32 @@ import { useState, useEffect } from 'react';
 import StoreList, { StoreType } from '../component/StoreList';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
-import { Header } from '../assets/styles/global-style';
 import { RootState } from '../modules';
+import styled from 'styled-components';
+import { Header } from '../component/Header';
 const Wish: React.FC = () => {
   const history = useHistory();
-  const { userObj } = useSelector((state: RootState) => ({ userObj: state.user.userObj, }))
-  const { isLoggedin } = useSelector((state: RootState) => ({ isLoggedin: state.user.isLoggedin }))
+  const { userObj } = useSelector((state: RootState) => ({ userObj: state.user.userObj, }));
+  const { isLoggedin } = useSelector((state: RootState) => ({ isLoggedin: state.user.isLoggedin }));
 
-  const [storeArr, setStoreArr] = useState<StoreType[]>([])
+  const [storeArr, setStoreArr] = useState<StoreType[]>([]);
 
   useEffect(() => {
     //로그인 처리
     !isLoggedin && history.push("/auth");
-
     axios.get(`/user/wishArr/${userObj.id}`).then(res => {
-      setStoreArr(res.data)
+      setStoreArr(res.data);
     })
   }, [])
   return (
-    <div className="feed">
-      <Header className="row-container">
+    <Container>
+      <Header>
         <FontAwesomeIcon icon={faHeart} color="#f89573" />
-        <span id="">관심 매장</span>
+        <span>관심 매장</span>
       </Header>
       {storeArr.map((store: StoreType) => <StoreList store={store} />)}
       <Nav />
-    </div>)
+    </Container>)
 }
 export default Wish;
+const Container=styled.div``

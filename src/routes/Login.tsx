@@ -38,7 +38,7 @@ const Login: React.FC = () => {
       sendKakaoTokenToServer(res.data.access_token)
     });
   }
-  //일반 초기 로그인
+  /* 일반 로그인 */
   const sendKakaoTokenToServer = (token: string) => {
     axios.post('/auth/kakao', { access_token: token })
       .then(res => {
@@ -59,12 +59,12 @@ const Login: React.FC = () => {
 
   return (<>
     <Randing className="container">
-      <span>로그인으로, 더 많은 서비스를 이용할 수 있어요!</span>
-      <div className="list col-container">
-        <span><FontAwesomeIcon icon={faBreadSlice} color="#e2c26e" id="icon" /> 빵지순례 방문 기록</span>
-        <span><FontAwesomeIcon icon={faBook} color="#7e7e7e" id="icon" /> 빵지순례 방문 일지</span>
-        <span><FontAwesomeIcon icon={faHeart} color="#f89573" id="icon" /> 관심 빵집 등록</span>
-      </div>
+      <Label>로그인으로, 더 많은 서비스를 이용할 수 있어요!</Label>
+      <Wrapper className="col-container">
+        <List><FontAwesomeIcon icon={faBreadSlice} color="#e2c26e" id="icon" /> 빵지순례 방문 기록</List>
+        <List><FontAwesomeIcon icon={faBook} color="#7e7e7e" id="icon" /> 빵지순례 방문 일지</List>
+        <List><FontAwesomeIcon icon={faHeart} color="#f89573" id="icon" /> 관심 빵집 등록</List>
+      </Wrapper>
       <img src="logo.png" width="40%" />
       <span>간편로그인으로 3초만에 로그인</span>
       <a href={kauthUrl}><img src="kakao_login.png" id="kakao-login-btn" width="250px" /></a>
@@ -75,26 +75,26 @@ const Login: React.FC = () => {
 
 export default Login;
 const Randing = styled.div`
-margin-top: 50px;
->span{
-  font-weight: lighter;
-  font-size: large;
-}
-.list{
+  margin-top: 50px;
+  span:nth-child(4){
+    font-size: small;
+    margin: 50px;
+  }
+`
+const Wrapper = styled.div`
   align-items: flex-start;
   font-weight: lighter;
   margin: 30px;
-}
-.list span{
-  margin: 5px 0;
-}
-.list #icon{
-  margin-right: 10px;
-  margin-bottom: 10px;
+`
+const Label = styled.span`
+  font-weight: lighter;
   font-size: large;
-}
-span:nth-child(4){
-  font-size: small;
-  margin: 50px;
-}
+`
+const List = styled.span`
+  margin: 5px 0;
+  #icon{
+    margin-right: 10px;
+    margin-bottom: 10px;
+    font-size: large;
+  }
 `

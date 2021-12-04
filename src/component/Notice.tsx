@@ -43,7 +43,6 @@ const Notice: React.FC = () => {
         </div>
 
       </div>
-
     </NoticeDiv>
   </>)
 }

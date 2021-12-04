@@ -12,7 +12,7 @@ const Login: React.FC = () => {
   const dispatch = useDispatch();
   const history = useHistory();
 
-  const kauthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_KAKAO_REST_KEY}&redirect_uri=http://localhost:3000/auth&response_type=code`
+  const kauthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_KAKAO_REST_KEY}&redirect_uri=http://localhost:3000/auth&response_type=code`;
   const query = queryString.parse(window.location.search);
   useEffect(() => {
     if (query.code) {

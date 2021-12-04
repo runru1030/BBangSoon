@@ -20,7 +20,7 @@ interface props {
 const HeaderCmp: React.FC<props> = ({ reviewArr, visitCnt, onClickHandler }) => {
     const history = useHistory();
     const dispatch = useDispatch();
-    const { userObj } = useSelector((state: RootState) => ({ userObj: state.user.userObj, }))
+    const { userObj } = useSelector((state: RootState) => ({ userObj: state.user.userObj, }));
 
     const [isOpenModal, setIsOpenModal] = useState(false);
     const onClickName = () => {
@@ -57,7 +57,7 @@ const HeaderCmp: React.FC<props> = ({ reviewArr, visitCnt, onClickHandler }) => 
             if (res.status == 200) {
                 dispatch(setLoggedInfo(userObj, false));
                 window.localStorage.removeItem("token");
-                history.push("/")
+                history.push("/");
             }
         })
     }

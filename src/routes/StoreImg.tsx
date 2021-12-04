@@ -12,7 +12,7 @@ interface img {
     imageUrl: string
 }
 const StoreImg = () => {
-    const storeInfo = useSelector((state: RootState) => state.store.storeObj)
+    const storeInfo = useSelector((state: RootState) => state.store.storeObj);
     const [storeImgArr, setStoreImgArr] = useState<img[]>([]);
 
     useEffect(() => {

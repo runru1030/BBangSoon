@@ -13,7 +13,7 @@ interface props{
 }
 const EditForm: React.FC<props> = ({setEditNick, onClickEditNick}) => {
     const dispatch = useDispatch();
-    const { userObj } = useSelector((state: RootState) => ({ userObj: state.user.userObj, }))
+    const { userObj } = useSelector((state: RootState) => ({ userObj: state.user.userObj, }));
 
     /* 닉네임 변경 */
     const [newNick, setNewNick] = useState({ nickName: "", valid: false, error: "" } as { nickName: string, valid: boolean, error: string });

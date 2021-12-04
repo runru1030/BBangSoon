@@ -41,7 +41,7 @@ const Store: React.FC = () => {
         detail: true,
         menu: false,
         review: false,
-    })
+    });
     const onClick = (e: React.MouseEvent) => {
         setIsOpen({
             map: false,
@@ -49,34 +49,33 @@ const Store: React.FC = () => {
             menu: false,
             review: false,
             [e.currentTarget.id]: true
-        })
+        });
     }
 
     /* store 정보 REST API*/
     useEffect(() => {
         axios.post(`/storeCrawl`, storeInfo).then(res => {
             dispatch(setStoreInfo({ ...storeInfo, ...res.data }));
-
-        })
+        });
         const update = setInterval(() => {
             axios.post(`/storeCrawl`, storeInfo).then(res => {
                 dispatch(setStoreInfo({ ...storeInfo, ...res.data }));
-            })
+            });
         }, 10000);
         return () => {
             clearInterval(update);
         }
-    }, [])
+    }, []);
 
     return (<>
         <HeaderCmp />
 
         <Wrapper>
-            {/* {(!storeInfo.Reviews || storeInfo.Reviews.length == 0) &&
+            {(!storeInfo.Reviews || storeInfo.Reviews.length == 0) &&
                 <Loding>
                     <img width="50%" src="loding.gif" />
                     <span>외부 사이트로부터 데이터를 가져오는 중 입니다</span>
-                </Loding>} */}
+                </Loding>}
             <ImgViewer />
             <StoreInfo onClick={onClick} isOpen={isOpen} />
             <MapInfo onClick={onClick} isOpen={isOpen} />

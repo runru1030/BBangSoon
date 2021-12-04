@@ -21,8 +21,8 @@ const Wish: React.FC = () => {
     !isLoggedin && history.push("/auth");
     axios.get(`/user/wishArr/${userObj.id}`).then(res => {
       setStoreArr(res.data);
-    })
-  }, [])
+    });
+  }, []);
   return (
     <Container>
       <Header>

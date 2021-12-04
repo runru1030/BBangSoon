@@ -1,5 +1,6 @@
 /.history
 /node_modules
+/.vscode
 .env
 combined.log
 error.log

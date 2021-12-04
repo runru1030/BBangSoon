@@ -12,7 +12,7 @@ interface props {
 const Store: React.FC<props> = ({resultArr, curpage, isEnd, getStoreKakao}) => {
     /* search */
     const onClickNext = () => {
-        getStoreKakao(curpage + 1);
+        getStoreKakao(curpage);
     }
 
     return (

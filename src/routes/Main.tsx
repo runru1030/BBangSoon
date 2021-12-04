@@ -13,6 +13,7 @@ import Search from '../component/Main/Search';
 import Ranking from '../component/Main/Ranking';
 import Store from '../component/Main/Store';
 import { Header } from '../component/Header';
+import { getStore, getStoreList } from '../utils/KakaoLocalAPI';
 export interface resultState extends StoreType {
     category_group_code: string,
     category_name: string
@@ -34,33 +35,14 @@ const Main: React.FC = () => {
 
     //카카오 검색 API
     const getStoreKakao = (page: number) => {
-        axios.get(`https://dapi.kakao.com/v2/local/search/keyword.json?query=${search}`, {
-            headers: { Authorization: `KakaoAK ${process.env.REACT_APP_KAKAO_REST_KEY}` },
-            params: {
-                page: page,
-                category_group_code: "CE7, FD6"
-            }
-        }).then(res => {
-            setIsEnd(res.data.meta.is_end);
-            setCurPage(page + 1);
-            var arr = res.data.documents.filter((it: resultState) => it.category_group_code == "CE7" || it.category_name.split(" > ")[1] == "간식");
-            setResultArr(res.data.documents.filter((it: resultState) => it.category_group_code == "CE7" || it.category_name.split(" > ")[1] == "간식"));
-
-            axios.post("/store/list", arr.map((store: resultState) => ({ id: store.id }))).then(res => {
-                setResultArr(arr.map((store: resultState, idx: number) => ({ ...store, ...res.data[idx] })));
-                arr = arr.map((store: resultState, idx: number) => ({ ...store, ...res.data[idx] }));
-
-                arr.forEach(async (element: resultState, i: number) => {
-                    if (element.avgStar == null) {
-                        await axios.post("/storeCrawl/count", { id: element.id, url: element.place_url }).then(res => {
-                            arr[i] = { ...arr[i], ...res.data };
-                            setResultArr([...arr]);
-                        });
-                    }
-                });
-            })
+        getStore(page, resultArr ,search).then((res:any)=>{
+            setResultArr(res.resultArr);
+            setIsEnd(res.isEnd);
+            setCurPage(p=>p+1);
+            getStoreList(res.resultArr, setResultArr);
         })
     }
+
     return (
         <Container>
             <Header><FontAwesomeIcon icon={faMapMarkerAlt} onClick={onClickLoc} /> {location?.si}</Header>

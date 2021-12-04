@@ -63,14 +63,12 @@ const Store = styled.div`
     padding: 20px 0px;
     height: 30px;
     border-top: ${props => `solid thin` + props.theme.color.border_grey};
-    div{
-        flex: 0.2;
-    }
 `
 const Block=styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     font-size: large;
     color: #636363;
     #small{
@@ -78,10 +76,8 @@ const Block=styled.div`
     }
 `
 const Wrapper=styled.div`
-    gap: 15px;
-    flex: 1;
+    gap: 20px;
     margin-right:20px;
-    justify-content: flex-end;
 `
 const StoreName=styled.span`
     flex: 1;

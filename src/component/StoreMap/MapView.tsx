@@ -18,7 +18,7 @@ const MapView:React.FC<props> = ({markerArr, isEnd, curpage, getStoreApi}) => {
     const [curLoc, setCurLoc] = useState({ title: "", y: location.y, x: location.x }); //내 위치 좌표
 
     const onClickNext = () => {
-        getStoreApi(curpage + 1);
+        getStoreApi(curpage);
     }
 
     return (

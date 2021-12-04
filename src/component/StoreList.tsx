@@ -41,49 +41,49 @@ const StoreList: React.FC<StoreListProps> = ({ store, children }) => {
 
     return (<Store onClick={onClick}>
         {children}
-        <span id="storeName">{store.place_name}</span>
-        <div className="row-container">
-            <div>
+        <StoreName>{store.place_name}</StoreName>
+        <Wrapper className="row-container">
+            <Block>
                 <span>{store.avgStar == null ? <FontAwesomeIcon icon={faSpinner} /> : store.reviewCnt}</span>
                 <span id="small">리뷰</span>
-            </div>
-            <div>
+            </Block>
+            <Block>
                 <span>{store.avgStar == null ? <FontAwesomeIcon icon={faSpinner} /> : store.avgStar.toFixed(1)}</span>
                 <span id="small">평점</span>
-            </div>
-        </div>
+            </Block>
+        </Wrapper>
     </Store>);
 }
 export default StoreList;
 const Store = styled.div`
-width: 100vw;
-max-width: 100vw;
-display: flex;
-align-items: center;
-padding: 20px 0px;
-height: 30px;
-border-top: ${props => `solid thin` + props.theme.color.border_grey};
-#storeName{
-    flex: 1;
-    margin-left: 20px;
-}
-.row-container{
-    gap: 15px;
-    flex: 1;
-    margin-right:20px;
-    justify-content: flex-end;
-}
-.row-container>div{
+    width: 100vw;
+    max-width: 100vw;
+    display: flex;
+    align-items: center;
+    padding: 20px 0px;
+    height: 30px;
+    border-top: ${props => `solid thin` + props.theme.color.border_grey};
+    div{
+        flex: 0.2;
+    }
+`
+const Block=styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
     font-size: large;
     color: #636363;
-}
-div>#small{
-    font-size: xx-small;
-}
-div{
-    flex: 0.2;
-}
+    #small{
+        font-size: xx-small;
+    }
+`
+const Wrapper=styled.div`
+    gap: 15px;
+    flex: 1;
+    margin-right:20px;
+    justify-content: flex-end;
+`
+const StoreName=styled.span`
+    flex: 1;
+    margin-left: 20px;
 `

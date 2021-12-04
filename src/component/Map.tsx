@@ -30,11 +30,12 @@ const Map: React.FC<locationProps> = ({ loc, setLoc, curLoc, markerArr }) => {
   const [mapCenter, setMapcenter] = useState<StoreState["loc"]>({ title: "", y: loc.y, x: loc.x });
   useEffect(() => {
     map();
-  }, [loc, markerArr])
+  }, [loc, markerArr]);
 
   const onClickReSearch = () => {
-    setLoc && setLoc(mapCenter)
+    setLoc && setLoc(mapCenter);
   }
+  
   /* 카카오 지도 생성 */
   const map = () => {
     let container = document.getElementById('mapContainer');

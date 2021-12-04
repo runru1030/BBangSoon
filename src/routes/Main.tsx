@@ -1,22 +1,18 @@
 import * as React from 'react';
 import Nav from '../component/Nav';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faMapMarkerAlt, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import styled from 'styled-components';
 import axios from 'axios';
-import { useState, useEffect } from 'react';
-import StoreList, { StoreType } from '../component/StoreList';
+import { useState } from 'react';
+import { StoreType } from '../component/StoreList';
 import { useSelector } from 'react-redux';
 import LocList from '../component/LocList';
-import { Header, Label, SearchForm } from '../assets/styles/global-style';
 import { RootState } from '../modules';
-interface rankingState {
-    id: number,
-    place_name: string,
-    reviewCnt: number,
-    avgStar: number,
-    totalStar: number
-}
+import Search from '../component/Main/Search';
+import Ranking from '../component/Main/Ranking';
+import Store from '../component/Main/Store';
+import { Header } from '../component/Header';
 export interface resultState extends StoreType {
     category_group_code: string,
     category_name: string
@@ -31,40 +27,10 @@ const Main: React.FC = () => {
     }
 
     /* search */
-    const [search, setSearch] = useState("");       //검색창 검색어
+    const [search, setSearch] = useState("");
     const [resultArr, setResultArr] = useState<resultState[]>([]);  //search result Arr
     const [curpage, setCurPage] = React.useState(1);//search page
     const [isEnd, setIsEnd] = React.useState<boolean>();    //page end
-    const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { target: { value } } = e;
-        setSearch(value);
-        if (value == "") setResultArr([]);
-    }
-    const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        setResultArr([]);
-        getStoreKakao(1);
-    }
-    const onClickNext = () => {
-        getStoreKakao(curpage + 1);
-    }
-
-    /* ranking */
-    const colorList = ["#FF764A", "#46A6FF", "#46A6FF"];    //ranking num's color
-    const [reviewRank, setReviewRank] = useState<rankingState[]>([]);       //ranking top 20's store Arr
-    const [isMore, setIsMore] = useState(false);
-    const onClickMore = () => {
-        setIsMore(true);
-    }
-
-
-
-    useEffect(() => {
-        //위치기준 랭킹 top 20
-        axios.get(`/store/rankReview/${location?.si}`).then(res => {
-            setReviewRank(res.data)
-        })
-    }, [location]);
 
     //카카오 검색 API
     const getStoreKakao = (page: number) => {
@@ -95,54 +61,20 @@ const Main: React.FC = () => {
             })
         })
     }
-
     return (
-        <MainCt className="main">
+        <Container>
             <Header><FontAwesomeIcon icon={faMapMarkerAlt} onClick={onClickLoc} /> {location?.si}</Header>
             {changeSi ?
                 <LocList setChangeSi={setChangeSi} />
                 :
-                <><SearchForm onSubmit={onSubmit} className="container">
-                    <input type="text" value={search} onChange={onChange} placeholder="매장 검색" />
-                    <input type="submit" id="search" style={{ "display": "none" }} />
-                    <label htmlFor="search" id="search-btn"><FontAwesomeIcon icon={faSearch} /></label>
-                </SearchForm>
-
+                <><Search search={search} setSearch={setSearch} setResultArr={setResultArr} getStoreKakao={getStoreKakao} />
                     {resultArr.length == 0 ?
-                        <div className="col-container wrapper">
-                            <Label path={"main"}>랭킹</Label>
-                            {reviewRank.map((store: rankingState, idx: number) => (idx < 10 || (isMore)) && <><div className="row-container reviewRank">
-                                <StoreList store={store} children={<RankNum id="rank-num" style={{ "color": idx < 3 ? colorList[idx] : "black" }}>{idx + 1}</RankNum>} />
-                            </div>
-                                {idx == 9 && !isMore && <span className="more-btn" onClick={onClickMore}>더보기</span>}
-                            </>)}
-                        </div>
+                        <Ranking />
                         :
-                        <div className="wrapper">
-                            {resultArr.map((result: resultState) => <StoreList store={result} />)}
-                            {!isEnd && <button className="more-btn" onClick={onClickNext}>더 보기</button>}
-                        </div>}</>
-            }
+                        <Store resultArr={resultArr} curpage={curpage} isEnd={isEnd} getStoreKakao={getStoreKakao} />}</>}
             <Nav />
-        </MainCt>)
+        </Container>)
 }
 export default Main;
-const RankNum = styled.span`
-  font-size: large;
-  margin-left: 20px;
+const Container = styled.div`
 `
-const MainCt = styled.div`
-.wrapper{
-  width: 100%;
-  margin-right:0;
-  margin-bottom: 100px;
-}
-.wrapper .more-btn{
-  align-items: center;
-  width: 100%;
-  text-align: center;
-  flex: 1;
-  border-top: ${props => `solid thin` + props.theme.color.border_grey};
-  padding: 10px 0;
-  font-size: small;
-}`

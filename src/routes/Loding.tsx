@@ -13,20 +13,20 @@ const Loding: React.FC = () => {
 }
 export default Loding;
 const LodingView = styled.div`
-width: 100%;
-height: 100vh;
-display: flex;
-flex-direction: column;
-align-items: center;
-margin-top: 150px;
-span{
-    font-weight: lighter;
-    margin-bottom: 80px;
-    font-size: large;
-}
-#copyright{
-    position: absolute;
-    font-size: small;
-    bottom: 50px;
-}
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 150px;
+    span{
+        font-weight: lighter;
+        margin-bottom: 80px;
+        font-size: large;
+    }
+    #copyright{
+        position: absolute;
+        font-size: small;
+        bottom: 50px;
+    }
 `

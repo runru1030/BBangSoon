@@ -1,8 +1,0 @@
-{
-  "/auth/login/page": "/auth/login",
-  "/feed/page": "/feed",
-  "/map/page": "/map",
-  "/store/[storeId]/page": "/store/[storeId]",
-  "/wish/page": "/wish",
-  "/home/page": "/home"
-}

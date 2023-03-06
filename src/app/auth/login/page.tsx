@@ -1,77 +1,18 @@
 "use client";
-import { userInfoAtoms } from "@app/GlobalProvider";
+import useAuthKakao from "@components/hooks/useAuthKakao";
+import Nav from "@components/Nav";
 import {
   faBook,
   faBreadSlice,
-  faHeart,
+  faHeart
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import axios from "axios";
-import { useSetAtom } from "jotai";
+import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
 import styled from "styled-components";
-import Nav from "../../../components/Nav";
 const Page = () => {
-  const setUserAtom = useSetAtom(userInfoAtoms.userAtom);
-  const searchParams = useSearchParams();
-  const query = searchParams?.get("code");
-  const router = useRouter();
-
-  useEffect(() => {
-    sendKakaoTokenToServer("");
-    if (query) {
-      getKakaoTokenHandler(query);
-    }
-  }, [query]);
-
-  /* 카카오 로그인 token 발급 REST API */
-  const getKakaoTokenHandler = async (code: string) => {
-    const data: any = {
-      grant_type: "authorization_code",
-      client_id: process.env.NEXT_PUBLIC_KAKAO_REST_KEY,
-      redirect_uri: "http://localhost:3000/auth/login",
-      code,
-    };
-    const queryString = Object.keys(data)
-      .map(
-        (k: any) => encodeURIComponent(k) + "=" + encodeURIComponent(data[k])
-      )
-      .join("&");
-    axios
-      .post("https://kauth.kakao.com/oauth/token", queryString, {
-        headers: {
-          "Content-type": "application/x-www-form-urlencoded;charset=utf-8",
-        },
-      })
-      .then((res) => {
-        sendKakaoTokenToServer(res.data.access_token);
-      });
-  };
-  /* 일반 로그인 */
-  const sendKakaoTokenToServer = async (token: string) => {
-    const res = await axios.put("/auth/api", {
-      access_token: "WkcPYc7p7-Tf7bP8SbLRPH7tY0bwvqz7-BXwWp40Cj102gAAAYa17JNl",
-    });
-    const { jwt, user } = res.data;
-
-    if (res.status == 201 || res.status == 200) {
-      setUserAtom(user);
-      window.localStorage.setItem(
-        "token",
-        JSON.stringify({
-          access_token: jwt,
-        })
-      );
-      axios.defaults.headers.common["Authorization"] = `${jwt}`;
-      router.push("/home");
-    } else {
-      window.alert("로그인에 실패하였습니다.");
-    }
-  };
-
+  const { isLoading } = useAuthKakao();
   return (
     <div>
       <Randing className="col-container items-center py-8">
@@ -93,6 +34,7 @@ const Page = () => {
         <Image src="/assets/logo.png" width="200" height="100" alt="logo" />
         <span>간편로그인으로 3초만에 로그인</span>
         <Link
+          className={clsx("relative", isLoading && "pointer-events-none")}
           href={`https://kauth.kakao.com/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_KAKAO_REST_KEY}&redirect_uri=http://localhost:3000/auth/login&response_type=code`}
         >
           <Image
@@ -102,6 +44,15 @@ const Page = () => {
             height="100"
             alt="kakao"
           />
+          {isLoading && (
+            <div className="absolute w-full h-full bg-[#FEE500] top-0 flex items-center justify-center rounded-lg">
+              <div className="flex justify-center gap-1">
+                <div className="h-1 w-1 animate-zoomIn rounded-full bg-gray-400 animate-infinite" />
+                <div className="h-1 w-1 animate-zoomIn rounded-full bg-gray-400 animate-infinite animate-delay-150" />
+                <div className="h-1 w-1 animate-zoomIn rounded-full bg-gray-400 animate-infinite animate-delay-300" />
+              </div>
+            </div>
+          )}
         </Link>
       </Randing>
       <Nav />

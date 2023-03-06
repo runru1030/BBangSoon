@@ -1,9 +1,11 @@
 "use client";
 
-import axios from "axios";
-import { atom, Provider, useSetAtom } from "jotai";
-import React, { useEffect } from "react";
+import useAuth from "@components/hooks/useAuth";
+import useGeoLocation from "@components/hooks/useGeoLocation";
+import { atom, Provider } from "jotai";
 import { DevTools } from "jotai-devtools";
+import { atomWithReset } from "jotai/utils";
+import React from "react";
 
 interface user {
   id: number | null;
@@ -16,7 +18,7 @@ interface location {
   x: number;
 }
 export const userInfoAtoms = {
-  userAtom: atom<user>({
+  userAtom: atomWithReset<user>({
     id: null,
     userName: "",
   }),
@@ -28,35 +30,8 @@ export const userInfoAtoms = {
 };
 
 export default function GlobalProvider(props: { children: React.ReactNode }) {
-  const setLocationAtom = useSetAtom(userInfoAtoms.locationAtom);
-  const geolocationPositionCallback = async (position: GeolocationPosition) => {
-    try {
-      const { data } = await axios.get(
-        `https://dapi.kakao.com/v2/local/geo/coord2address.json`,
-        {
-          headers: {
-            Authorization: `KakaoAK ${process.env.NEXT_PUBLIC_KAKAO_REST_KEY}`,
-          },
-          params: {
-            y: position.coords.latitude,
-            x: position.coords.longitude,
-          },
-        }
-      );
-      setLocationAtom({
-        si: data.documents[0].address.region_1depth_name,
-        y: position.coords.latitude,
-        x: position.coords.longitude,
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  useEffect(() => {
-    navigator.geolocation.getCurrentPosition(geolocationPositionCallback);
-  }, []);
-
+  useAuth();
+  useGeoLocation();
   return (
     <Provider>
       <DevTools />

@@ -742,6 +742,11 @@
     jest-diff "^26.0.0"
     pretty-format "^26.0.0"
 
+"@types/lodash@^4.14.191":
+  version "4.14.191"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.191.tgz#09511e7f7cba275acd8b419ddac8da9a6a79e2fa"
+  integrity sha512-BdZ5BCCvho3EIXw6wUCXHe7rS53AIDPLE+JzwgT+OsJk53oBfbSmZZ7CX4VaRoN78N+TJpFi9QPlfIVNmJYWxQ==
+
 "@types/navermaps@^3.0.8":
   version "3.6.4"
   resolved "https://registry.yarnpkg.com/@types/navermaps/-/navermaps-3.6.4.tgz#e529da8ab2416b2ee18f83cb7418875a6fb28466"

@@ -9,7 +9,7 @@ const nextConfig = {
   },
   poweredByHeader: false,
   compress: true,
-  reactStrictMode: true,
+  reactStrictMode: false,
   experimental: {
     externalDir: true,
     appDir: true,

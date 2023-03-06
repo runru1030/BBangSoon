@@ -44,7 +44,7 @@ const useAuthKakao = () => {
 
   const putKakaoTokenToServer = useMutation({
     mutationFn: async (token: string) => {
-      return await axios.put("/auth/api", {
+      return await axios.put("/api/auth/kakao", {
         access_token: token,
       });
     },
@@ -69,7 +69,6 @@ const useAuthKakao = () => {
   });
 
   useEffect(() => {
-    console.log(query);
     if (query) {
       getKakaoToken.mutate(query);
     }

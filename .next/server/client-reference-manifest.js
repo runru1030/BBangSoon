@@ -109,7 +109,7 @@ self.__RSC_MANIFEST={
         "id": "(sc_client)/./src/app/GlobalProvider.tsx",
         "name": "",
         "chunks": [
-          "app/home/page:app/home/page"
+          "app/feed/page:app/feed/page"
         ],
         "async": false
       },
@@ -117,7 +117,7 @@ self.__RSC_MANIFEST={
         "id": "(sc_client)/./src/app/GlobalProvider.tsx",
         "name": "*",
         "chunks": [
-          "app/home/page:app/home/page"
+          "app/feed/page:app/feed/page"
         ],
         "async": false
       },
@@ -125,7 +125,7 @@ self.__RSC_MANIFEST={
         "id": "(sc_client)/./src/app/GlobalProvider.tsx",
         "name": "default",
         "chunks": [
-          "app/home/page:app/home/page"
+          "app/feed/page:app/feed/page"
         ],
         "async": false
       },
@@ -133,7 +133,7 @@ self.__RSC_MANIFEST={
         "id": "(sc_client)/./src/app/GlobalProvider.tsx",
         "name": "userInfoAtoms",
         "chunks": [
-          "app/home/page:app/home/page"
+          "app/feed/page:app/feed/page"
         ],
         "async": false
       }
@@ -190,6 +190,32 @@ self.__RSC_MANIFEST={
         "async": false
       }
     },
+    "(app-client)/./src/app/auth/login/page.tsx": {
+      "": {
+        "id": "(sc_client)/./src/app/auth/login/page.tsx",
+        "name": "",
+        "chunks": [
+          "app/auth/login/page:app/auth/login/page"
+        ],
+        "async": false
+      },
+      "*": {
+        "id": "(sc_client)/./src/app/auth/login/page.tsx",
+        "name": "*",
+        "chunks": [
+          "app/auth/login/page:app/auth/login/page"
+        ],
+        "async": false
+      },
+      "default": {
+        "id": "(sc_client)/./src/app/auth/login/page.tsx",
+        "name": "default",
+        "chunks": [
+          "app/auth/login/page:app/auth/login/page"
+        ],
+        "async": false
+      }
+    },
     "(app-client)/./src/app/home/page.tsx": {
       "": {
         "id": "(sc_client)/./src/app/home/page.tsx",
@@ -212,6 +238,32 @@ self.__RSC_MANIFEST={
         "name": "default",
         "chunks": [
           "app/home/page:app/home/page"
+        ],
+        "async": false
+      }
+    },
+    "(app-client)/./src/app/feed/page.tsx": {
+      "": {
+        "id": "(sc_client)/./src/app/feed/page.tsx",
+        "name": "",
+        "chunks": [
+          "app/feed/page:app/feed/page"
+        ],
+        "async": false
+      },
+      "*": {
+        "id": "(sc_client)/./src/app/feed/page.tsx",
+        "name": "*",
+        "chunks": [
+          "app/feed/page:app/feed/page"
+        ],
+        "async": false
+      },
+      "default": {
+        "id": "(sc_client)/./src/app/feed/page.tsx",
+        "name": "default",
+        "chunks": [
+          "app/feed/page:app/feed/page"
         ],
         "async": false
       }
@@ -436,7 +488,7 @@ self.__RSC_MANIFEST={
       "id": "(app-client)/./src/app/GlobalProvider.tsx",
       "name": "",
       "chunks": [
-        "app/home/page:app/home/page"
+        "app/feed/page:app/feed/page"
       ],
       "async": false
     },
@@ -444,7 +496,7 @@ self.__RSC_MANIFEST={
       "id": "(app-client)/./src/app/GlobalProvider.tsx",
       "name": "*",
       "chunks": [
-        "app/home/page:app/home/page"
+        "app/feed/page:app/feed/page"
       ],
       "async": false
     },
@@ -452,7 +504,7 @@ self.__RSC_MANIFEST={
       "id": "(app-client)/./src/app/GlobalProvider.tsx",
       "name": "default",
       "chunks": [
-        "app/home/page:app/home/page"
+        "app/feed/page:app/feed/page"
       ],
       "async": false
     },
@@ -460,7 +512,7 @@ self.__RSC_MANIFEST={
       "id": "(app-client)/./src/app/GlobalProvider.tsx",
       "name": "userInfoAtoms",
       "chunks": [
-        "app/home/page:app/home/page"
+        "app/feed/page:app/feed/page"
       ],
       "async": false
     }
@@ -517,6 +569,32 @@ self.__RSC_MANIFEST={
       "async": false
     }
   },
+  "/Users/jihyeon/Documents/BBangSoon/src/app/auth/login/page.tsx": {
+    "": {
+      "id": "(app-client)/./src/app/auth/login/page.tsx",
+      "name": "",
+      "chunks": [
+        "app/auth/login/page:app/auth/login/page"
+      ],
+      "async": false
+    },
+    "*": {
+      "id": "(app-client)/./src/app/auth/login/page.tsx",
+      "name": "*",
+      "chunks": [
+        "app/auth/login/page:app/auth/login/page"
+      ],
+      "async": false
+    },
+    "default": {
+      "id": "(app-client)/./src/app/auth/login/page.tsx",
+      "name": "default",
+      "chunks": [
+        "app/auth/login/page:app/auth/login/page"
+      ],
+      "async": false
+    }
+  },
   "/Users/jihyeon/Documents/BBangSoon/src/app/home/page.tsx": {
     "": {
       "id": "(app-client)/./src/app/home/page.tsx",
@@ -539,6 +617,32 @@ self.__RSC_MANIFEST={
       "name": "default",
       "chunks": [
         "app/home/page:app/home/page"
+      ],
+      "async": false
+    }
+  },
+  "/Users/jihyeon/Documents/BBangSoon/src/app/feed/page.tsx": {
+    "": {
+      "id": "(app-client)/./src/app/feed/page.tsx",
+      "name": "",
+      "chunks": [
+        "app/feed/page:app/feed/page"
+      ],
+      "async": false
+    },
+    "*": {
+      "id": "(app-client)/./src/app/feed/page.tsx",
+      "name": "*",
+      "chunks": [
+        "app/feed/page:app/feed/page"
+      ],
+      "async": false
+    },
+    "default": {
+      "id": "(app-client)/./src/app/feed/page.tsx",
+      "name": "default",
+      "chunks": [
+        "app/feed/page:app/feed/page"
       ],
       "async": false
     }

@@ -1,39 +1,35 @@
-import * as React from "react";
-import styled from "styled-components";
+import { userInfoAtoms } from "@app/GlobalProvider";
 import axios from "axios";
+import { useAtom } from "jotai";
+import * as React from "react";
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { setUserInfo } from "../../../store/user";
-import { RootState } from "../../../store";
+import styled from "styled-components";
 
 interface props {
   setEditNick: React.Dispatch<React.SetStateAction<boolean>>;
   onClickEditNick: React.MouseEventHandler<HTMLSpanElement>;
 }
 const EditForm: React.FC<props> = ({ setEditNick, onClickEditNick }) => {
-  const dispatch = useDispatch();
-  const { userObj } = useSelector((state: RootState) => ({
-    userObj: state.user.userObj,
-  }));
+  const [userAtom, setUserAtom] = useAtom(userInfoAtoms.userAtom);
 
   /* 닉네임 변경 */
   const [newNick, setNewNick] = useState({
-    nickName: "",
+    userName: "",
     valid: false,
     error: "",
-  } as { nickName: string; valid: boolean; error: string });
+  } as { userName: string; valid: boolean; error: string });
 
   const onChangeNick = (event: React.ChangeEvent<HTMLInputElement>) => {
     let valNick = /\s/g;
     if (valNick.test(event.target.value)) {
       setNewNick({
-        nickName: event.target.value,
+        userName: event.target.value,
         valid: false,
         error: "사용 불가",
       });
     } else {
       setNewNick({
-        nickName: event.target.value,
+        userName: event.target.value,
         valid: true,
         error: "사용 가능",
       });
@@ -42,16 +38,16 @@ const EditForm: React.FC<props> = ({ setEditNick, onClickEditNick }) => {
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      if (newNick.nickName == "" || !newNick.valid) {
+      if (newNick.userName == "" || !newNick.valid) {
         throw new Error("조건을 확인 해주세요.");
       }
       axios
-        .patch(`/user/nickName/${userObj.id}/${newNick.nickName}`)
+        .patch(`/user/userName/${userAtom.id}/${newNick.userName}`)
         .then((res) => {
           res.status == 200 &&
-            dispatch(setUserInfo({ ...userObj, nickName: newNick.nickName }));
+            setUserAtom({ ...userAtom, userName: newNick.userName });
           setEditNick(false);
-          setNewNick({ nickName: "", valid: false, error: "" });
+          setNewNick({ userName: "", valid: false, error: "" });
         });
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -73,9 +69,9 @@ const EditForm: React.FC<props> = ({ setEditNick, onClickEditNick }) => {
           {<span id="valid">{newNick.error}</span>}
           <input
             type="text"
-            value={newNick.nickName}
+            value={newNick.userName}
             onChange={onChangeNick}
-            placeholder={userObj.nickName + "(10자 이하, 공백불가)"}
+            placeholder={userAtom.userName + "(10자 이하, 공백불가)"}
             maxLength={10}
           />
           <div className="row-container">

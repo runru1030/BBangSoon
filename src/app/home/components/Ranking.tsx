@@ -1,10 +1,10 @@
-import * as React from "react";
-import styled from "styled-components";
+import { userInfoAtoms } from "@app/GlobalProvider";
 import axios from "axios";
-import { useState, useEffect } from "react";
-import StoreList from "../../../components/StoreList";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../store";
+import { useAtomValue } from "jotai";
+import * as React from "react";
+import { useEffect, useState } from "react";
+import styled from "styled-components";
+import StoreList from "../../../components/StoreItem";
 interface rankingState {
   id: number;
   place_name: string;
@@ -14,7 +14,7 @@ interface rankingState {
 }
 const Ranking: React.FC = () => {
   /* location */
-  // const location = useSelector((state: RootState) => state.user.location);
+  const location = useAtomValue(userInfoAtoms.locationAtom);
 
   /* ranking */
   const colorList = ["#FF764A", "#46A6FF", "#46A6FF"]; //ranking num's color
@@ -24,12 +24,12 @@ const Ranking: React.FC = () => {
     setIsMore(true);
   };
 
-  // useEffect(() => {
-  //   //위치기준 랭킹 top 20
-  //   axios.get(`/store/rankReview/${location?.si}`).then((res) => {
-  //     setReviewRank(res.data);
-  //   });
-  // }, [location]);
+  useEffect(() => {
+    //위치기준 랭킹 top 20
+    // axios.get(`/store/rankReview/${location?.si}`).then((res) => {
+    //   setReviewRank(res.data);
+    // });
+  }, [location]);
 
   return (
     <Wrapper className="col-container">

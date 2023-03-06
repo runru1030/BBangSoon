@@ -1,44 +1,27 @@
+import { userInfoAtoms } from "@app/GlobalProvider";
+import Map from "@components/Map";
 import { faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import clsx from "clsx";
+import { useAtom, useAtomValue } from "jotai";
 import React from "react";
 import styled from "styled-components";
-import { useSelector } from "react-redux";
-import { DBStoreType, StoreState } from "../page";
-import { RootState } from "@store/index";
-import Map from "@components/Map";
-interface props {
-  onClick: React.MouseEventHandler<HTMLDivElement>;
-  isOpen: {
-    map: boolean;
-    detail: boolean;
-    menu: boolean;
-    review: boolean;
-  };
-}
-const MapInfo: React.FC<props> = ({ onClick, isOpen }) => {
-  const storeInfo: DBStoreType = useSelector(
-    (state: RootState) => state.store.storeObj
-  );
-  const location = {
-    si: "서울",
-    y: 37.556428224476505,
-    x: 126.97150576481177,
-  };
-  // const location = useSelector((state: RootState) => state.user.location);
-  const [curLoc, setCurLoc] = React.useState<StoreState["loc"]>({
-    title: "",
-    y: location.y,
-    x: location.x,
-  }); //내 위치
+import { DBStoreType, openedStoreInfoAtom } from "../PageContent";
+import { storeInfoAtoms } from "../StoreInfoProvider";
+const MapInfo = () => {
+  const storeInfo: DBStoreType = useAtomValue(storeInfoAtoms.storeAtom);
+  const [openedStoreInfo, setOpenedStoreInfo] = useAtom(openedStoreInfoAtom);
+  const location = useAtomValue(userInfoAtoms.locationAtom);
+
   return (
     <Wrapper>
       <Label
         id="map"
-        onClick={onClick}
-        style={isOpen.map ? { color: "#46A6FF" } : undefined}
+        onClick={() => setOpenedStoreInfo("map")}
+        className={clsx(openedStoreInfo === "map" ? "text-blue" : "")}
       >
         지도
-        {isOpen.map && (
+        {openedStoreInfo === "map" && (
           <Navi className="navi-wrapper">
             <a
               href={"https://map.kakao.com/link/roadview/" + storeInfo.id}
@@ -50,7 +33,7 @@ const MapInfo: React.FC<props> = ({ onClick, isOpen }) => {
           </Navi>
         )}
       </Label>
-      {isOpen.map && storeInfo.x && storeInfo.y && (
+      {openedStoreInfo === "map" && storeInfo.x && storeInfo.y && (
         <div>
           <Map
             loc={{
@@ -59,7 +42,11 @@ const MapInfo: React.FC<props> = ({ onClick, isOpen }) => {
               x: storeInfo.x,
             }}
             setLoc={null}
-            curLoc={curLoc}
+            curLoc={{
+              title: "",
+              y: location.y,
+              x: location.x,
+            }}
             markerArr={[storeInfo]}
           />
         </div>

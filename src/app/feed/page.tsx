@@ -1,13 +1,13 @@
-"use client"
+"use client";
+import { userInfoAtoms } from "@app/GlobalProvider";
 import axios from "axios";
+import { useAtomValue } from "jotai";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import styled from "styled-components";
 import Nav from "../../components/Nav";
-import StoreList, { StoreType } from "../../components/StoreList";
-import { RootState } from "../../store";
+import StoreList, { StoreType } from "../../components/StoreItem";
 import HeaderCmp from "./components/HeaderCmp";
 import Review from "./components/Review";
 
@@ -21,12 +21,7 @@ export interface reviewType {
 }
 const Page = () => {
   const router = useRouter();
-  const { userObj } = useSelector((state: RootState) => ({
-    userObj: state.user.userObj,
-  }));
-  const { isLoggedin } = useSelector((state: RootState) => ({
-    isLoggedin: state.user.isLoggedin,
-  }));
+  const userAtom = useAtomValue(userInfoAtoms.userAtom);
   const [reviewArr, setReviewArr] = useState<reviewType[]>([]); //유저의 리뷰arr
 
   /* 순례 리스트 */
@@ -46,8 +41,8 @@ const Page = () => {
 
   useEffect(() => {
     //로그인 처리
-    !isLoggedin && router.push("/auth/login");
-    axios.get(`/user/feed/${userObj.id}`).then((res) => {
+    !userAtom.id && router.push("/auth/login");
+    axios.get(`/user/feed/${userAtom.id}`).then((res) => {
       setReviewArr(res.data.Reviews);
       setVisitId(res.data.Visits.map((it: { StoreId: number }) => it.StoreId));
     });

@@ -1,18 +1,17 @@
+import Header from "@app/store/[storeId]/components/Header";
+import { storeInfoAtoms } from "@app/store/[storeId]/StoreInfoProvider";
 import axios from "axios";
-import { useEffect } from "react";
-import { useState } from "react";
-import Nav from "./Nav";
-import ImgModal from "./ImgModal";
-import { useSelector } from "react-redux";
-import { RootState } from "../store";
+import { useAtomValue } from "jotai";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Grid } from "./Grid";
-import Header from "@app/store/[storeId]/components/Header";
+import ImgModal from "./ImgModal";
+import Nav from "./Nav";
 interface img {
   imageUrl: string;
 }
 const StoreImg = () => {
-  const storeInfo = useSelector((state: RootState) => state.store.storeObj);
+  const storeInfo = useAtomValue(storeInfoAtoms.storeAtom);
   const [storeImgArr, setStoreImgArr] = useState<img[]>([]);
 
   useEffect(() => {

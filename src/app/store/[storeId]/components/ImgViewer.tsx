@@ -1,20 +1,24 @@
+import { useAtomValue } from "jotai";
+import Image from "next/image";
 import React from "react";
 import styled from "styled-components";
-import Grid from "./Grid";
-import { useSelector } from "react-redux";
-import { DBStoreType } from "../page";
-import { RootState } from "@store/index";
+import { DBStoreType } from "../PageContent";
+import { storeInfoAtoms } from "../StoreInfoProvider";
+import Grid from "./ImgGridContainer";
 
 const ImgViewer: React.FC = () => {
-  const storeInfo: DBStoreType = useSelector(
-    (state: RootState) => state.store.storeObj
-  );
+  const storeInfo: DBStoreType = useAtomValue(storeInfoAtoms.storeAtom);
 
   return (
     <Wrapper>
       {!storeInfo.StoreImgs || storeInfo.StoreImgs.length == 0 ? (
         <NomImg className="non-img container">
-          <img src="bread.png" width="40%" />
+          <Image
+            src="/assets/bread.png"
+            alt="non-img"
+            width="100"
+            height="100"
+          />
           <span>{storeInfo.place_name}</span>
         </NomImg>
       ) : (

@@ -1,34 +1,39 @@
-"use client"
-import queryString from "query-string";
-import axios from "axios";
-import styled from "styled-components";
-import Nav from "../../../components/Nav";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+"use client";
+import { userInfoAtoms } from "@app/GlobalProvider";
 import {
   faBook,
   faBreadSlice,
   faHeart,
 } from "@fortawesome/free-solid-svg-icons";
-import { useDispatch } from "react-redux";
-import { setLoggedInfo } from "../../../store/user";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import axios from "axios";
+import { useSetAtom } from "jotai";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
+import styled from "styled-components";
+import Nav from "../../../components/Nav";
 const Page = () => {
-  const dispatch = useDispatch();
+  const setUserAtom = useSetAtom(userInfoAtoms.userAtom);
+  const searchParams = useSearchParams();
+  const query = searchParams?.get("code");
+  const router = useRouter();
 
-  const kauthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.REACT_APP_KAKAO_REST_KEY}&redirect_uri=http://localhost:3000/auth&response_type=code`;
-  // const query = queryString.parse(window.location.search);
-  // useEffect(() => {
-  //   if (query.code) {
-  //     getKakaoTokenHandler(query.code.toString());
-  //   }
-  // }, []);
+  useEffect(() => {
+    sendKakaoTokenToServer("");
+    if (query) {
+      getKakaoTokenHandler(query);
+    }
+  }, [query]);
+
   /* 카카오 로그인 token 발급 REST API */
   const getKakaoTokenHandler = async (code: string) => {
     const data: any = {
       grant_type: "authorization_code",
-      client_id: process.env.REACT_APP_KAKAO_REST_KEY,
-      redirect_uri: "http://localhost:3000/auth",
-      code: code,
+      client_id: process.env.NEXT_PUBLIC_KAKAO_REST_KEY,
+      redirect_uri: "http://localhost:3000/auth/login",
+      code,
     };
     const queryString = Object.keys(data)
       .map(
@@ -46,28 +51,30 @@ const Page = () => {
       });
   };
   /* 일반 로그인 */
-  const sendKakaoTokenToServer = (token: string) => {
-    axios.post("/auth/kakao", { access_token: token }).then((res) => {
-      if (res.status == 201 || res.status == 200) {
-        const user = res.data.user;
-        dispatch(setLoggedInfo(user, true));
-        window.localStorage.setItem(
-          "token",
-          JSON.stringify({
-            access_token: res.data.jwt,
-          })
-        );
-        axios.defaults.headers.common["Authorization"] = `${res.data.jwt}`;
-        history.go(-2);
-      } else {
-        window.alert("로그인에 실패하였습니다.");
-      }
+  const sendKakaoTokenToServer = async (token: string) => {
+    const res = await axios.put("/auth/api", {
+      access_token: "WkcPYc7p7-Tf7bP8SbLRPH7tY0bwvqz7-BXwWp40Cj102gAAAYa17JNl",
     });
+    const { jwt, user } = res.data;
+
+    if (res.status == 201 || res.status == 200) {
+      setUserAtom(user);
+      window.localStorage.setItem(
+        "token",
+        JSON.stringify({
+          access_token: jwt,
+        })
+      );
+      axios.defaults.headers.common["Authorization"] = `${jwt}`;
+      router.push("/home");
+    } else {
+      window.alert("로그인에 실패하였습니다.");
+    }
   };
 
   return (
     <div>
-      <Randing className="container">
+      <Randing className="col-container items-center py-8">
         <Label>로그인으로, 더 많은 서비스를 이용할 수 있어요!</Label>
         <Wrapper className="col-container">
           <List>
@@ -83,11 +90,19 @@ const Page = () => {
             빵집 등록
           </List>
         </Wrapper>
-        <img src="logo.png" width="40%" />
+        <Image src="/assets/logo.png" width="200" height="100" alt="logo" />
         <span>간편로그인으로 3초만에 로그인</span>
-        <a href={kauthUrl}>
-          <img src="kakao_login.png" id="kakao-login-btn" width="250px" />
-        </a>
+        <Link
+          href={`https://kauth.kakao.com/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_KAKAO_REST_KEY}&redirect_uri=http://localhost:3000/auth/login&response_type=code`}
+        >
+          <Image
+            src="/assets/kakao_login.png"
+            id="kakao-login-btn"
+            width="250"
+            height="100"
+            alt="kakao"
+          />
+        </Link>
       </Randing>
       <Nav />
     </div>
@@ -113,6 +128,8 @@ const Label = styled.span`
 `;
 const List = styled.span`
   margin: 5px 0;
+  display: flex;
+
   #icon {
     margin-right: 10px;
     margin-bottom: 10px;

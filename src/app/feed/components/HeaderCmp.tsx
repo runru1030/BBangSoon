@@ -1,16 +1,15 @@
-import * as React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBreadSlice } from "@fortawesome/free-solid-svg-icons";
-import styled from "styled-components";
-import axios from "axios";
-import { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import EditForm from "./EditForm";
-import { reviewType } from "../page";
-import { RootState } from "@store/index";
-import { setLoggedInfo } from "@store/user";
+import { userInfoAtoms } from "@app/GlobalProvider";
 import { Header } from "@components/Header";
+import { faBreadSlice } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import axios from "axios";
+import { useAtomValue } from "jotai";
 import { useRouter } from "next/navigation";
+import * as React from "react";
+import { useEffect, useState } from "react";
+import styled from "styled-components";
+import { reviewType } from "../page";
+import EditForm from "./EditForm";
 
 interface props {
   reviewArr: reviewType[];
@@ -23,10 +22,7 @@ const HeaderCmp: React.FC<props> = ({
   onClickHandler,
 }) => {
   const router = useRouter();
-  const dispatch = useDispatch();
-  const { userObj } = useSelector((state: RootState) => ({
-    userObj: state.user.userObj,
-  }));
+  const userAtom = useAtomValue(userInfoAtoms.userAtom);
 
   const [isOpenModal, setIsOpenModal] = useState(false);
   const onClickName = () => {
@@ -60,7 +56,7 @@ const HeaderCmp: React.FC<props> = ({
   const onClickLogout = () => {
     axios.post("/auth/logout").then((res) => {
       if (res.status == 200) {
-        dispatch(setLoggedInfo(userObj, false));
+        // dispatch(setLoggedInfo(userAtom, false));
         window.localStorage.removeItem("token");
         router.push("/");
       }
@@ -69,7 +65,7 @@ const HeaderCmp: React.FC<props> = ({
   return (
     <>
       <Header className="row-container">
-        <span onClick={onClickName}>{userObj.nickName}</span>
+        <span onClick={onClickName}>{userAtom.userName}</span>
         {isOpenModal && (
           <Modal className="col-container" ref={wrapperRef}>
             <span onClick={onClickLogout}>로그아웃</span>

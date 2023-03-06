@@ -24,9 +24,8 @@
       "@app/*": ["./src/app/*"],
       "@hits/hits-ui/*": ["../../packages/hits-ui/src/*"],
       "@components/*": ["./src/components/*"],
-      "@store/*": ["./src/store/*"],
       "@lib/*": ["./src/lib/*"],
-      "@assets/*": ["./public/assets/*"],
+      "@assets/*": ["./public/assets/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

@@ -1,31 +1,30 @@
-import Nav from "./Nav";
-import styled from "styled-components";
 import axios from "axios";
-import { useState, useEffect } from "react";
-import StoreList, { StoreType } from "./StoreList";
-import { useSelector } from "react-redux";
-import StarCmp from "./StarCmp";
-import { RootState } from "../store";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import styled from "styled-components";
+import Nav from "./Nav";
+import StarCmp from "./StarCmp";
+import StoreList, { StoreType } from "./StoreItem";
 const Review: React.FC = () => {
   const router = useRouter();
-  const { review } = useSelector((state: RootState) => ({
-    review: state.review.review,
-  }));
+  // const { review } = useSelector((state: RootState) => ({
+  //   review: state.review.review,
+  // }));
+  // const review = {};
   const [store, setStore] = useState<StoreType>(); // DetailReview's store
 
-  const onClickDel = () => {
-    axios.delete(`/store/review/${review.id}`).then(() => {
-      router.push("/feed");
-    });
-  };
-  useEffect(() => {
-    axios.post(`/store/${review.StoreId}`).then((res) => setStore(res.data));
-  }, []);
+  // const onClickDel = () => {
+  //   axios.delete(`/store/review/${review.id}`).then(() => {
+  //     router.push("/feed");
+  //   });
+  // };
+  // useEffect(() => {
+  //   axios.post(`/store/${review.StoreId}`).then((res) => setStore(res.data));
+  // }, []);
   return (
     <Container>
       {store != undefined && <StoreList store={store} />}
-      {review.reviewImg && (
+      {/* {review.reviewImg && (
         <ImgWrapper>
           <img src={review.reviewImg} />
         </ImgWrapper>
@@ -41,7 +40,7 @@ const Review: React.FC = () => {
           <Button onClick={onClickDel}>삭제</Button>
         </Wrapper>
         <Content>{review.content}</Content>
-      </ReviewCmp>
+      </ReviewCmp> */}
       <Nav />
     </Container>
   );

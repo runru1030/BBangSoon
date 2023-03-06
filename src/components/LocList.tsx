@@ -1,46 +1,44 @@
+import { userInfoAtoms } from "@app/GlobalProvider";
+import { useAtom } from "jotai";
 import * as React from "react";
 import styled from "styled-components";
-import { useDispatch, useSelector } from "react-redux";
-import { setLocationInfo } from "../store/user";
-import { RootState } from "../store";
 interface props {
-  setChangeSi: React.Dispatch<React.SetStateAction<boolean>>;
+  setChangeLocMode: React.Dispatch<React.SetStateAction<boolean>>;
 }
-const LocList: React.FC<props> = ({ setChangeSi }) => {
-  // const location = useSelector((state: RootState) => state.user.location);
-  const location = {
-    si: "서울",
-    y: 37.556428224476505,
-    x: 126.97150576481177,
-  };
-  const dispatch = useDispatch();
-  const onClick = (si: string) => {
-    dispatch(setLocationInfo({ ...location, si: si }));
-    setChangeSi(false);
-  };
-  const siArr = [
-    "서울",
-    "부산",
-    "대구",
-    "인천",
-    "광주",
-    "대전",
-    "울산",
-    "세종",
-    "경기",
-    "강원",
-    "충북",
-    "충남",
-    "전북",
-    "전남",
-    "경북",
-    "경남",
-    "제주특별자치도",
-  ];
+const siArr = [
+  "서울",
+  "부산",
+  "대구",
+  "인천",
+  "광주",
+  "대전",
+  "울산",
+  "세종",
+  "경기",
+  "강원",
+  "충북",
+  "충남",
+  "전북",
+  "전남",
+  "경북",
+  "경남",
+  "제주특별자치도",
+];
+const LocList: React.FC<props> = ({ setChangeLocMode }) => {
+  const [location, setLocation] = useAtom(userInfoAtoms.locationAtom);
+
   return (
     <GridContainer>
-      {siArr.map((it: string) => (
-        <Store onClick={(e) => onClick(it)}>{it}</Store>
+      {siArr.map((si: string) => (
+        <Store
+          key={si}
+          onClick={() => {
+            setLocation({ ...location, si: si });
+            setChangeLocMode(false);
+          }}
+        >
+          {si}
+        </Store>
       ))}
     </GridContainer>
   );
@@ -52,19 +50,23 @@ const Store = styled.div`
   padding: 35px 0;
   border-bottom: ${(props) => `solid thin` + props.theme.color.border_grey};
   border-right: ${(props) => `solid thin` + props.theme.color.border_grey};
-  font-weight: lighter;
+  font-size: 18px;
+  transition: 0.3s;
+  &:active {
+    filter: brightness(80%);
+  }
 `;
 
 const GridContainer = styled.div`
   display: grid;
-  width: 100vw;
-  height: 100vw;
+  width: 100%;
+  padding-bottom: 64px;
   grid-template-columns: 50% 50%;
   column-gap: 3px;
   row-gap: 3px;
   cursor: pointer;
   border-top: ${(props) => `solid thin` + props.theme.color.border_grey};
-  > div {
+  & > div {
     display: flex;
     background-color: white;
     overflow: hidden;

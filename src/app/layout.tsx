@@ -1,9 +1,8 @@
-import ReactQueryProvider from "./ReactQueryProvider";
-import RootStyleRegistry from "./RootStyleRegistry";
 import React from "react";
 import "src/styles/globals.css";
 import GlobalProvider from "./GlobalProvider";
-import ReduxProvider from "./ReduxProvider";
+import ReactQueryProvider from "./ReactQueryProvider";
+import RootStyleRegistry from "./RootStyleRegistry";
 
 export default async function RootLayout({
   children,
@@ -15,15 +14,17 @@ export default async function RootLayout({
       <head>
         <link rel="shortcut icon" href="/favicon.png" />
         <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+        <script
+          type="text/javascript"
+          src={`https://dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_JS_KEY}`}
+        ></script>
         <title>BBangSoon</title>
       </head>
       <body>
         <ReactQueryProvider>
-          <ReduxProvider>
-            <RootStyleRegistry>
-              <GlobalProvider>{children}</GlobalProvider>
-            </RootStyleRegistry>
-          </ReduxProvider>
+          <RootStyleRegistry>
+            <GlobalProvider>{children}</GlobalProvider>
+          </RootStyleRegistry>
         </ReactQueryProvider>
       </body>
     </html>

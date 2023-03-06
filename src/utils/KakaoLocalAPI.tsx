@@ -1,5 +1,5 @@
+import { resultState } from "@app/home/PageContent";
 import axios from "axios";
-import { resultState } from "../app/home/page";
 import { StoreState } from "../app/store/[storeId]/page";
 
 export const getStore = async (
@@ -16,7 +16,7 @@ export const getStore = async (
       `https://dapi.kakao.com/v2/local/search/keyword.json?query=${search}`,
       {
         headers: {
-          Authorization: `KakaoAK ${process.env.REACT_APP_KAKAO_REST_KEY}`,
+          Authorization: `KakaoAK ${process.env.NEXT_PUBLIC_KAKAO_REST_KEY}`,
         },
         params: {
           page: page,
@@ -79,7 +79,7 @@ export const getStoreMap = async (
   await axios
     .get(`https://dapi.kakao.com/v2/local/search/keyword.json?query=디저트`, {
       headers: {
-        Authorization: `KakaoAK ${process.env.REACT_APP_KAKAO_REST_KEY}`,
+        Authorization: `KakaoAK ${process.env.NEXT_PUBLIC_KAKAO_REST_KEY}`,
       },
       params: {
         y: loc.y,

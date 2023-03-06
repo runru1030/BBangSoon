@@ -1,46 +1,37 @@
-import * as React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  storeInfoAtoms,
+  StoreType,
+} from "@app/store/[storeId]/StoreInfoProvider";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
-import styled from "styled-components";
-import { useDispatch } from "react-redux";
-import { setStoreInfo } from "../store/store";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useSetAtom } from "jotai";
 import { useRouter } from "next/navigation";
-export interface StoreType {
-  id: number;
-  road_address_name?: string;
-  address_name?: string;
-  place_name: string;
-  phone?: string;
-  x?: number;
-  y?: number;
-  place_url?: string;
-  reviewCnt?: number;
-  avgStar?: number;
-}
+import * as React from "react";
+import styled from "styled-components";
 interface StoreListProps {
   store: StoreType;
-  children?: any;
 }
-const StoreList: React.FC<StoreListProps> = ({ store, children }) => {
+const StoreItem = ({
+  store,
+  children,
+}: React.PropsWithChildren<StoreListProps>) => {
   const router = useRouter();
-  const dispatch = useDispatch();
+  const setStoreInfo = useSetAtom(storeInfoAtoms.storeAtom);
   const onClick = () => {
-    dispatch(
-      setStoreInfo({
-        id: store.id,
-        address_name: store.road_address_name
-          ? store.road_address_name
-          : store.address_name,
-        place_name: store.place_name,
-        phone: store.phone,
-        x: store.x,
-        y: store.y,
-        place_url: store.place_url,
-        reviewCnt: store.reviewCnt,
-        avgStar: store.avgStar,
-      })
-    );
-    router.push("/store");
+    setStoreInfo({
+      id: store.id,
+      address_name: store.road_address_name
+        ? store.road_address_name
+        : store.address_name,
+      place_name: store.place_name,
+      phone: store.phone,
+      x: store.x,
+      y: store.y,
+      place_url: store.place_url,
+      reviewCnt: store.reviewCnt,
+      avgStar: store.avgStar,
+    });
+    router.push(`/store/${store.id}`);
   };
 
   return (
@@ -56,7 +47,7 @@ const StoreList: React.FC<StoreListProps> = ({ store, children }) => {
               store.reviewCnt
             )}
           </span>
-          <span id="small">리뷰</span>
+          <span className="text-sm">리뷰</span>
         </Block>
         <Block>
           <span>
@@ -66,13 +57,13 @@ const StoreList: React.FC<StoreListProps> = ({ store, children }) => {
               store.avgStar.toFixed(1)
             )}
           </span>
-          <span id="small">평점</span>
+          <span className="text-sm">평점</span>
         </Block>
       </Wrapper>
     </Store>
   );
 };
-export default StoreList;
+export default StoreItem;
 const Store = styled.div`
   width: 100vw;
   max-width: 100vw;
@@ -89,9 +80,6 @@ const Block = styled.div`
   justify-content: center;
   font-size: large;
   color: #636363;
-  #small {
-    font-size: xx-small;
-  }
 `;
 const Wrapper = styled.div`
   gap: 20px;

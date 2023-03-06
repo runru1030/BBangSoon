@@ -1,32 +1,31 @@
+import { userInfoAtoms } from "@app/GlobalProvider";
+import { storeInfoAtoms } from "@app/store/[storeId]/StoreInfoProvider";
 import { faBreadSlice, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
-import TextareaAutosize from "react-textarea-autosize";
+import clsx from "clsx";
+import { atom, useAtom, useAtomValue } from "jotai";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { setStoreInfo } from "../store/store";
+import TextareaAutosize from "react-textarea-autosize";
 import styled from "styled-components";
-import { DBStoreType } from "../app/store/[storeId]/page";
-import { RootState } from "../store";
-interface props {
-  storeId: number;
-  setIsWrite: React.Dispatch<React.SetStateAction<boolean>>;
-}
 export interface reviewState {
   content: string;
   star: number;
   attach: string | ArrayBuffer;
   nickName: string;
 }
-const ReviewForm: React.FC<props> = ({ storeId, setIsWrite }) => {
-  const dispatch = useDispatch();
-  const storeInfo: DBStoreType = useSelector(
-    (state: RootState) => state.store.storeObj
-  );
-  const { userObj } = useSelector((state: RootState) => ({
-    userObj: state.user.userObj,
-    isLoggedin: state.user.isLoggedin,
-  }));
+
+const isWriteModeAtom = atom<boolean>(false);
+
+interface props {
+  storeId: number;
+}
+
+const ReviewForm = ({ storeId }: props) => {
+  const [storeInfo, setStoreInfo] = useAtom(storeInfoAtoms.storeAtom);
+  const userAtom = useAtomValue(userInfoAtoms.userAtom);
+  const [isWriteMode, setisWriteMode] = useAtom(isWriteModeAtom);
 
   /* 리뷰 작성 */
   const [reviewImg, setReviewImg] = useState<File>();
@@ -46,9 +45,9 @@ const ReviewForm: React.FC<props> = ({ storeId, setIsWrite }) => {
     formData.append("content", newReview.content);
     formData.append("nickName", newReview.nickName);
     formData.append("star", newReview.star.toString());
-    formData.append("UserId", userObj.id);
+    formData.append("UserId", userAtom.id + "");
     axios.post(`/store/review/${storeId}`, formData).then((res) => {
-      dispatch(setStoreInfo({ ...storeInfo, ...res.data }));
+      setStoreInfo({ ...storeInfo, ...res.data });
     });
     setNewReview({
       content: "",
@@ -57,7 +56,7 @@ const ReviewForm: React.FC<props> = ({ storeId, setIsWrite }) => {
       nickName: "익명",
     });
     setReviewImg(undefined);
-    setIsWrite(false);
+    setisWriteMode(false);
   };
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const {
@@ -79,10 +78,10 @@ const ReviewForm: React.FC<props> = ({ storeId, setIsWrite }) => {
   };
 
   return (
-    <>
-      <Form onSubmit={onSubmit} className="col-container">
+    <div className={clsx(isWriteMode ? "visible" : "hidden")}>
+      <Form onSubmit={onSubmit} className="col-container justify-center w-full">
         {newReview.attach && <img src={newReview.attach + ""} width="60%" />}
-        <StarContainer className="row-container">
+        <StarContainer className="row-container items-center">
           {Array.from({ length: 5 }, (v, i) => i).map((it) => (
             <FontAwesomeIcon
               id={it + 1 + ""}
@@ -91,14 +90,23 @@ const ReviewForm: React.FC<props> = ({ storeId, setIsWrite }) => {
               color={newReview.star >= it + 1 ? "#e2c26e" : "#cabfa3"}
             />
           ))}
-          <span>{newReview.star}</span>
+          <span className="text-2xl font-semibold text-brown ml-2">
+            {newReview.star}
+          </span>
           <ButtonGroup className="wrapper row-container">
-            <label htmlFor="file">
+            <label
+              htmlFor="file"
+              className="bg-brown-2 text-white px-3 py-2 rounded-l-lg"
+            >
               <FontAwesomeIcon icon={faPlus} />
             </label>
-            <label htmlFor="submit" id="sbm-btn">
+            <button
+              type="submit"
+              id="sbm-btn"
+              className="bg-brown-2 text-white px-3 py-2 rounded-r-lg"
+            >
               <span>작성</span>
-            </label>
+            </button>
           </ButtonGroup>
         </StarContainer>
         <TextareaAutosize
@@ -117,18 +125,33 @@ const ReviewForm: React.FC<props> = ({ storeId, setIsWrite }) => {
           type="file"
           style={{ display: "none" }}
           onChange={onFileChange}
-        />
-        <input
-          id="submit"
-          type="submit"
-          value="제출"
-          style={{ display: "none" }}
+          accept="image/png, image/jpeg"
         />
       </Form>
-    </>
+    </div>
   );
 };
+
+const WriteBtn = () => {
+  const router = useRouter();
+  const [isWriteMode, setisWriteMode] = useAtom(isWriteModeAtom);
+  const userAtom = useAtomValue(userInfoAtoms.userAtom);
+  return (
+    <button
+      onClick={() => {
+        !userAtom.id
+          ? setisWriteMode(!isWriteMode)
+          : router.push("/auth/login");
+      }}
+      className="text-sm text-orange"
+    >
+      {isWriteMode ? "취소" : "작성하기"}
+    </button>
+  );
+};
+ReviewForm.triggerBtn = WriteBtn;
 export default ReviewForm;
+
 const Form = styled.form`
   width: 90%;
   font-size: medium;
@@ -149,22 +172,11 @@ const StarContainer = styled.span`
   align-items: center;
   gap: 3px;
   margin-top: 30px;
-  & > span {
-    font-size: x-large;
-    margin-left: 10px;
-    font-weight: bold;
-    color: #e2c26e;
-  }
 `;
 const ButtonGroup = styled.div`
   font-size: small;
   flex: 1;
   justify-content: flex-end;
-  label {
-    padding: 5px 10px;
-    background-color: #9c9789;
-    color: white;
-  }
   #sbm-btn {
     border-left: white solid thin;
   }

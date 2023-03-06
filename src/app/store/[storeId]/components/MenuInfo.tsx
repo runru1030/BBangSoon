@@ -1,33 +1,24 @@
+import clsx from "clsx";
+import { useAtom, useAtomValue } from "jotai";
 import React from "react";
 import styled from "styled-components";
-import { useSelector } from "react-redux";
-import { DBStoreType } from "../page";
-import { RootState } from "@store/index";
+import { DBStoreType, openedStoreInfoAtom } from "../PageContent";
+import { storeInfoAtoms } from "../StoreInfoProvider";
 
-interface props {
-  onClick: React.MouseEventHandler<HTMLDivElement>;
-  isOpen: {
-    map: boolean;
-    detail: boolean;
-    menu: boolean;
-    review: boolean;
-  };
-}
-const MenuInfo: React.FC<props> = ({ onClick, isOpen }) => {
-  const storeInfo: DBStoreType = useSelector(
-    (state: RootState) => state.store.storeObj
-  );
+const MenuInfo = () => {
+  const storeInfo: DBStoreType = useAtomValue(storeInfoAtoms.storeAtom);
+  const [openedStoreInfo, setOpenedStoreInfo] = useAtom(openedStoreInfoAtom);
 
   return (
     <Wrapper>
       <Label
         id="menu"
-        onClick={onClick}
-        style={isOpen.menu ? { color: "#46A6FF" } : undefined}
+        onClick={() => setOpenedStoreInfo("menu")}
+        className={clsx(openedStoreInfo === "menu" ? "text-blue" : "")}
       >
         메뉴
       </Label>
-      {isOpen.menu && (
+      {openedStoreInfo === "menu" && (
         <div>
           {storeInfo.Menus?.map((menu: any) => (
             <Label>

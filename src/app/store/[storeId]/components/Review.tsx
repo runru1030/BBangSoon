@@ -1,64 +1,43 @@
-import React from "react";
-import { useState } from "react";
-import styled from "styled-components";
-import { useSelector } from "react-redux";
-import { RootState } from "@store/index";
-import { DBStoreType } from "../page";
-import ReviewForm from "@components/ReviewForm";
+import ReviewForm from "@app/store/[storeId]/components/ReviewForm";
 import ReviewList, { reviewProps } from "@components/ReviewList";
-import { useRouter } from "next/navigation";
-interface props {
-  onClick: React.MouseEventHandler<HTMLDivElement>;
-  isOpen: {
-    map: boolean;
-    detail: boolean;
-    menu: boolean;
-    review: boolean;
-  };
-}
-const Review: React.FC<props> = ({ onClick, isOpen }) => {
-  const router = useRouter();
-  const { userObj, isLoggedin } = useSelector((state: RootState) => ({
-    userObj: state.user.userObj,
-    isLoggedin: state.user.isLoggedin,
-  }));
+import clsx from "clsx";
+import { useAtom, useAtomValue } from "jotai";
+import styled from "styled-components";
+import { DBStoreType, openedStoreInfoAtom } from "../PageContent";
+import { storeInfoAtoms } from "../StoreInfoProvider";
 
-  const storeInfo: DBStoreType = useSelector(
-    (state: RootState) => state.store.storeObj
-  );
-
-  /* 리뷰 작성 */
-  const [isWrite, setIsWrite] = useState(false);
-  const onClickWrite = () => {
-    isLoggedin ? setIsWrite((prev) => !prev) : router.push("/auth");
-  };
-
+const Review = () => {
+  const storeInfo: DBStoreType = useAtomValue(storeInfoAtoms.storeAtom);
+  const [openedStoreInfo, setOpenedStoreInfo] = useAtom(openedStoreInfoAtom);
   return (
-    <Wrapper>
+    <div>
       <Label
         id="review"
-        onClick={onClick}
-        style={isOpen.review ? { color: "#46A6FF" } : undefined}
+        onClick={() => setOpenedStoreInfo("review")}
+        className={clsx(openedStoreInfo === "review" ? "text-blue" : "")}
       >
         <span>리뷰</span>
-        <span onClick={onClickWrite} id="side">
-          {isWrite ? "취소" : "작성하기"}
-        </span>
+        {openedStoreInfo === "review" && <ReviewForm.triggerBtn />}
       </Label>
-      {isWrite && <ReviewForm storeId={storeInfo.id} setIsWrite={setIsWrite} />}
-      {isOpen.review && storeInfo.Reviews && (
-        <div>
-          {storeInfo.Reviews.map((review: reviewProps["review"]) => (
-            <ReviewList review={review} userId={userObj.id} />
-          ))}
-        </div>
+      {openedStoreInfo === "review" && (
+        <>
+          <ReviewForm storeId={storeInfo.id} />
+          <div>
+            {storeInfo.Reviews && storeInfo.Reviews?.length !== 0 ? (
+              storeInfo.Reviews?.map((review: reviewProps["review"]) => (
+                <ReviewList review={review} key={review.id} />
+              ))
+            ) : (
+              <div className="flex justify-center w-full">리뷰가 없어용</div>
+            )}
+          </div>
+        </>
       )}
-    </Wrapper>
+    </div>
   );
 };
 export default Review;
-const Wrapper = styled.div``;
-const Label = styled.div<{ path?: string }>`
+const Label = styled.div`
   font-size: medium;
   padding: 15px;
   display: flex;
@@ -67,11 +46,5 @@ const Label = styled.div<{ path?: string }>`
   box-sizing: border-box;
   span {
     flex: 1;
-  }
-  #side {
-    flex: 0.2;
-    text-align: end;
-    font-size: xx-small;
-    color: #6f6f6f;
   }
 `;

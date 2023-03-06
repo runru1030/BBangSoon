@@ -1,10 +1,9 @@
+import { userInfoAtoms } from "@app/GlobalProvider";
+import { storeInfoAtoms } from "@app/store/[storeId]/StoreInfoProvider";
 import axios from "axios";
-import { useDispatch, useSelector } from "react-redux";
+import { useAtom, useAtomValue } from "jotai";
 import styled from "styled-components";
 import ImgModal from "./ImgModal";
-import { RootState } from "../store";
-import { setStoreInfo } from "../store/store";
-import { DBStoreType } from "../app/store/[storeId]/page";
 import StarCmp from "./StarCmp";
 export interface reviewProps {
   review: {
@@ -16,17 +15,15 @@ export interface reviewProps {
     date: Date;
     UserId: number;
   };
-  userId: number;
 }
-const ReviewList: React.FC<reviewProps> = ({ review, userId }) => {
-  const dispatch = useDispatch();
-  const storeInfo: DBStoreType = useSelector(
-    (state: RootState) => state.store.storeObj
-  );
+const ReviewList: React.FC<reviewProps> = ({ review }) => {
+  const [storeInfo, setStoreInfo] = useAtom(storeInfoAtoms.storeAtom);
+  const userAtom = useAtomValue(userInfoAtoms.userAtom);
+
   const onClickDel = () => {
     axios.delete(`/store/review/${review.id}`);
     axios.post(`/storeCrawl`, storeInfo).then((res) => {
-      dispatch(setStoreInfo({ ...storeInfo, ...res.data }));
+      setStoreInfo({ ...storeInfo, ...res.data });
     });
   };
   return (
@@ -38,7 +35,9 @@ const ReviewList: React.FC<reviewProps> = ({ review, userId }) => {
       )}
       <Wrapper className="row-container">
         <StarCmp reviewStar={review.star} />
-        {userId == review.UserId && <Button onClick={onClickDel}>삭제</Button>}
+        {userAtom.id === review.UserId && (
+          <Button onClick={onClickDel}>삭제</Button>
+        )}
       </Wrapper>
       <span id="content">{review.content}</span>
       <Detail>

@@ -4,36 +4,27 @@ import {
   faPhoneAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import clsx from "clsx";
+import { useAtom, useAtomValue } from "jotai";
 import React from "react";
 import styled from "styled-components";
-import { useSelector } from "react-redux";
-import { DBStoreType } from "../page";
-import { RootState } from "@store/index";
+import { DBStoreType, openedStoreInfoAtom } from "../PageContent";
+import { storeInfoAtoms } from "../StoreInfoProvider";
 
-interface props {
-  onClick: React.MouseEventHandler<HTMLDivElement>;
-  isOpen: {
-    map: boolean;
-    detail: boolean;
-    menu: boolean;
-    review: boolean;
-  };
-}
-const StoreInfo: React.FC<props> = ({ onClick, isOpen }) => {
-  const storeInfo: DBStoreType = useSelector(
-    (state: RootState) => state.store.storeObj
-  );
+const StoreInfo = () => {
+  const storeInfo: DBStoreType = useAtomValue(storeInfoAtoms.storeAtom);
+  const [openedStoreInfo, setOpenedStoreInfo] = useAtom(openedStoreInfoAtom);
 
   return (
     <Wrapper>
       <Label
         id="detail"
-        onClick={onClick}
-        style={isOpen.detail ? { color: "#46A6FF" } : undefined}
+        onClick={() => setOpenedStoreInfo("detail")}
+        className={clsx(openedStoreInfo === "detail" ? "text-blue" : "")}
       >
         상세정보
       </Label>
-      {isOpen.detail && (
+      {openedStoreInfo === "detail" && (
         <DetailDiv className="col-container">
           <div>
             <span id="label">

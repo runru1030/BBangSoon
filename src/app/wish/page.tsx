@@ -1,30 +1,25 @@
-"use client"
-import Nav from "../../components/Nav";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+"use client";
+import { userInfoAtoms } from "@app/GlobalProvider";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
-import { useState, useEffect } from "react";
-import StoreList, { StoreType } from "../../components/StoreList";
-import { useSelector } from "react-redux";
-import { RootState } from "../../store";
+import { useAtomValue } from "jotai";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Header } from "../../components/Header";
-import { useRouter } from "next/navigation";
+import Nav from "../../components/Nav";
+import StoreList, { StoreType } from "../../components/StoreItem";
 const Page = () => {
   const router = useRouter();
-  const { userObj } = useSelector((state: RootState) => ({
-    userObj: state.user.userObj,
-  }));
-  const { isLoggedin } = useSelector((state: RootState) => ({
-    isLoggedin: state.user.isLoggedin,
-  }));
+  const userAtom = useAtomValue(userInfoAtoms.userAtom);
 
   const [storeArr, setStoreArr] = useState<StoreType[]>([]);
 
   useEffect(() => {
     //로그인 처리
-    !isLoggedin && router.push("/auth/login");
-    axios.get(`/user/wishArr/${userObj.id}`).then((res) => {
+    !userAtom.id && router.push("/auth/login");
+    axios.get(`/user/wishArr/${userAtom.id}`).then((res) => {
       setStoreArr(res.data);
     });
   }, []);

@@ -5,11 +5,11 @@ import { useRouter } from 'next/navigation';
 interface props {
   imgArr: { url: string }[]
 }
-const Grid: React.FC<props> = ({ imgArr }) => {
+const ImgGridContainer: React.FC<props> = ({ imgArr }) => {
   const router = useRouter();
 
   const onClickStoreImage = () => {
-    router.push("/store/image");
+    // router.push("/store/image");
   }
   return (
     <Wrapper>
@@ -39,7 +39,7 @@ const Grid: React.FC<props> = ({ imgArr }) => {
     </Wrapper>
   )
 }
-export default Grid;
+export default ImgGridContainer;
 const Wrapper = styled.div``
 const GridContainer = styled.div`
   display: grid;

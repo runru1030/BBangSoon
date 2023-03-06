@@ -1,5 +1,4 @@
 import axios from "axios";
-// import { useDispatch } from "react-redux";
 // import { setLocationInfo, setLoggedInfo } from "../store/user";
 // //위치 GPS, loding 화면
 // const App: React.FC = () => {
@@ -29,7 +28,7 @@ import axios from "axios";
 //       axios
 //         .get(`https://dapi.kakao.com/v2/local/geo/coord2address.json`, {
 //           headers: {
-//             Authorization: `KakaoAK ${process.env.REACT_APP_KAKAO_REST_KEY}`,
+//             Authorization: `KakaoAK ${process.env.NEXT_PUBLIC__KAKAO_REST_KEY}`,
 //           },
 //           params: {
 //             y: position.coords.latitude,
@@ -69,4 +68,4 @@ import axios from "axios";
 // };
 
 // export default App;
-export const test=()=>{}
+export const test = () => {};

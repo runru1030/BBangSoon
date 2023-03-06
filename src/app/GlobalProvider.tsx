@@ -3,6 +3,7 @@
 import axios from "axios";
 import { atom, Provider, useSetAtom } from "jotai";
 import React, { useEffect } from "react";
+import { DevTools } from "jotai-devtools";
 
 interface user {
   id: number | null;
@@ -56,5 +57,10 @@ export default function GlobalProvider(props: { children: React.ReactNode }) {
     navigator.geolocation.getCurrentPosition(geolocationPositionCallback);
   }, []);
 
-  return <Provider>{props.children}</Provider>;
+  return (
+    <Provider>
+      <DevTools />
+      {props.children}
+    </Provider>
+  );
 }

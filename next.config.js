@@ -36,6 +36,7 @@ const nextConfig = {
   async redirects() {
     return [];
   },
+  transpilePackages: ["jotai-devtools"],
 };
 
 module.exports = nextConfig;

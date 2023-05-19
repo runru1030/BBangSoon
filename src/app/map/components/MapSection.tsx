@@ -1,10 +1,11 @@
 import { userInfoAtoms } from "@app/GlobalProvider";
-import { resultState } from "@app/home/PageContent";
+import { StrapiStoreType } from "@app/store/[storeId]/StoreInfoProvider";
 import Map from "@components/Map";
 import StoreList from "@components/StoreItem";
+import { strapiStoresApi } from "@lib/apis/Stores";
+import { useQuery } from "@tanstack/react-query";
 import { useAtom, useAtomValue } from "jotai";
-import { useEffect, useState } from "react";
-import { getStoreList, getStoreMap } from "src/utils/KakaoLocalAPI";
+import { useState } from "react";
 import styled from "styled-components";
 import { mapLocationAtom } from "../PageContent";
 
@@ -12,22 +13,24 @@ const MapSection = () => {
   const location = useAtomValue(userInfoAtoms.locationAtom);
   const [mapLocation, setMapLocation] = useAtom(mapLocationAtom);
 
-  const [markerArr, setMarkerArr] = useState<resultState[]>([]);
-  const [isEnd, setIsEnd] = useState<boolean>();
-  const [curpage, setCurPage] = useState(1);
+  const [storeArr, setStoreArr] = useState<StrapiStoreType[]>([]);
 
-  useEffect(() => {
-    getStoreApi(1);
-  }, [mapLocation]);
-
-  const getStoreApi = (page: number) => {
-    getStoreMap(page, markerArr, mapLocation).then((res: any) => {
-      setMarkerArr(res.resultArr);
-      setIsEnd(res.isEnd);
-      setCurPage((p) => p + 1);
-      getStoreList(res.resultArr, setMarkerArr);
-    });
-  };
+  useQuery(["getNearbyStores"], {
+    queryFn: async () => {
+      return await strapiStoresApi.getNearbyStores({
+        curr_x: mapLocation.x,
+        curr_y: mapLocation.y,
+      });
+    },
+    onSuccess: (res: any) => {
+      setStoreArr(res.data);
+    },
+    onError: (err: any) => {
+      console.log(err);
+    },
+    retry: false,
+    enabled: mapLocation.x !== 0,
+  });
 
   return (
     <>
@@ -39,17 +42,13 @@ const MapSection = () => {
           y: location.y,
           x: location.x,
         }}
-        markerArr={markerArr}
+        markerArr={storeArr}
       />
       <ScrollDiv className="col-container">
-        {markerArr.map((store) => (
-          <StoreList store={store} key={store.id} />
+        {storeArr.map((store) => (
+          <StoreList store={store} key={store.store_id} />
         ))}
-        {!isEnd && (
-          <MoreBtn className="more-btn" onClick={() => getStoreApi(curpage)}>
-            더 보기
-          </MoreBtn>
-        )}
+        {storeArr.length === 0 && <span>지역 오픈 준비중</span>}
       </ScrollDiv>
     </>
   );

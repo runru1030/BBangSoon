@@ -1,4 +1,5 @@
-import { jwtUtil, strapiUtil } from "./utils/util";
+import { strapiAuthUsersApi } from "@lib/apis/AuthUsersApis";
+import { jwtUtil } from "./utils/util";
 
 export async function GET(req: Request) {
   try {
@@ -15,7 +16,7 @@ export async function GET(req: Request) {
       userName: jwtUser.userName,
       id: -1,
     };
-    const { attributes } = await strapiUtil.getStrapiUser(userInfo.email);
+    const { attributes } = await strapiAuthUsersApi.getUser(userInfo.email);
     userInfo.id = attributes.id;
 
     if (!attributes)

@@ -1,6 +1,6 @@
 "use client";
 import { userInfoAtoms } from "@app/GlobalProvider";
-import { StoreType } from "@app/store/[storeId]/StoreInfoProvider";
+import { StrapiStoreType } from "@app/store/[storeId]/StoreInfoProvider";
 import { faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import clsx from "clsx";
@@ -10,12 +10,11 @@ import { Header } from "../../components/Header";
 import LocList from "../../components/LocList";
 import Ranking from "./components/Ranking";
 import SearchStore from "./components/SearchStore";
-export interface resultState extends StoreType {
+export interface resultState extends StrapiStoreType {
   category_group_code: string;
   category_name: string;
 }
 const PageContent = () => {
-  /* location */
   const location = useAtomValue(userInfoAtoms.locationAtom);
   const [changeLocMode, setChangeLocMode] = useState(false);
 

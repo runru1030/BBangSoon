@@ -1,24 +1,16 @@
+import { StoreState } from "@app/store/[storeId]/PageContent";
+import { StrapiStoreType } from "@app/store/[storeId]/StoreInfoProvider";
 import { faRedo } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { StoreState } from "../app/store/[storeId]/page";
 
 interface locationProps {
-  //지도 중심 위치
   loc: StoreState["loc"];
   setLoc: React.Dispatch<React.SetStateAction<StoreState["loc"]>> | null;
-  //내 위치
   curLoc: StoreState["loc"];
-  //매장 정보arr
-  markerArr: {
-    x?: number;
-    y?: number;
-    title?: string;
-    place_name?: string;
-    address_name?: string;
-  }[];
+  markerArr: StrapiStoreType[];
 }
 declare global {
   interface Window {
@@ -54,7 +46,7 @@ const Map: React.FC<locationProps> = ({ loc, setLoc, curLoc, markerArr }) => {
       map: map,
       position: new window.kakao.maps.LatLng(curLoc?.y, curLoc?.x),
       image: new window.kakao.maps.MarkerImage(
-        "curLoc.png",
+        "/assets/curLoc.png",
         new window.kakao.maps.Size(20, 20)
       ),
       clickable: true,
@@ -63,14 +55,14 @@ const Map: React.FC<locationProps> = ({ loc, setLoc, curLoc, markerArr }) => {
     markerArr.map((el) => {
       const marker = new window.kakao.maps.Marker({
         map: map,
-        position: new window.kakao.maps.LatLng(el.y, el.x),
-        title: el.title,
+        position: new window.kakao.maps.LatLng(el.loc_y, el.loc_x),
+        title: el.name,
         clickable: true,
       });
       const contentString = `
        <div><div id="info">
-       <span>${el.place_name}</span>
-       <span>${el.address_name}</span>
+       <span>${el.name}</span>
+       <span>${el.road_address_name}</span>
        </div></div>
       `;
       var overlay = new window.kakao.maps.CustomOverlay({
@@ -102,7 +94,7 @@ const Map: React.FC<locationProps> = ({ loc, setLoc, curLoc, markerArr }) => {
   };
   return (
     <>
-      {pathname == "/storemap" && (
+      {pathname == "/map" && (
         <ReSearchBtn onClick={onClickReSearch}>
           <FontAwesomeIcon icon={faRedo} />
           <span>현 위치 검색</span>

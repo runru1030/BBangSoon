@@ -5,7 +5,7 @@ import MapInfo from "./components/MapInfo";
 import MenuInfo from "./components/MenuInfo";
 import Review from "./components/Review";
 import StoreInfo from "./components/StoreInfo";
-import { StoreType } from "./StoreInfoProvider";
+import { StrapiStoreType } from "./StoreInfoProvider";
 export interface StoreState {
   store: DBStoreType;
   loc: {
@@ -14,7 +14,7 @@ export interface StoreState {
     x: number;
   };
 }
-export interface DBStoreType extends StoreType {
+export interface DBStoreType extends StrapiStoreType {
   Reviews?: [] | null;
   Visits?: [] | null;
   Wishes?: [] | null;

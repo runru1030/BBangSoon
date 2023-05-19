@@ -1,15 +1,13 @@
 import {
+  StrapiStoreType,
   storeInfoAtoms,
-  StoreType,
 } from "@app/store/[storeId]/StoreInfoProvider";
-import { faSpinner } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useSetAtom } from "jotai";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 import styled from "styled-components";
 interface StoreListProps {
-  store: StoreType;
+  store: StrapiStoreType;
 }
 const StoreItem = ({
   store,
@@ -18,28 +16,16 @@ const StoreItem = ({
   const router = useRouter();
   const setStoreInfo = useSetAtom(storeInfoAtoms.storeAtom);
   const onClick = () => {
-    setStoreInfo({
-      id: store.id,
-      address_name: store.road_address_name
-        ? store.road_address_name
-        : store.address_name,
-      place_name: store.place_name,
-      phone: store.phone,
-      x: store.x,
-      y: store.y,
-      place_url: store.place_url,
-      reviewCnt: store.reviewCnt,
-      avgStar: store.avgStar,
-    });
-    router.push(`/store/${store.id}`);
+    setStoreInfo(store);
+    router.push(`/store/${store.storeId}`);
   };
 
   return (
     <Store onClick={onClick}>
       {children}
-      <StoreName>{store.place_name}</StoreName>
+      <StoreName>{store.name}</StoreName>
       <Wrapper className="row-container">
-        <Block>
+        {/* <Block>
           <span>
             {store.avgStar == null ? (
               <FontAwesomeIcon icon={faSpinner} />
@@ -58,7 +44,7 @@ const StoreItem = ({
             )}
           </span>
           <span className="text-sm">평점</span>
-        </Block>
+        </Block> */}
       </Wrapper>
     </Store>
   );

@@ -21,7 +21,7 @@ const Review = () => {
       </Label>
       {openedStoreInfo === "review" && (
         <>
-          <ReviewForm storeId={storeInfo.id} />
+          <ReviewForm storeId={storeInfo.storeId} />
           <div>
             {storeInfo.Reviews && storeInfo.Reviews?.length !== 0 ? (
               storeInfo.Reviews?.map((review: reviewProps["review"]) => (

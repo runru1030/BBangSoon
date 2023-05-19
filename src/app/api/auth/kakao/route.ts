@@ -1,6 +1,7 @@
 import axios from "axios";
 import KakaoAuth from "../utils/KakaoAuth";
-import { jwtUtil, strapiUtil } from "../utils/util";
+import { jwtUtil } from "../utils/util";
+import { strapiAuthUsersApi } from "@lib/apis/AuthUsersApis";
 
 export async function PUT(req: Request) {
   try {
@@ -19,7 +20,7 @@ export async function PUT(req: Request) {
       id: -1,
     };
 
-    const { attributes } = await strapiUtil.getStrapiUser(userInfo.email);
+    const { attributes } = await strapiAuthUsersApi.getUser(userInfo.email);
     userInfo.id = attributes.id;
 
     if (!attributes) {

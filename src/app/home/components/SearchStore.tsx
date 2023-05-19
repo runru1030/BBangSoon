@@ -62,7 +62,7 @@ const SearchStore = () => {
       >
         <div>
           {resultArr.map((result: resultState) => (
-            <StoreItem store={result} key={result.storeId} />
+            <StoreItem store={result} key={result.store_id} />
           ))}
         </div>
         {!searchResultInfo.isEnd && (

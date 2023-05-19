@@ -1,12 +1,13 @@
 import { userInfoAtoms } from "@app/GlobalProvider";
-import { strapiUtil } from "@app/api/auth/utils/util";
+import { StrapiStoreType } from "@app/store/[storeId]/StoreInfoProvider";
 import Map from "@components/Map";
 import StoreList from "@components/StoreItem";
+import { strapiStoresApi } from "@lib/apis/Stores";
+import { useQuery } from "@tanstack/react-query";
 import { useAtom, useAtomValue } from "jotai";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import styled from "styled-components";
 import { mapLocationAtom } from "../PageContent";
-import { StrapiStoreType } from "@app/store/[storeId]/StoreInfoProvider";
 
 const MapSection = () => {
   const location = useAtomValue(userInfoAtoms.locationAtom);
@@ -14,17 +15,22 @@ const MapSection = () => {
 
   const [storeArr, setStoreArr] = useState<StrapiStoreType[]>([]);
 
-  useEffect(() => {
-    getStores();
-  }, [mapLocation]);
-
-  const getStores = async () => {
-    const stores = await strapiUtil.getStrapiNearbyStores({
-      curr_x: mapLocation.x,
-      curr_y: mapLocation.y,
-    });
-    setStoreArr(stores);
-  };
+  useQuery(["getNearbyStores"], {
+    queryFn: async () => {
+      return await strapiStoresApi.getNearbyStores({
+        curr_x: mapLocation.x,
+        curr_y: mapLocation.y,
+      });
+    },
+    onSuccess: (res: any) => {
+      setStoreArr(res.data);
+    },
+    onError: (err: any) => {
+      console.log(err);
+    },
+    retry: false,
+    enabled: mapLocation.x !== 0,
+  });
 
   return (
     <>
@@ -40,7 +46,7 @@ const MapSection = () => {
       />
       <ScrollDiv className="col-container">
         {storeArr.map((store) => (
-          <StoreList store={store} key={store.storeId} />
+          <StoreList store={store} key={store.store_id} />
         ))}
         {storeArr.length === 0 && <span>지역 오픈 준비중</span>}
       </ScrollDiv>

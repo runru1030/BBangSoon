@@ -24,7 +24,7 @@ const getStore = async (sotreId: string) => {
     const {
       data: { data },
     } = await axios.get(
-      `http://localhost:1337/api/stores?filters[store_id][$eq]=${sotreId}`
+      `http://localhost:1337/api/stores?filters[store_id][$eq]=${sotreId}&populate=*`
     );
 
     return { data: data[0].attributes };

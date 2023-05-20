@@ -3,9 +3,10 @@ import Nav from "../../../components/Nav";
 import Header from "./components/Header";
 import PageContent from "./PageContent";
 import StoreInfoProvider from "./StoreInfoProvider";
-const Page = () => {
+const Page = ({ params: { storeId } }: { params: { storeId: string } }) => {
+
   return (
-    <StoreInfoProvider>
+    <StoreInfoProvider {...{ storeId }}>
       <div>
         <Header />
         <PageContent />

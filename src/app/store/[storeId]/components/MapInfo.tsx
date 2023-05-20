@@ -4,12 +4,11 @@ import { faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import clsx from "clsx";
 import { useAtom, useAtomValue } from "jotai";
-import React from "react";
 import styled from "styled-components";
-import { DBStoreType, openedStoreInfoAtom } from "../PageContent";
+import { openedStoreInfoAtom } from "../PageContent";
 import { storeInfoAtoms } from "../StoreInfoProvider";
 const MapInfo = () => {
-  const storeInfo: DBStoreType = useAtomValue(storeInfoAtoms.storeAtom);
+  const storeInfo = useAtomValue(storeInfoAtoms.storeAtom);
   const [openedStoreInfo, setOpenedStoreInfo] = useAtom(openedStoreInfoAtom);
   const location = useAtomValue(userInfoAtoms.locationAtom);
 
@@ -24,8 +23,9 @@ const MapInfo = () => {
         {openedStoreInfo === "map" && (
           <Navi className="navi-wrapper">
             <a
-              href={"https://map.kakao.com/link/roadview/" + storeInfo.id}
+              href={`https://map.kakao.com/link/to/${storeInfo.name},${storeInfo.loc_y},${storeInfo.loc_x}`}
               id="navi"
+              target="_blank"
             >
               <FontAwesomeIcon icon={faMapMarkerAlt} color="#46A6FF" />
               <span>길찾기</span>
@@ -33,13 +33,13 @@ const MapInfo = () => {
           </Navi>
         )}
       </Label>
-      {openedStoreInfo === "map" && storeInfo.x && storeInfo.y && (
+      {openedStoreInfo === "map" && storeInfo.loc_x && storeInfo.loc_y && (
         <div>
           <Map
             loc={{
-              title: storeInfo.place_name || "",
-              y: storeInfo.y,
-              x: storeInfo.x,
+              title: storeInfo.name || "",
+              y: storeInfo.loc_y,
+              x: storeInfo.loc_x,
             }}
             setLoc={null}
             curLoc={{

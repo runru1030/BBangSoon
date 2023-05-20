@@ -6,13 +6,13 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import clsx from "clsx";
 import { useAtom, useAtomValue } from "jotai";
-import React from "react";
+import Link from "next/link";
 import styled from "styled-components";
-import { DBStoreType, openedStoreInfoAtom } from "../PageContent";
+import { openedStoreInfoAtom } from "../PageContent";
 import { storeInfoAtoms } from "../StoreInfoProvider";
 
 const StoreInfo = () => {
-  const storeInfo: DBStoreType = useAtomValue(storeInfoAtoms.storeAtom);
+  const storeInfo = useAtomValue(storeInfoAtoms.storeAtom);
   const [openedStoreInfo, setOpenedStoreInfo] = useAtom(openedStoreInfoAtom);
 
   return (
@@ -30,7 +30,7 @@ const StoreInfo = () => {
             <span id="label">
               <FontAwesomeIcon icon={faMapMarkerAlt} />
             </span>
-            <span>{storeInfo.address_name}</span>
+            <span>{storeInfo.road_address_name}</span>
           </div>
           <div>
             <span id="label">
@@ -38,12 +38,14 @@ const StoreInfo = () => {
             </span>
             <a href={"tel:" + storeInfo.phone}>{storeInfo.phone}</a>
           </div>
-          {storeInfo.site && (
+          {storeInfo.store_url && (
             <div>
               <span id="label">
                 <FontAwesomeIcon icon={faGlobe} />
               </span>
-              <a href={"https://" + storeInfo.site}>{storeInfo.site}</a>
+              <Link href={storeInfo.store_url} target="_blank">
+                {storeInfo.store_url}
+              </Link>
             </div>
           )}
         </DetailDiv>

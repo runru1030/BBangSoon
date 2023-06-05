@@ -24,12 +24,12 @@ export async function PUT(req: Request) {
     userInfo.id = attributes.id;
 
     if (!attributes) {
-      const {
-        data: { data },
-      } = await axios.post("http://localhost:1337/api/auth-users", {
-        data: { ...userInfo, kakaoToken: access_token },
-      });
-      userInfo.id = data.attributes.id;
+      const { attributes: created_attributes } =
+        await strapiAuthUsersApi.createUser({
+          userInfo,
+          kakaoToken: access_token,
+        });
+      userInfo.id = created_attributes.id;
     }
 
     return new Response(

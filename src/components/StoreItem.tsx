@@ -15,13 +15,14 @@ const StoreItem = ({
 }: React.PropsWithChildren<StoreListProps>) => {
   const router = useRouter();
   const setStoreInfo = useSetAtom(storeInfoAtoms.storeAtom);
-  const onClick = () => {
-    setStoreInfo(store);
-    router.push(`/store/${store.storeId}`);
-  };
 
   return (
-    <Store onClick={onClick}>
+    <Store
+      onClick={() => {
+        setStoreInfo(store);
+        router.push(`/store/${store.store_id}`);
+      }}
+    >
       {children}
       <StoreName>{store.name}</StoreName>
       <Wrapper className="row-container">

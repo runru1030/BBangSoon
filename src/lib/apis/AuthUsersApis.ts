@@ -14,4 +14,27 @@ const getUser = async (email: string) => {
   }
 };
 
-export const strapiAuthUsersApi = { getUser };
+const createUser = async ({
+  userInfo,
+  kakaoToken,
+}: {
+  userInfo: {
+    email: string;
+    userName: string;
+    id: number;
+  };
+  kakaoToken: string;
+}) => {
+  try {
+    const {
+      data: { data },
+    } = await axios.post("http://localhost:1337/api/auth-users", {
+      data: { ...userInfo, kakaoToken },
+    });
+    return { attributes: data.attributes };
+  } catch (error) {
+    console.error(error);
+    return { attributes: undefined };
+  }
+};
+export const strapiAuthUsersApi = { getUser, createUser };

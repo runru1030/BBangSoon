@@ -46,7 +46,7 @@ module.exports = withAnimations({
           700: "#9DA6BA",
           800: "#B2BCD0",
           900: "#DCE1EC",
-          1000: "#E8EBF2",
+          1000: "#eeeeee",
           1100: "#F4F6F9",
         },
         white: {

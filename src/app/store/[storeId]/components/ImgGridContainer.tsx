@@ -43,7 +43,7 @@ const ImgGridContainer: React.FC<props> = ({ imgArr }) => {
           {imgArr.map((img, index) => {
             if (index == 0)
               return (
-                <ImgWrapper isBigger>
+                <ImgWrapper isBigger key={img.id}>
                   <Image
                     src={`http://localhost:1337${img.attributes.url}`}
                     width="100"
@@ -54,7 +54,7 @@ const ImgGridContainer: React.FC<props> = ({ imgArr }) => {
               );
             if (index == 2)
               return (
-                <ImgWrapper onClick={onClickStoreImage}>
+                <ImgWrapper onClick={onClickStoreImage} key={img.id}>
                   <span>더보기</span>
                   <MoreImg
                     className="plus-img"
@@ -67,7 +67,7 @@ const ImgGridContainer: React.FC<props> = ({ imgArr }) => {
               );
             else
               return (
-                <ImgWrapper>
+                <ImgWrapper key={img.id}>
                   <Image
                     src={`http://localhost:1337${img.attributes.url}`}
                     width="100"

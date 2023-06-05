@@ -37,7 +37,7 @@ const useAuth = () => {
 
     if (token) {
       setJwtToken(token);
-      axios.defaults.headers.common["Authorization"] = `${jwtToken}`;
+      axios.defaults.headers.common["Authorization"] = `${token}`;
     }
   }, []);
 

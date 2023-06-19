@@ -3,12 +3,11 @@
 import useAuth from "@components/hooks/useAuth";
 import useGeoLocation from "@components/hooks/useGeoLocation";
 import { atom, Provider } from "jotai";
-import { DevTools } from "jotai-devtools";
 import { atomWithReset } from "jotai/utils";
 import React from "react";
 
 interface user {
-  id: number | null;
+  email: string | null;
   userName: string;
   kakaoToken?: string;
 }
@@ -19,7 +18,7 @@ interface location {
 }
 export const userInfoAtoms = {
   userAtom: atomWithReset<user>({
-    id: null,
+    email: null,
     userName: "",
   }),
   locationAtom: atom<location>({
@@ -33,9 +32,9 @@ export default function GlobalProvider(props: { children: React.ReactNode }) {
   useAuth();
   useGeoLocation();
   return (
-    <Provider>
-      <DevTools />
+    <>
+      {/* <DevTools /> */}
       {props.children}
-    </Provider>
+    </>
   );
 }

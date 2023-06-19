@@ -1,6 +1,6 @@
 import { strapiStoresApi } from "@lib/apis/Stores";
 import { useQuery } from "@tanstack/react-query";
-import { atom, createStore, Provider } from "jotai";
+import { atom, createStore, Provider, useSetAtom } from "jotai";
 import React from "react";
 
 export interface StoreImg {
@@ -32,20 +32,17 @@ export const storeInfoAtoms = {
   }),
 };
 
-const StoreInfoStore = createStore();
-
 export default function StoreInfoProvider(props: {
   children: React.ReactNode | React.ReactNode[];
   storeId: string;
 }) {
+  const setStoreInfo = useSetAtom(storeInfoAtoms.storeAtom);
   useQuery(["getStore"], {
     queryFn: async () => {
       return await strapiStoresApi.getStore(props.storeId);
     },
     onSuccess: (res: any) => {
-      console.log(res.data);
-
-      StoreInfoStore.set(storeInfoAtoms.storeAtom, {
+      setStoreInfo({
         ...res.data,
         store_imgs: res.data.store_imgs.data.slice(0, 3),
       });
@@ -57,5 +54,5 @@ export default function StoreInfoProvider(props: {
     enabled: props.storeId !== undefined,
   });
 
-  return <Provider store={StoreInfoStore}>{props.children}</Provider>;
+  return <>{props.children}</>;
 }

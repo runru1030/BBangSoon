@@ -1,6 +1,6 @@
 import { userInfoAtoms } from "@app/GlobalProvider";
 import { storeInfoAtoms } from "@app/store/[storeId]/StoreInfoProvider";
-import { faBreadSlice, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faBreadSlice, faCamera, faX } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { strapiReviewsApi } from "@lib/apis/ReviewsApis";
 import { useMutation } from "@tanstack/react-query";
@@ -75,44 +75,64 @@ const ReviewForm = () => {
 
   return (
     <div className={clsx(isWriteMode ? "visible" : "hidden")}>
-      <Form onSubmit={onSubmit} className="col-container justify-center w-full">
-        {reviewImg && <img src={reviewImg + ""} width="60%" />}
+      <form
+        onSubmit={onSubmit}
+        className="flex flex-col w-full gap-5 p-4 relative"
+      >
+        <div className="flex flex-row justify-between items-center w-full">
+          <div className="flex flex-row gap-1 text-3xl">
+            {Array.from({ length: 5 }, (v, i) => i).map((it) => (
+              <FontAwesomeIcon
+                key={it}
+                id={it + 1 + ""}
+                icon={faBreadSlice}
+                onClick={(e: React.MouseEvent) => {
+                  setReview({ ...review, star: parseInt(e.currentTarget.id) });
+                }}
+                color={review.star >= it + 1 ? "#e2c26e" : "#cabfa3"}
+              />
+            ))}
+            <span className="text-2xl font-semibold text-brown ml-2">
+              {review.star}
+            </span>
+          </div>
+          <button
+            type="submit"
+            id="sbm-btn"
+            className="bg-brown text-white px-3 py-2 rounded-lg"
+          >
+            <span>작성하기</span>
+          </button>
+        </div>
 
-        <StarContainer className="row-container items-center">
-          {Array.from({ length: 5 }, (v, i) => i).map((it) => (
+        {!reviewImg && (
+          <label
+            htmlFor="file"
+            className="w-fit flex items-center gap-1 px-3 py-2 rounded-lg border border-dashed border-gray-300"
+          >
+            <FontAwesomeIcon icon={faCamera} color="#42454E" />
+            <span className="flex items-center gap-1 text-gray-300">
+              사진 추가 <span className="text-xs text-gray-700">최대 1장</span>
+            </span>
+          </label>
+        )}
+        {reviewImg && (
+          <div className="relative border border-gray-1000 w-48 h-48 overflow-hidden flex items-center justify-center">
+            <img src={reviewImg + ""} width="100%" />
             <FontAwesomeIcon
-              key={it}
-              id={it + 1 + ""}
-              icon={faBreadSlice}
-              onClick={(e: React.MouseEvent) => {
-                setReview({ ...review, star: parseInt(e.currentTarget.id) });
+              icon={faX}
+              color="#565656"
+              className="absolute right-0 top-0 p-1"
+              onClick={() => {
+                setReviewImg(undefined);
               }}
-              color={review.star >= it + 1 ? "#e2c26e" : "#cabfa3"}
             />
-          ))}
-          <span className="text-2xl font-semibold text-brown ml-2">
-            {review.star}
-          </span>
-          <ButtonGroup className="wrapper row-container">
-            <label
-              htmlFor="file"
-              className="bg-brown-2 text-white px-3 py-2 rounded-l-lg"
-            >
-              <FontAwesomeIcon icon={faPlus} />
-            </label>
-            <button
-              type="submit"
-              id="sbm-btn"
-              className="bg-brown-2 text-white px-3 py-2 rounded-r-lg"
-            >
-              <span>작성</span>
-            </button>
-          </ButtonGroup>
-        </StarContainer>
+          </div>
+        )}
 
-        <TextareaAutosize
+        <StyledTextArea
           id="textArea"
-          placeholder="최대 300자 / 이미지 최대 1장"
+          placeholder="리뷰 작성하기"
           value={review.content}
           maxLength={300}
           onChange={(event) =>
@@ -122,6 +142,10 @@ const ReviewForm = () => {
             })
           }
         />
+        <span className="absolute right-5 bottom-5 text-sm text-gray-300">
+          {review.content.length}
+          <span className="text-gray-800"> / 300</span>
+        </span>
         <input
           id="file"
           type="file"
@@ -130,7 +154,7 @@ const ReviewForm = () => {
           onChange={onFileChange}
           accept="image/png, image/jpeg"
         />
-      </Form>
+      </form>
     </div>
   );
 };
@@ -157,32 +181,23 @@ const WriteBtn = () => {
 ReviewForm.triggerBtn = WriteBtn;
 export default ReviewForm;
 
-const Form = styled.form`
-  width: 90%;
+const StyledTextArea = styled(TextareaAutosize)`
+  all: unset;
+  width: auto;
+  min-height: 100px;
+  overflow: hidden;
+  resize: none;
+  padding: 12px;
+  border-radius: 8px;
+  position: relative;
+  background-color: #f4f6f9;
   font-size: medium;
-  padding: 15px;
-  #textArea {
-    all: unset;
-    margin-top: 30px;
-    width: 100%;
-    overflow: hidden;
-    resize: none;
-    padding: 10px 4px;
-    position: relative;
+  transition: 0.3s;
+  &::placeholder {
+    color: #b2bcd0;
   }
-`;
-const StarContainer = styled.span`
-  font-size: xx-large;
-  text-align: center;
-  align-items: center;
-  gap: 3px;
-  margin-top: 30px;
-`;
-const ButtonGroup = styled.div`
-  font-size: small;
-  flex: 1;
-  justify-content: flex-end;
-  #sbm-btn {
-    border-left: white solid thin;
+  &:focus {
+    background-color: white;
+    border: solid thin #ff9900;
   }
 `;

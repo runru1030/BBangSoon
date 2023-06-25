@@ -24,10 +24,10 @@ const getStore = async (sotreId: string) => {
     const {
       data: { data },
     } = await axios.get(
-      `http://localhost:1337/api/stores?filters[store_id][$eq]=${sotreId}&populate=*`
+      `http://localhost:1337/api/stores?filters[id][$eq]=${sotreId}&populate=*`
     );
 
-    return { data: data[0].attributes };
+    return { data: { id: data[0].id, ...data[0].attributes } };
   } catch (error) {
     console.error(error);
     return { attributes: undefined };

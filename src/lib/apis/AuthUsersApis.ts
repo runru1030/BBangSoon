@@ -7,7 +7,7 @@ const getUser = async (email: string) => {
     } = await axios.get(
       `http://localhost:1337/api/auth-users?filters[email][$eq]=${email}`
     );
-    return { attributes: data[0].attributes };
+    return { attributes: { id: data[0].id, ...data[0].attributes } };
   } catch (error) {
     console.error(error);
     return { attributes: undefined };

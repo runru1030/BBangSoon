@@ -10,7 +10,7 @@ export interface StoreImg {
   };
 }
 export interface StrapiStoreType {
-  store_id: number;
+  id: number;
   name: string;
   road_address_name?: string;
   phone?: string;
@@ -26,7 +26,7 @@ export interface StrapiStoreType {
 
 export const storeInfoAtoms = {
   storeAtom: atom<StrapiStoreType>({
-    store_id: 0,
+    id: 0,
     name: "",
     Reviews: [],
   }),

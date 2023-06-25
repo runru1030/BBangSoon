@@ -20,7 +20,7 @@ const StoreItem = ({
     <Store
       onClick={() => {
         setStoreInfo(store);
-        router.push(`/store/${store.store_id}`);
+        router.push(`/store/${store.id}`);
       }}
     >
       {children}

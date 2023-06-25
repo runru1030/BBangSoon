@@ -46,7 +46,7 @@ const MapSection = () => {
       />
       <ScrollDiv className="col-container">
         {storeArr.map((store) => (
-          <StoreList store={store} key={store.store_id} />
+          <StoreList store={store} key={store.id} />
         ))}
         {storeArr.length === 0 && <span>지역 오픈 준비중</span>}
       </ScrollDiv>

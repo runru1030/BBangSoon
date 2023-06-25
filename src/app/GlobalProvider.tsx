@@ -7,6 +7,7 @@ import { atomWithReset } from "jotai/utils";
 import React from "react";
 
 interface user {
+  id: number;
   email: string | null;
   userName: string;
   kakaoToken?: string;
@@ -18,6 +19,7 @@ interface location {
 }
 export const userInfoAtoms = {
   userAtom: atomWithReset<user>({
+    id: 0,
     email: null,
     userName: "",
   }),

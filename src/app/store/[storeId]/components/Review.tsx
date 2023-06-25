@@ -24,7 +24,7 @@ const Review = () => {
 
       {openedStoreInfo === "review" && (
         <>
-          <ReviewForm storeId={storeInfo.store_id} />
+          <ReviewForm />
           <div>
             {storeInfo.Reviews?.length === 0 ? (
               <div className="flex justify-center w-full">리뷰가 없어용</div>

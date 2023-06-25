@@ -4,14 +4,15 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import Nav from "./Nav";
 import StarCmp from "./StarCmp";
-import StoreList, { StoreType } from "./StoreItem";
+import { StrapiStoreType } from "@app/store/[storeId]/StoreInfoProvider";
+// import StoreList, { StoreType } from "./StoreItem";
 const Review: React.FC = () => {
   const router = useRouter();
   // const { review } = useSelector((state: RootState) => ({
   //   review: state.review.review,
   // }));
   // const review = {};
-  const [store, setStore] = useState<StoreType>(); // DetailReview's store
+  const [store, setStore] = useState<StrapiStoreType>(); // DetailReview's store
 
   // const onClickDel = () => {
   //   axios.delete(`/store/review/${review.id}`).then(() => {
@@ -23,7 +24,7 @@ const Review: React.FC = () => {
   // }, []);
   return (
     <Container>
-      {store != undefined && <StoreList store={store} />}
+      {/* {store != undefined && <StoreList store={store} />} */}
       {/* {review.reviewImg && (
         <ImgWrapper>
           <img src={review.reviewImg} />

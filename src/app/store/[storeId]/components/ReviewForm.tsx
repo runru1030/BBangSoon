@@ -2,76 +2,72 @@ import { userInfoAtoms } from "@app/GlobalProvider";
 import { storeInfoAtoms } from "@app/store/[storeId]/StoreInfoProvider";
 import { faBreadSlice, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import axios from "axios";
+import { strapiReviewsApi } from "@lib/apis/ReviewsApis";
+import { useMutation } from "@tanstack/react-query";
 import clsx from "clsx";
 import { atom, useAtom, useAtomValue } from "jotai";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 import styled from "styled-components";
 export interface reviewState {
   content: string;
   star: number;
-  attach: string | ArrayBuffer;
-  nickName: string;
+  auth_user: number;
+  store: number;
 }
 
 const isWriteModeAtom = atom<boolean>(false);
 
-interface props {
-  storeId: number;
-}
-
-const ReviewForm = ({ storeId }: props) => {
-  const [storeInfo, setStoreInfo] = useAtom(storeInfoAtoms.storeAtom);
+const ReviewForm = () => {
+  const storeInfo = useAtomValue(storeInfoAtoms.storeAtom);
   const userAtom = useAtomValue(userInfoAtoms.userAtom);
   const [isWriteMode, setisWriteMode] = useAtom(isWriteModeAtom);
 
-  /* 리뷰 작성 */
-  const [reviewImg, setReviewImg] = useState<File>();
-  const [newReview, setNewReview] = useState<reviewState>({
+  const [reviewImg, setReviewImg] = useState<ArrayBuffer | string>();
+  const [review, setReview] = useState<reviewState>({
     content: "",
     star: 0,
-    attach: "",
-    nickName: "익명",
+    auth_user: userAtom.id,
+    store: storeInfo.id,
   });
-  const onClickStar = (e: React.MouseEvent) => {
-    setNewReview({ ...newReview, star: parseInt(e.currentTarget.id) });
-  };
+
+  const postReview = useMutation({
+    mutationFn: async (reviewFormData: FormData) =>
+      await strapiReviewsApi.postReview(reviewFormData),
+    onSuccess: () => {
+      setReview({
+        content: "",
+        star: 0,
+        auth_user: userAtom.id,
+        store: storeInfo.id,
+      });
+      setReviewImg(undefined);
+      setisWriteMode(false);
+    },
+    onError: (err) => {
+      console.error(err);
+      alert("리뷰 작성에 실패했습니다.");
+    },
+  });
+
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData();
-    formData.append("reviewImg", reviewImg || "");
-    formData.append("content", newReview.content);
-    formData.append("nickName", newReview.nickName);
-    formData.append("star", newReview.star.toString());
-    formData.append("UserId", userAtom.id + "");
-    axios.post(`/store/review/${storeId}`, formData).then((res) => {
-      setStoreInfo({ ...storeInfo, ...res.data });
-    });
-    setNewReview({
-      content: "",
-      star: 0,
-      attach: "",
-      nickName: "익명",
-    });
-    setReviewImg(undefined);
-    setisWriteMode(false);
+    formData.append("data", JSON.stringify(review));
+    formData.append("files.img", (event.target as any).elements.img.files[0]);
+    postReview.mutate(formData);
   };
+
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const {
       target: { files },
     } = e;
     if (files) {
       const theFile = files[0];
-      setReviewImg(files[0]);
-
       const reader = new FileReader();
       reader.onloadend = (finishedEvent) => {
-        setNewReview({
-          ...newReview,
-          attach: finishedEvent.target?.result || "",
-        });
+        setReviewImg(finishedEvent.target?.result || "");
       };
       reader.readAsDataURL(theFile);
     }
@@ -80,18 +76,22 @@ const ReviewForm = ({ storeId }: props) => {
   return (
     <div className={clsx(isWriteMode ? "visible" : "hidden")}>
       <Form onSubmit={onSubmit} className="col-container justify-center w-full">
-        {newReview.attach && <img src={newReview.attach + ""} width="60%" />}
+        {reviewImg && <img src={reviewImg + ""} width="60%" />}
+
         <StarContainer className="row-container items-center">
           {Array.from({ length: 5 }, (v, i) => i).map((it) => (
             <FontAwesomeIcon
+              key={it}
               id={it + 1 + ""}
               icon={faBreadSlice}
-              onClick={onClickStar}
-              color={newReview.star >= it + 1 ? "#e2c26e" : "#cabfa3"}
+              onClick={(e: React.MouseEvent) => {
+                setReview({ ...review, star: parseInt(e.currentTarget.id) });
+              }}
+              color={review.star >= it + 1 ? "#e2c26e" : "#cabfa3"}
             />
           ))}
           <span className="text-2xl font-semibold text-brown ml-2">
-            {newReview.star}
+            {review.star}
           </span>
           <ButtonGroup className="wrapper row-container">
             <label
@@ -109,13 +109,15 @@ const ReviewForm = ({ storeId }: props) => {
             </button>
           </ButtonGroup>
         </StarContainer>
+
         <TextareaAutosize
           id="textArea"
           placeholder="최대 300자 / 이미지 최대 1장"
-          value={newReview.content}
+          value={review.content}
+          maxLength={300}
           onChange={(event) =>
-            setNewReview({
-              ...newReview,
+            setReview({
+              ...review,
               content: event.target.value.substring(0, 300),
             })
           }
@@ -123,6 +125,7 @@ const ReviewForm = ({ storeId }: props) => {
         <input
           id="file"
           type="file"
+          name="img"
           style={{ display: "none" }}
           onChange={onFileChange}
           accept="image/png, image/jpeg"
@@ -135,13 +138,15 @@ const ReviewForm = ({ storeId }: props) => {
 const WriteBtn = () => {
   const router = useRouter();
   const [isWriteMode, setisWriteMode] = useAtom(isWriteModeAtom);
-  const userAtom = useAtomValue(userInfoAtoms.userAtom);
+  const user = useAtomValue(userInfoAtoms.userAtom);
+  useEffect(() => {
+    console.log(user);
+  }, [user]);
+
   return (
     <button
       onClick={() => {
-        !userAtom.id
-          ? setisWriteMode(!isWriteMode)
-          : router.push("/auth/login");
+        user.email ? setisWriteMode(!isWriteMode) : router.push("/auth/login");
       }}
       className="text-sm text-orange"
     >

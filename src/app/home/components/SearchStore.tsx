@@ -3,7 +3,7 @@ import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import clsx from "clsx";
 import { FormEvent, useState } from "react";
-import { getStore, getStoreList } from "src/utils/KakaoLocalAPI";
+import { getStore } from "src/utils/KakaoLocalAPI";
 import styled from "styled-components";
 import { resultState } from "../PageContent";
 const SearchStore = () => {
@@ -20,7 +20,7 @@ const SearchStore = () => {
         currPage: p.currPage + 1,
       }));
       setResultArr(res.resultArr);
-      getStoreList(res.resultArr, setResultArr);
+      // getStoreList(res.resultArr, setResultArr);
     });
   };
 

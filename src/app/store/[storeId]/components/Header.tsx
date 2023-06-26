@@ -63,14 +63,14 @@ const Header: React.FC<props> = ({ isStoreImg }) => {
   return (
     <StyledHeader>
       <StoreName>{storeInfo.name}</StoreName>
-      <Wrapper>
+      {/* <Wrapper>
         <span>{storeInfo.reviewCnt}</span>
         <span id="small">리뷰</span>
       </Wrapper>
       <Wrapper>
         <span>{storeInfo.avgStar?.toFixed(1)}</span>
         <span id="small">평점</span>
-      </Wrapper>
+      </Wrapper> */}
       <FontAwesomeIcon
         id="visit"
         onClick={onClickFeature}

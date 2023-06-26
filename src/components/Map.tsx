@@ -1,4 +1,4 @@
-import { StoreState } from "@app/store/[storeId]/PageContent";
+import { kakaoLocation } from "@app/map/PageContent";
 import { StrapiStoreType } from "@app/store/[storeId]/StoreInfoProvider";
 import { faRedo } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -7,9 +7,9 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 
 interface locationProps {
-  loc: StoreState["loc"];
-  setLoc: React.Dispatch<React.SetStateAction<StoreState["loc"]>> | null;
-  curLoc: StoreState["loc"];
+  loc: kakaoLocation;
+  setLoc: React.Dispatch<React.SetStateAction<kakaoLocation>> | null;
+  curLoc: kakaoLocation;
   markerArr: StrapiStoreType[];
 }
 declare global {
@@ -19,7 +19,7 @@ declare global {
 }
 const Map: React.FC<locationProps> = ({ loc, setLoc, curLoc, markerArr }) => {
   const pathname = usePathname();
-  const [mapCenter, setMapcenter] = useState<StoreState["loc"]>({
+  const [mapCenter, setMapcenter] = useState<kakaoLocation>({
     title: "",
     y: loc.y,
     x: loc.x,

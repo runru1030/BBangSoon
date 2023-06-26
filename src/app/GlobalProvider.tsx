@@ -12,7 +12,7 @@ interface user {
   userName: string;
   kakaoToken?: string;
 }
-interface location {
+export interface location {
   si: string;
   y: number;
   x: number;

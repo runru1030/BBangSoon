@@ -33,9 +33,5 @@ module.exports = {
     "no-console": ["error", { allow: ["warn", "error"] }],
     "react/prop-types": "off",
     "jsx-a11y/no-autofocus": "off",
-    // "@typescript-eslint/no-explicit-any": "off",
-    // "@typescript-eslint/no-non-null-assertion": "off",
-    // "@typescript-eslint/no-unused-vars": "off",
-    // "react-hooks/exhaustive-deps": "off",
   },
 };

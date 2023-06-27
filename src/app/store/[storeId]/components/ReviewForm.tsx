@@ -3,7 +3,7 @@ import { storeInfoAtoms } from "@app/store/[storeId]/StoreInfoProvider";
 import { faBreadSlice, faCamera, faX } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { strapiReviewsApi } from "@lib/apis/ReviewsApis";
-import { useMutation } from "@tanstack/react-query";
+import { QueryClient, useMutation } from "@tanstack/react-query";
 import clsx from "clsx";
 import { atom, useAtom, useAtomValue } from "jotai";
 import { useRouter } from "next/navigation";
@@ -15,6 +15,7 @@ export interface reviewState {
   star: number;
   auth_user: number;
   store: number;
+  store_imgs?: string;
 }
 
 const isWriteModeAtom = atom<boolean>(false);
@@ -31,10 +32,26 @@ const ReviewForm = () => {
     auth_user: userAtom.id,
     store: storeInfo.id,
   });
-
+  const queryClient = new QueryClient();
   const postReview = useMutation({
-    mutationFn: async (reviewFormData: FormData) =>
-      await strapiReviewsApi.postReview(reviewFormData),
+    mutationFn: async ({
+      imgFormData,
+      reviewData,
+    }: {
+      imgFormData: FormData;
+      reviewData: reviewState;
+    }) => {
+      if (reviewImg) {
+        const res = await strapiReviewsApi.postReviewImg(imgFormData);
+
+        await strapiReviewsApi.postReview({
+          ...reviewData,
+          store_imgs: res?.data.data.id,
+        });
+      } else {
+        await strapiReviewsApi.postReview(reviewData);
+      }
+    },
     onSuccess: () => {
       setReview({
         content: "",
@@ -44,6 +61,7 @@ const ReviewForm = () => {
       });
       setReviewImg(undefined);
       setisWriteMode(false);
+      queryClient.invalidateQueries(["getStoreReviews"]);
     },
     onError: (err) => {
       console.error(err);
@@ -53,10 +71,13 @@ const ReviewForm = () => {
 
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const formData = new FormData();
-    formData.append("data", JSON.stringify(review));
-    formData.append("files.img", (event.target as any).elements.img.files[0]);
-    postReview.mutate(formData);
+    const imgFormData = new FormData();
+    imgFormData.append("data", JSON.stringify({ store: storeInfo.id }));
+    imgFormData.append(
+      "files.img",
+      (event.target as any).elements.img.files[0]
+    );
+    postReview.mutate({ imgFormData, reviewData: review });
   };
 
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {

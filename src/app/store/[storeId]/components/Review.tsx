@@ -4,10 +4,26 @@ import clsx from "clsx";
 import { useAtom, useAtomValue } from "jotai";
 import { openedStoreInfoAtom } from "../PageContent";
 import { storeInfoAtoms } from "../StoreInfoProvider";
+import { useQuery } from "@tanstack/react-query";
+import { strapiReviewsApi } from "@lib/apis/ReviewsApis";
 
 const Review = () => {
-  const storeInfo = useAtomValue(storeInfoAtoms.storeAtom);
+  const [storeInfo, setStoreInfo] = useAtom(storeInfoAtoms.storeAtom);
   const [openedStoreInfo, setOpenedStoreInfo] = useAtom(openedStoreInfoAtom);
+
+  useQuery(["getStoreReviews"], {
+    queryFn: async () => {
+      return await strapiReviewsApi.getReviewsOfStore(storeInfo.id);
+    },
+    onSuccess: (res: any) => {
+      setStoreInfo({ ...storeInfo, reviews: res.data });
+    },
+    onError: (err: any) => {
+      console.log(err);
+    },
+    retry: false,
+    enabled: storeInfo.id !== 0,
+  });
   return (
     <div>
       <div
@@ -26,11 +42,11 @@ const Review = () => {
         <>
           <ReviewForm />
           <div>
-            {storeInfo.Reviews?.length === 0 ? (
+            {storeInfo.reviews?.length === 0 ? (
               <div className="flex justify-center w-full">리뷰가 없어용</div>
             ) : (
-              storeInfo.Reviews?.map((review: reviewProps["review"]) => (
-                <ReviewList review={review} key={review.id} />
+              storeInfo.reviews?.map((review: reviewProps) => (
+                <ReviewList {...{ ...review }} key={review.id} />
               ))
             )}
           </div>

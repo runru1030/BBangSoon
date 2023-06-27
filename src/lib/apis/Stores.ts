@@ -9,7 +9,7 @@ const getNearbyStores = async ({
 }) => {
   try {
     const { data } = await axios.get(
-      `http://localhost:1337/api/nearby-stores?curr_x=${curr_x}&curr_y=${curr_y}`
+      `${process.env.NEXT_PUBLIC_DOMAIN}/api/nearby-stores?curr_x=${curr_x}&curr_y=${curr_y}`
     );
 
     return { data };
@@ -19,19 +19,34 @@ const getNearbyStores = async ({
   }
 };
 
-const getStore = async (sotreId: string) => {
+const getStore = async (storeId: string) => {
   try {
     const {
       data: { data },
     } = await axios.get(
-      `http://localhost:1337/api/stores?filters[id][$eq]=${sotreId}&populate=*`
+      `${process.env.NEXT_PUBLIC_DOMAIN}/api/stores/${storeId}`
     );
 
-    return { data: { id: data[0].id, ...data[0].attributes } };
+    return { data: { id: data.id, ...data.attributes } };
   } catch (error) {
     console.error(error);
     return { attributes: undefined };
   }
 };
 
-export const strapiStoresApi = { getNearbyStores, getStore };
+const getStoreThumbNail = async (storeId: string) => {
+  try {
+    const {
+      data: { data },
+    } = await axios.get(
+      `${process.env.NEXT_PUBLIC_DOMAIN}/api/store-imgs?filters[store][id][$eq]=${storeId}&pagination[limit]=3&populate=*`
+    );
+
+    return { data: data.map((d: any) => d.attributes.img.data.attributes) };
+  } catch (error) {
+    console.error(error);
+    return { attributes: undefined };
+  }
+};
+
+export const strapiStoresApi = { getNearbyStores, getStore, getStoreThumbNail };

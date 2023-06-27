@@ -17,22 +17,24 @@ const ImgGridContainer: React.FC<props> = ({ imgArr }) => {
       {imgArr.length == 1 && (
         <Wrapper>
           <Image
-            src={`http://localhost:1337${imgArr[0].attributes.url}`}
+            src={`${process.env.NEXT_PUBLIC_DOMAIN}${imgArr[0].url}`}
             width="100"
             height="100"
             alt="img-1"
+            unoptimized={true}
           />
         </Wrapper>
       )}
       {imgArr.length == 2 && (
         <GridContainer>
           {imgArr.map((img) => (
-            <ImgWrapper key={img.id}>
+            <ImgWrapper key={img.name}>
               <Image
-                src={`http://localhost:1337${img.attributes.url}`}
+                src={`${process.env.NEXT_PUBLIC_DOMAIN}${img.url}`}
                 height="100"
                 width="100"
                 alt="img-2"
+                unoptimized={true}
               />
             </ImgWrapper>
           ))}
@@ -43,36 +45,39 @@ const ImgGridContainer: React.FC<props> = ({ imgArr }) => {
           {imgArr.map((img, index) => {
             if (index == 0)
               return (
-                <ImgWrapper isBigger key={img.id}>
+                <ImgWrapper isBigger key={img.name + index}>
                   <Image
-                    src={`http://localhost:1337${img.attributes.url}`}
+                    src={`${process.env.NEXT_PUBLIC_DOMAIN}${img.url}`}
                     width="100"
                     height="100"
                     alt="img-1"
+                    unoptimized={true}
                   />
                 </ImgWrapper>
               );
             if (index == 2)
               return (
-                <ImgWrapper onClick={onClickStoreImage} key={img.id}>
+                <ImgWrapper onClick={onClickStoreImage} key={img.name + index}>
                   <span>더보기</span>
                   <MoreImg
                     className="plus-img"
                     alt="img-more"
-                    src={`http://localhost:1337${img.attributes.url}`}
+                    src={`${process.env.NEXT_PUBLIC_DOMAIN}${img.url}`}
                     width="100"
                     height="100"
+                    unoptimized={true}
                   />
                 </ImgWrapper>
               );
             else
               return (
-                <ImgWrapper key={img.id}>
+                <ImgWrapper key={img.name + index}>
                   <Image
-                    src={`http://localhost:1337${img.attributes.url}`}
+                    src={`${process.env.NEXT_PUBLIC_DOMAIN}${img.url}`}
                     width="100"
                     height="100"
                     alt="img"
+                    unoptimized={true}
                   />
                 </ImgWrapper>
               );

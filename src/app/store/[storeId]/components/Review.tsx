@@ -19,7 +19,7 @@ const Review = () => {
       setStoreInfo({ ...storeInfo, reviews: res.data });
     },
     onError: (err: any) => {
-      console.log(err);
+      console.error(err);
     },
     retry: false,
     enabled: storeInfo.id !== 0,

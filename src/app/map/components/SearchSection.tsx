@@ -81,6 +81,7 @@ const SearchSection = () => {
         {addressList.map((store: resultState, idx: number) => (
           <div
             id={store.id + ""}
+            key={store.id}
             onClick={() => onClickResult(store)}
             className="w-full flex items-center p-5 h-8 border-t border-gray-1000"
           >

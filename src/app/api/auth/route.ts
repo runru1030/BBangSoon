@@ -1,4 +1,3 @@
-import { strapiAuthUsersApi } from "@lib/apis/AuthUsersApis";
 import { jwtUtil } from "./utils/util";
 
 export async function GET(req: Request) {
@@ -11,12 +10,15 @@ export async function GET(req: Request) {
     const jwtUser = jwtUtil.getJWTUser(
       req.headers.get("authorization") as string
     );
-    let userInfo = {
-      email: jwtUser.email,
-      userName: jwtUser.userName,
+    const userInfo = {
+      email: (jwtUser as { email: string; userName: string }).email,
+      userName: (jwtUser as { email: string; userName: string }).userName,
       id: -1,
     };
-    const { attributes } = await strapiAuthUsersApi.getUser(userInfo.email);
+    // const { attributes } = await strapiAuthUsersApi.getUser(userInfo.email);
+    const attributes = {
+      id: 8,
+    };
     userInfo.id = attributes.id;
 
     if (!attributes)

@@ -26,7 +26,7 @@ const MapSection = () => {
       setStoreArr(res.data);
     },
     onError: (err: any) => {
-      console.log(err);
+      console.error(err);
     },
     retry: false,
     enabled: mapLocation.x !== 0,

@@ -2,7 +2,7 @@
 
 import useAuth from "@components/hooks/useAuth";
 import useGeoLocation from "@components/hooks/useGeoLocation";
-import { atom, Provider } from "jotai";
+import { atom } from "jotai";
 import { atomWithReset } from "jotai/utils";
 import React from "react";
 

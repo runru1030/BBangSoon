@@ -10,7 +10,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html>
+    <html lang="ko">
       <head>
         <link rel="shortcut icon" href="/favicon.png" />
         <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>

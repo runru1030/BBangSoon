@@ -21,7 +21,7 @@ const MenuInfo = () => {
       {openedStoreInfo === "menu" && (
         <div>
           {storeInfo.Menus?.map((menu: any) => (
-            <Label>
+            <Label key={menu.tit}>
               <span id="tit">{menu.tit}</span>
               <span id="price">{menu.price}</span>
             </Label>

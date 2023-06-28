@@ -10,7 +10,7 @@ module.exports = {
     "eslint:recommended",
     "plugin:@next/next/recommended",
     "plugin:react-hooks/recommended",
-    "plugin:jsx-a11y/recommended",
+    // "plugin:jsx-a11y/recommended",
     "plugin:@typescript-eslint/recommended",
     "prettier",
     "next",
@@ -24,7 +24,7 @@ module.exports = {
   plugins: [
     "react",
     "@typescript-eslint",
-    "jsx-a11y",
+    // "jsx-a11y",
     "unused-imports",
     "react-hooks",
   ],

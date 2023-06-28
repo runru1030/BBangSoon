@@ -184,9 +184,6 @@ const WriteBtn = () => {
   const router = useRouter();
   const [isWriteMode, setisWriteMode] = useAtom(isWriteModeAtom);
   const user = useAtomValue(userInfoAtoms.userAtom);
-  useEffect(() => {
-    console.log(user);
-  }, [user]);
 
   return (
     <button

@@ -45,7 +45,7 @@ export default function StoreInfoProvider(props: {
       });
     },
     onError: (err: any) => {
-      console.log(err);
+      console.error(err);
     },
     retry: false,
     enabled: props.storeId !== undefined,
@@ -62,7 +62,7 @@ export default function StoreInfoProvider(props: {
       });
     },
     onError: (err: any) => {
-      console.log(err);
+      console.error(err);
     },
     retry: false,
     enabled: props.storeId !== undefined,

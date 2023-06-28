@@ -20,7 +20,7 @@ const EditForm: React.FC<props> = ({ setEditNick, onClickEditNick }) => {
   } as { userName: string; valid: boolean; error: string });
 
   const onChangeNick = (event: React.ChangeEvent<HTMLInputElement>) => {
-    let valNick = /\s/g;
+    const valNick = /\s/g;
     if (valNick.test(event.target.value)) {
       setNewNick({
         userName: event.target.value,

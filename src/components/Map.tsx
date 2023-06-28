@@ -34,8 +34,8 @@ const Map: React.FC<locationProps> = ({ loc, setLoc, curLoc, markerArr }) => {
 
   /* 카카오 지도 생성 */
   const map = () => {
-    let container = document.getElementById("mapContainer");
-    let options = {
+    const container = document.getElementById("mapContainer");
+    const options = {
       center: new window.kakao.maps.LatLng(loc?.y, loc?.x),
       level: 5,
     };
@@ -65,7 +65,7 @@ const Map: React.FC<locationProps> = ({ loc, setLoc, curLoc, markerArr }) => {
        <span>${el.road_address_name}</span>
        </div></div>
       `;
-      var overlay = new window.kakao.maps.CustomOverlay({
+      const overlay = new window.kakao.maps.CustomOverlay({
         content: contentString,
         map: map,
         position: marker.getPosition(),
@@ -79,7 +79,7 @@ const Map: React.FC<locationProps> = ({ loc, setLoc, curLoc, markerArr }) => {
         map,
         "click",
         function (mouseEvent: any) {
-          var latlng = mouseEvent.latLng;
+          const latlng = mouseEvent.latLng;
           if (latlng != marker.getPosition()) {
             overlay.setMap(null);
           }
@@ -88,7 +88,7 @@ const Map: React.FC<locationProps> = ({ loc, setLoc, curLoc, markerArr }) => {
     });
     /* 지도 중심 좌표 */
     window.kakao.maps.event.addListener(map, "center_changed", function () {
-      var center = map.getCenter();
+      const center = map.getCenter();
       setMapcenter({ title: "", y: center.getLat(), x: center.getLng() });
     });
   };

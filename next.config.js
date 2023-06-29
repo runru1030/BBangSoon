@@ -31,7 +31,10 @@ const nextConfig = {
     return config;
   },
   images: {
-    remotePatterns: [{ hostname: "*", protocol: "https" }],
+    remotePatterns: [
+      { hostname: "*", protocol: "http" },
+      { hostname: "*", protocol: "https" },
+    ],
   },
   async redirects() {
     return [];

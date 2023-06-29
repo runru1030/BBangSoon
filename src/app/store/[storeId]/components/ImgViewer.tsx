@@ -2,16 +2,15 @@ import { useAtomValue } from "jotai";
 import Image from "next/image";
 import React from "react";
 import styled from "styled-components";
-import { DBStoreType } from "../PageContent";
 import { storeInfoAtoms } from "../StoreInfoProvider";
 import Grid from "./ImgGridContainer";
 
 const ImgViewer: React.FC = () => {
-  const storeInfo: DBStoreType = useAtomValue(storeInfoAtoms.storeAtom);
+  const storeInfo = useAtomValue(storeInfoAtoms.storeAtom);
 
   return (
     <Wrapper>
-      {!storeInfo.StoreImgs || storeInfo.StoreImgs.length == 0 ? (
+      {!storeInfo.store_imgs || storeInfo.store_imgs.length == 0 ? (
         <NomImg className="non-img container">
           <Image
             src="/assets/bread.png"
@@ -19,12 +18,10 @@ const ImgViewer: React.FC = () => {
             width="100"
             height="100"
           />
-          <span>{storeInfo.place_name}</span>
+          <span>{storeInfo.name}</span>
         </NomImg>
       ) : (
-        <Grid
-          imgArr={storeInfo.StoreImgs.map((img) => ({ url: img.imageUrl }))}
-        />
+        <Grid imgArr={storeInfo.store_imgs} />
       )}
     </Wrapper>
   );

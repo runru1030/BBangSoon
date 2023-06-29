@@ -2,11 +2,11 @@ import clsx from "clsx";
 import { useAtom, useAtomValue } from "jotai";
 import React from "react";
 import styled from "styled-components";
-import { DBStoreType, openedStoreInfoAtom } from "../PageContent";
-import { storeInfoAtoms } from "../StoreInfoProvider";
+import { openedStoreInfoAtom } from "../PageContent";
+import { StrapiStoreType, storeInfoAtoms } from "../StoreInfoProvider";
 
 const MenuInfo = () => {
-  const storeInfo: DBStoreType = useAtomValue(storeInfoAtoms.storeAtom);
+  const storeInfo: StrapiStoreType = useAtomValue(storeInfoAtoms.storeAtom);
   const [openedStoreInfo, setOpenedStoreInfo] = useAtom(openedStoreInfoAtom);
 
   return (
@@ -21,7 +21,7 @@ const MenuInfo = () => {
       {openedStoreInfo === "menu" && (
         <div>
           {storeInfo.Menus?.map((menu: any) => (
-            <Label>
+            <Label key={menu.tit}>
               <span id="tit">{menu.tit}</span>
               <span id="price">{menu.price}</span>
             </Label>

@@ -5,23 +5,7 @@ import MapInfo from "./components/MapInfo";
 import MenuInfo from "./components/MenuInfo";
 import Review from "./components/Review";
 import StoreInfo from "./components/StoreInfo";
-import { StoreType } from "./StoreInfoProvider";
-export interface StoreState {
-  store: DBStoreType;
-  loc: {
-    title: string;
-    y: number;
-    x: number;
-  };
-}
-export interface DBStoreType extends StoreType {
-  Reviews?: [] | null;
-  Visits?: [] | null;
-  Wishes?: [] | null;
-  StoreImgs?: { imageUrl: string }[] | null;
-  Menus?: [] | null;
-  site?: string;
-}
+import { StrapiStoreType } from "./StoreInfoProvider";
 
 export const openedStoreInfoAtom = atom<"map" | "detail" | "menu" | "review">(
   "detail"
@@ -33,7 +17,7 @@ const PageContent = () => {
       <ImgViewer />
       <StoreInfo />
       <MapInfo />
-      <MenuInfo />
+      {/* <MenuInfo /> */}
       <Review />
     </div>
   );

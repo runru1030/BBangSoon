@@ -5,15 +5,45 @@ import {
   faMapMarkerAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import clsx from "clsx";
+import { throttle } from "lodash";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React from "react";
+import React, {
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from "react";
 import styled from "styled-components";
 
 const Nav: React.FC = () => {
   const pathname = usePathname();
+  const [visible, setVisible] = useState(true);
+  const beforeScrollY = useRef(0);
+
+  useEffect(() => {
+    window.addEventListener("touchmove", handleScroll);
+    return () => {
+      window.removeEventListener("touchmove", handleScroll);
+    };
+  }, []);
+
+  const handleScroll = useMemo(
+    () =>
+      throttle((e) => {
+        const currentScrollY = e.touches[0].screenY;
+        if (beforeScrollY.current > currentScrollY) {
+          setVisible(false);
+        } else {
+          setVisible(true);
+        }
+        beforeScrollY.current = currentScrollY;
+      }, 250),
+    [beforeScrollY]
+  );
   return (
-    <BottomNav>
+    <BottomNav className={clsx(visible ? "visible" : "invisible")}>
       <StyledLink href="/home">
         <FontAwesomeIcon
           icon={faBreadSlice}
@@ -77,4 +107,5 @@ const BottomNav = styled.div`
   padding: 10px 0;
   border-top: ${(props) => `solid thin` + props.theme.color.border_grey};
   background-color: white;
+  z-index: 100;
 `;

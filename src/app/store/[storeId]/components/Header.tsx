@@ -7,7 +7,6 @@ import { useAtomValue } from "jotai";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import styled from "styled-components";
-import { DBStoreType } from "../PageContent";
 import { storeInfoAtoms } from "../StoreInfoProvider";
 
 interface props {
@@ -16,7 +15,7 @@ interface props {
 const Header: React.FC<props> = ({ isStoreImg }) => {
   const router = useRouter();
   const userAtom = useAtomValue(userInfoAtoms.userAtom);
-  const storeInfo: DBStoreType = useAtomValue(storeInfoAtoms.storeAtom);
+  const storeInfo = useAtomValue(storeInfoAtoms.storeAtom);
 
   /* wish & visit */
   const [isVisit, setIsVisit] = useState(
@@ -63,15 +62,15 @@ const Header: React.FC<props> = ({ isStoreImg }) => {
 
   return (
     <StyledHeader>
-      <StoreName>{storeInfo.place_name}</StoreName>
-      <Wrapper>
+      <StoreName>{storeInfo.name}</StoreName>
+      {/* <Wrapper>
         <span>{storeInfo.reviewCnt}</span>
         <span id="small">리뷰</span>
       </Wrapper>
       <Wrapper>
         <span>{storeInfo.avgStar?.toFixed(1)}</span>
         <span id="small">평점</span>
-      </Wrapper>
+      </Wrapper> */}
       <FontAwesomeIcon
         id="visit"
         onClick={onClickFeature}

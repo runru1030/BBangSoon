@@ -1,4 +1,4 @@
-const request = require("request");
+import request from "request";
 
 export default {
   getProfile(accessToken: string) {
@@ -10,7 +10,7 @@ export default {
             "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
           },
           url: "https://kapi.kakao.com/v2/user/me",
-          method: "GET",
+           method: "GET",
         },
         (error: any, response: any, body: any) => {
           if (!error && response.statusCode === 200) {

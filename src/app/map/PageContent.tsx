@@ -6,7 +6,12 @@ import Header from "./components/Header";
 import MapSection from "./components/MapSection";
 import SearchSection from "./components/SearchSection";
 
-export const mapLocationAtom = atom<{ title: string; y: number; x: number }>({
+export interface kakaoLocation {
+  title: string;
+  y: number;
+  x: number;
+}
+export const mapLocationAtom = atom<kakaoLocation>({
   title: "",
   y: 0,
   x: 0,

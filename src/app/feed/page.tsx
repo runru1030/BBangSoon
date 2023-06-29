@@ -7,9 +7,10 @@ import * as React from "react";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import Nav from "../../components/Nav";
-import StoreList, { StoreType } from "../../components/StoreItem";
+// import StoreList, { StrapiStoreType } from "../../components/StoreItem";
 import HeaderCmp from "./components/HeaderCmp";
 import Review from "./components/Review";
+import { StrapiStoreType } from "@app/store/[storeId]/StoreInfoProvider";
 
 export interface reviewType {
   id: number;
@@ -27,7 +28,7 @@ const Page = () => {
   /* 순례 리스트 */
   const [isDetailVisit, setIsDetailVisit] = useState(false);
   const [visitId, setVisitId] = useState<number[]>([]); //유저의 순례리스트 매장 ID
-  const [visitArr, setVisitArr] = useState<StoreType[]>([]); //유저의 순례리스트 매장
+  const [visitArr, setVisitArr] = useState<StrapiStoreType[]>([]); //유저의 순례리스트 매장
 
   /* 순례 리스트 */
   const onClickHandler = (event: React.MouseEvent): void => {
@@ -56,11 +57,11 @@ const Page = () => {
         onClickHandler={onClickHandler}
       />
       <Label>{isDetailVisit ? "순례 리스트" : "방문 일지"}</Label>
-      {isDetailVisit ? (
-        visitArr.map((store: StoreType) => <StoreList store={store} />)
+      {/* {isDetailVisit ? (
+        visitArr.map((store: StrapiStoreType) => <StoreList store={store} />)
       ) : (
         <Review reviewArr={reviewArr} />
-      )}
+      )} */}
       <Nav />
     </>
   );

@@ -1,24 +1,16 @@
+import { kakaoLocation } from "@app/map/PageContent";
+import { StrapiStoreType } from "@app/store/[storeId]/StoreInfoProvider";
 import { faRedo } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { StoreState } from "../app/store/[storeId]/page";
 
 interface locationProps {
-  //지도 중심 위치
-  loc: StoreState["loc"];
-  setLoc: React.Dispatch<React.SetStateAction<StoreState["loc"]>> | null;
-  //내 위치
-  curLoc: StoreState["loc"];
-  //매장 정보arr
-  markerArr: {
-    x?: number;
-    y?: number;
-    title?: string;
-    place_name?: string;
-    address_name?: string;
-  }[];
+  loc: kakaoLocation;
+  setLoc: React.Dispatch<React.SetStateAction<kakaoLocation>> | null;
+  curLoc: kakaoLocation;
+  markerArr: StrapiStoreType[];
 }
 declare global {
   interface Window {
@@ -27,7 +19,7 @@ declare global {
 }
 const Map: React.FC<locationProps> = ({ loc, setLoc, curLoc, markerArr }) => {
   const pathname = usePathname();
-  const [mapCenter, setMapcenter] = useState<StoreState["loc"]>({
+  const [mapCenter, setMapcenter] = useState<kakaoLocation>({
     title: "",
     y: loc.y,
     x: loc.x,
@@ -42,8 +34,8 @@ const Map: React.FC<locationProps> = ({ loc, setLoc, curLoc, markerArr }) => {
 
   /* 카카오 지도 생성 */
   const map = () => {
-    let container = document.getElementById("mapContainer");
-    let options = {
+    const container = document.getElementById("mapContainer");
+    const options = {
       center: new window.kakao.maps.LatLng(loc?.y, loc?.x),
       level: 5,
     };
@@ -54,7 +46,7 @@ const Map: React.FC<locationProps> = ({ loc, setLoc, curLoc, markerArr }) => {
       map: map,
       position: new window.kakao.maps.LatLng(curLoc?.y, curLoc?.x),
       image: new window.kakao.maps.MarkerImage(
-        "curLoc.png",
+        "/assets/curLoc.png",
         new window.kakao.maps.Size(20, 20)
       ),
       clickable: true,
@@ -63,17 +55,17 @@ const Map: React.FC<locationProps> = ({ loc, setLoc, curLoc, markerArr }) => {
     markerArr.map((el) => {
       const marker = new window.kakao.maps.Marker({
         map: map,
-        position: new window.kakao.maps.LatLng(el.y, el.x),
-        title: el.title,
+        position: new window.kakao.maps.LatLng(el.loc_y, el.loc_x),
+        title: el.name,
         clickable: true,
       });
       const contentString = `
        <div><div id="info">
-       <span>${el.place_name}</span>
-       <span>${el.address_name}</span>
+       <span>${el.name}</span>
+       <span>${el.road_address_name}</span>
        </div></div>
       `;
-      var overlay = new window.kakao.maps.CustomOverlay({
+      const overlay = new window.kakao.maps.CustomOverlay({
         content: contentString,
         map: map,
         position: marker.getPosition(),
@@ -87,7 +79,7 @@ const Map: React.FC<locationProps> = ({ loc, setLoc, curLoc, markerArr }) => {
         map,
         "click",
         function (mouseEvent: any) {
-          var latlng = mouseEvent.latLng;
+          const latlng = mouseEvent.latLng;
           if (latlng != marker.getPosition()) {
             overlay.setMap(null);
           }
@@ -96,13 +88,13 @@ const Map: React.FC<locationProps> = ({ loc, setLoc, curLoc, markerArr }) => {
     });
     /* 지도 중심 좌표 */
     window.kakao.maps.event.addListener(map, "center_changed", function () {
-      var center = map.getCenter();
+      const center = map.getCenter();
       setMapcenter({ title: "", y: center.getLat(), x: center.getLng() });
     });
   };
   return (
     <>
-      {pathname == "/storemap" && (
+      {pathname == "/map" && (
         <ReSearchBtn onClick={onClickReSearch}>
           <FontAwesomeIcon icon={faRedo} />
           <span>현 위치 검색</span>

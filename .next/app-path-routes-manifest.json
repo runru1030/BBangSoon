@@ -1,0 +1,10 @@
+{
+  "/feed/page": "/feed",
+  "/home/page": "/home",
+  "/map/page": "/map",
+  "/wish/page": "/wish",
+  "/api/auth/route": "/api/auth",
+  "/auth/login/page": "/auth/login",
+  "/store/[storeId]/page": "/store/[storeId]",
+  "/api/auth/kakao/route": "/api/auth/kakao"
+}

@@ -1,6 +1,6 @@
 import { resultState } from "@app/home/PageContent";
+import { kakaoLocation } from "@app/map/PageContent";
 import axios from "axios";
-import { StoreState } from "../app/store/[storeId]/page";
 
 export const getStore = async (
   page: number,
@@ -9,7 +9,6 @@ export const getStore = async (
 ) => {
   let arr: resultState[];
   let isEnd: boolean;
-  console.log(page);
 
   await axios
     .get(
@@ -39,40 +38,40 @@ export const getStore = async (
     resolve({ isEnd: isEnd, resultArr: arr });
   });
 };
-export const getStoreList = (
-  storeArr: resultState[],
-  setArr: React.Dispatch<React.SetStateAction<resultState[]>>
-) => {
-  axios
-    .post(
-      "/store/list",
-      storeArr.map((store: resultState) => ({ id: store.id }))
-    )
-    .then((res) => {
-      const resArr = storeArr.map((store: resultState, idx: number) => ({
-        ...store,
-        ...res.data[idx],
-      }));
-      setArr(resArr);
-      resArr.forEach(async (element: resultState, i: number) => {
-        if (element.avgStar === null) {
-          await axios
-            .post("/storeCrawl/count", {
-              id: element.id,
-              url: element.place_url,
-            })
-            .then((res) => {
-              resArr[i] = { ...resArr[i], ...res.data };
-              setArr([...resArr]);
-            });
-        }
-      });
-    });
-};
+// export const getStoreList = (
+//   storeArr: resultState[],
+//   setArr: React.Dispatch<React.SetStateAction<resultState[]>>
+// ) => {
+//   axios
+//     .post(
+//       "/store/list",
+//       storeArr.map((store: resultState) => ({ id: store.id }))
+//     )
+//     .then((res) => {
+//       const resArr = storeArr.map((store: resultState, idx: number) => ({
+//         ...store,
+//         ...res.data[idx],
+//       }));
+//       setArr(resArr);
+//       resArr.forEach(async (element: resultState, i: number) => {
+//         if (element.avgStar === null) {
+//           await axios
+//             .post("/storeCrawl/count", {
+//               id: element.id,
+//               url: element.place_url,
+//             })
+//             .then((res) => {
+//               resArr[i] = { ...resArr[i], ...res.data };
+//               setArr([...resArr]);
+//             });
+//         }
+//       });
+//     });
+// };
 export const getStoreMap = async (
   page: number,
   markerArr: resultState[],
-  loc: StoreState["loc"]
+  loc: kakaoLocation
 ) => {
   let arr: resultState[];
   let isEnd: boolean;

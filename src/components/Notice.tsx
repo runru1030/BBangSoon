@@ -26,10 +26,10 @@ const Notice: React.FC = () => {
           </ContentList>
           <ContentDetail>
             <p>
-              현재 인기있는 빵집 '랭킹'을 확인해보고,<br />
-              '빵지도'를 이용하여 내 주위의 빵집들과 원하는 지역의 빵집들을 살펴봐요!</p>
+              현재 인기있는 빵집 &apos 랭킹&apos 을 확인해보고,<br />
+              &apos 빵지도&apos 를 이용하여 내 주위의 빵집들과 원하는 지역의 빵집들을 살펴봐요!</p>
             <p>
-              로그인하여, 나의 리뷰 & 관심 빵집 등록 & 방문 빵집 등록등 '나만의 기록 서비스'를 경험해보세요!</p>
+              로그인하여, 나의 리뷰 & 관심 빵집 등록 & 방문 빵집 등록등 &apos 나만의 기록 서비스&apos 를 경험해보세요!</p>
           </ContentDetail>
           <ImgContainer className="row-container">
             <ImgWarpper>

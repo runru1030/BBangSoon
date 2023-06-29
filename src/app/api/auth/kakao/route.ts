@@ -1,6 +1,6 @@
-import axios from "axios";
+import { strapiAuthUsersApi } from "@lib/apis/AuthUsersApis";
 import KakaoAuth from "../utils/KakaoAuth";
-import { jwtUtil, strapiUtil } from "../utils/util";
+import { jwtUtil } from "../utils/util";
 
 export async function PUT(req: Request) {
   try {
@@ -13,22 +13,25 @@ export async function PUT(req: Request) {
 
     const result: any = await KakaoAuth.getProfile(access_token);
     const kakaoUser = JSON.parse(result).kakao_account;
-    let userInfo = {
+    const userInfo = {
       email: kakaoUser.email,
       userName: kakaoUser.profile.nickname,
       id: -1,
     };
 
-    const { attributes } = await strapiUtil.getStrapiUser(userInfo.email);
+    // const { attributes } = await strapiAuthUsersApi.getUser(userInfo.email);
+    const attributes = {
+      id: 8,
+    };
     userInfo.id = attributes.id;
 
     if (!attributes) {
-      const {
-        data: { data },
-      } = await axios.post("http://localhost:1337/api/auth-users", {
-        data: { ...userInfo, kakaoToken: access_token },
-      });
-      userInfo.id = data.attributes.id;
+      const { attributes: created_attributes } =
+        await strapiAuthUsersApi.createUser({
+          userInfo,
+          kakaoToken: access_token,
+        });
+      userInfo.id = created_attributes.id;
     }
 
     return new Response(

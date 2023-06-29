@@ -6,46 +6,53 @@ import styled from "styled-components";
 import ImgModal from "./ImgModal";
 import StarCmp from "./StarCmp";
 export interface reviewProps {
-  review: {
-    id: number;
-    reviewImg: string | null;
+  id: number;
+  attributes: {
+    store_imgs: {
+      data: {
+        attributes: { img: { data: { attributes: { url: string } } } };
+      }[];
+    };
     content: string | null;
     star: number;
     nickName: string;
-    date: Date;
+    createdAt: Date;
     UserId: number;
   };
 }
-const ReviewList: React.FC<reviewProps> = ({ review }) => {
+const ReviewList: React.FC<reviewProps> = ({ id, attributes }) => {
   const [storeInfo, setStoreInfo] = useAtom(storeInfoAtoms.storeAtom);
   const userAtom = useAtomValue(userInfoAtoms.userAtom);
 
   const onClickDel = () => {
-    axios.delete(`/store/review/${review.id}`);
-    axios.post(`/storeCrawl`, storeInfo).then((res) => {
-      setStoreInfo({ ...storeInfo, ...res.data });
-    });
+    // axios.delete(`/store/${id}`);
+    // axios.post(`/storeCrawl`, storeInfo).then((res) => {
+    //   setStoreInfo({ ...storeInfo, ...res.data });
+    // });
   };
   return (
     <Container className="col-container">
-      {review.reviewImg && (
+      {attributes.store_imgs.data.length !== 0 && (
         <ImgWrapper>
-          <ImgModal src={review.reviewImg} width="200%" />
+          <ImgModal
+            src={`${process.env.NEXT_PUBLIC_DOMAIN}${attributes.store_imgs.data[0].attributes.img.data.attributes.url}`}
+            width="200%"
+          />
         </ImgWrapper>
       )}
       <Wrapper className="row-container">
-        <StarCmp reviewStar={review.star} />
-        {userAtom.id === review.UserId && (
+        <StarCmp reviewStar={attributes.star} />
+        {userAtom.id === attributes.UserId && (
           <Button onClick={onClickDel}>삭제</Button>
         )}
       </Wrapper>
-      <span id="content">{review.content}</span>
+      <span id="content">{attributes.content}</span>
       <Detail>
-        <span id="nickName">{review.nickName}</span>
+        <span id="nickName">{attributes.nickName}</span>
         <span id="date">
-          {new Date(review.date).getFullYear()}.
-          {new Date(review.date).getMonth() + 1}.
-          {new Date(review.date).getDate()}
+          {new Date(attributes.createdAt).getFullYear()}.
+          {new Date(attributes.createdAt).getMonth() + 1}.
+          {new Date(attributes.createdAt).getDate()}
         </span>
       </Detail>
     </Container>

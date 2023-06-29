@@ -20,9 +20,9 @@ const SearchSection = () => {
 
   const onClickResult = (store: resultState) => {
     setMapLocation({
-      title: store.place_name,
-      y: store.y || 0,
-      x: store.x || 0,
+      title: store.name,
+      y: store.loc_y || 0,
+      x: store.loc_x || 0,
     });
     setAddressList([]);
   };
@@ -81,10 +81,11 @@ const SearchSection = () => {
         {addressList.map((store: resultState, idx: number) => (
           <div
             id={store.id + ""}
+            key={store.id}
             onClick={() => onClickResult(store)}
             className="w-full flex items-center p-5 h-8 border-t border-gray-1000"
           >
-            {store.place_name}
+            {store.name}
           </div>
         ))}
       </div>

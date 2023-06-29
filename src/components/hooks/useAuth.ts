@@ -22,7 +22,7 @@ const useAuth = () => {
       setUserAtom(res.data.user);
     },
     onError: (err: any) => {
-      console.log(err);
+      console.error(err);
       resetUserAtom();
       window.localStorage.removeItem("token");
     },
@@ -37,13 +37,9 @@ const useAuth = () => {
 
     if (token) {
       setJwtToken(token);
-      axios.defaults.headers.common["Authorization"] = `${jwtToken}`;
+      axios.defaults.headers.common["Authorization"] = `${token}`;
     }
   }, []);
-
-  useEffect(() => {
-    console.log(user);
-  }, [user]);
 
   return;
 };

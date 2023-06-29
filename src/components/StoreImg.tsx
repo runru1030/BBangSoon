@@ -31,7 +31,7 @@ const StoreImg = () => {
             </Label>
             <Grid>
               {storeImgArr.map((img: img) => (
-                <div className="container">
+                <div className="container" key={img.imageUrl}>
                   <ImgModal src={img.imageUrl} width="100%" />
                 </div>
               ))}

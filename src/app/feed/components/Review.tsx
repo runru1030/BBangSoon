@@ -19,7 +19,7 @@ const Review: React.FC<props> = ({ reviewArr }) => {
   return (
     <Grid isFeed>
       {reviewArr.map((review: reviewType) => (
-        <Wrapper onClick={() => onClickReview(review)}>
+        <Wrapper onClick={() => onClickReview(review)} key={review.id}>
           {review.reviewImg ? (
             <ReviewWrapper className="container">
               <img src={review.reviewImg} />

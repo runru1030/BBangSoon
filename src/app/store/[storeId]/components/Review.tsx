@@ -2,33 +2,52 @@ import ReviewForm from "@app/store/[storeId]/components/ReviewForm";
 import ReviewList, { reviewProps } from "@components/ReviewList";
 import clsx from "clsx";
 import { useAtom, useAtomValue } from "jotai";
-import styled from "styled-components";
-import { DBStoreType, openedStoreInfoAtom } from "../PageContent";
+import { openedStoreInfoAtom } from "../PageContent";
 import { storeInfoAtoms } from "../StoreInfoProvider";
+import { useQuery } from "@tanstack/react-query";
+import { strapiReviewsApi } from "@lib/apis/ReviewsApis";
 
 const Review = () => {
-  const storeInfo: DBStoreType = useAtomValue(storeInfoAtoms.storeAtom);
+  const [storeInfo, setStoreInfo] = useAtom(storeInfoAtoms.storeAtom);
   const [openedStoreInfo, setOpenedStoreInfo] = useAtom(openedStoreInfoAtom);
+
+  useQuery(["getStoreReviews"], {
+    queryFn: async () => {
+      return await strapiReviewsApi.getReviewsOfStore(storeInfo.id);
+    },
+    onSuccess: (res: any) => {
+      setStoreInfo({ ...storeInfo, reviews: res.data });
+    },
+    onError: (err: any) => {
+      console.error(err);
+    },
+    retry: false,
+    enabled: storeInfo.id !== 0,
+  });
   return (
     <div>
-      <Label
+      <div
         id="review"
         onClick={() => setOpenedStoreInfo("review")}
-        className={clsx(openedStoreInfo === "review" ? "text-blue" : "")}
+        className={clsx(
+          "flex items-center p-3 justify-between",
+          openedStoreInfo === "review" ? "text-blue" : ""
+        )}
       >
         <span>리뷰</span>
         {openedStoreInfo === "review" && <ReviewForm.triggerBtn />}
-      </Label>
+      </div>
+
       {openedStoreInfo === "review" && (
         <>
-          <ReviewForm storeId={storeInfo.id} />
+          <ReviewForm />
           <div>
-            {storeInfo.Reviews && storeInfo.Reviews?.length !== 0 ? (
-              storeInfo.Reviews?.map((review: reviewProps["review"]) => (
-                <ReviewList review={review} key={review.id} />
-              ))
-            ) : (
+            {storeInfo.reviews?.length === 0 ? (
               <div className="flex justify-center w-full">리뷰가 없어용</div>
+            ) : (
+              storeInfo.reviews?.map((review: reviewProps) => (
+                <ReviewList {...{ ...review }} key={review.id} />
+              ))
             )}
           </div>
         </>
@@ -37,14 +56,3 @@ const Review = () => {
   );
 };
 export default Review;
-const Label = styled.div`
-  font-size: medium;
-  padding: 15px;
-  display: flex;
-  align-items: center;
-  width: 100%;
-  box-sizing: border-box;
-  span {
-    flex: 1;
-  }
-`;

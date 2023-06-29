@@ -39,11 +39,11 @@ const Ranking: React.FC = () => {
           (idx < 10 || isMore) && (
             <>
               <div className="row-container">
-                <StoreList store={store}>
+                {/* <StoreList store={store}>
                   <RankNum color={idx < 3 ? colorList[idx] : "black"}>
                     {idx + 1}
                   </RankNum>
-                </StoreList>
+                </StoreList> */}
               </div>
               {idx == 9 && !isMore && (
                 <Button onClick={onClickMore}>더보기</Button>

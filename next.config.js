@@ -1,21 +1,9 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const path = require("path");
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   compiler: {
     styledComponents: true,
     removeConsole: process.env.NODE_ENV === "production",
   },
-  poweredByHeader: false,
-  compress: true,
-  reactStrictMode: false,
-  experimental: {
-    externalDir: true,
-    appDir: true,
-    outputFileTracingRoot: path.join(__dirname, "../../"),
-  },
-  output: "standalone",
   webpack(config) {
     config.module.rules.push({
       test: /\.svg$/i,
@@ -35,9 +23,6 @@ const nextConfig = {
       { hostname: "*", protocol: "http" },
       { hostname: "*", protocol: "https" },
     ],
-  },
-  async redirects() {
-    return [];
   },
   transpilePackages: ["jotai-devtools"],
 };

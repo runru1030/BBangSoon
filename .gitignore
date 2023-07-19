@@ -11,6 +11,7 @@
 
 # production
 /build
+/.next/
 
 .env
 .history

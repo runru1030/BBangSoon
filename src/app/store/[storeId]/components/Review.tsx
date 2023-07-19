@@ -12,9 +12,7 @@ const Review = () => {
   const [openedStoreInfo, setOpenedStoreInfo] = useAtom(openedStoreInfoAtom);
 
   useQuery(["getStoreReviews"], {
-    queryFn: async () => {
-      return await strapiReviewsApi.getReviewsOfStore(storeInfo.id);
-    },
+    queryFn: async () => await strapiReviewsApi.getReviewsOfStore(storeInfo.id),
     onSuccess: (res: any) => {
       setStoreInfo({ ...storeInfo, reviews: res.data });
     },

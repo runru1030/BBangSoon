@@ -96,7 +96,7 @@ const StyledLink = styled(Link)`
   }
 `;
 const BottomNav = styled.div`
-  position: fixed;
+  position: sticky;
   bottom: 0;
   display: flex;
   width: 100%;

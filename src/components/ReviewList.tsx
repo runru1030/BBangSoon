@@ -1,6 +1,11 @@
 import { userInfoAtoms } from "@app/GlobalProvider";
 import { storeInfoAtoms } from "@app/store/[storeId]/StoreInfoProvider";
-import axios from "axios";
+import { strapiReviewsApi } from "@lib/apis/ReviewsApis";
+import {
+  QueryClient,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { useAtom, useAtomValue } from "jotai";
 import styled from "styled-components";
 import ImgModal from "./ImgModal";
@@ -8,89 +13,63 @@ import StarCmp from "./StarCmp";
 export interface reviewProps {
   id: number;
   attributes: {
-    store_imgs: {
-      data: {
-        attributes: { img: { data: { attributes: { url: string } } } };
-      }[];
-    };
+    store_imgs: { url: string };
+    auth_user: { id: number; userName: string };
     content: string | null;
     star: number;
-    nickName: string;
     createdAt: Date;
-    UserId: number;
   };
 }
 const ReviewList: React.FC<reviewProps> = ({ id, attributes }) => {
   const [storeInfo, setStoreInfo] = useAtom(storeInfoAtoms.storeAtom);
   const userAtom = useAtomValue(userInfoAtoms.userAtom);
+  const queryClient = useQueryClient();
+  const deleteReview = useMutation({
+    mutationFn: async (reviewId: number) =>
+      await strapiReviewsApi.deleteReview(reviewId),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["getStoreReviews"]);
+    },
+    onError: (err) => {
+      console.error(err);
+    },
+  });
 
-  const onClickDel = () => {
-    // axios.delete(`/store/${id}`);
-    // axios.post(`/storeCrawl`, storeInfo).then((res) => {
-    //   setStoreInfo({ ...storeInfo, ...res.data });
-    // });
-  };
   return (
-    <Container className="col-container">
-      {attributes.store_imgs.data.length !== 0 && (
+    <div className="flex flex-col w-full border-t border-gray-1000 p-3 gap-1">
+      {!!attributes.store_imgs && (
         <ImgWrapper>
           <ImgModal
-            src={`${process.env.NEXT_PUBLIC_DOMAIN}${attributes.store_imgs.data[0].attributes.img.data.attributes.url}`}
+            src={`${process.env.NEXT_PUBLIC_DOMAIN}${attributes.store_imgs.url}`}
             width="200%"
           />
         </ImgWrapper>
       )}
-      <Wrapper className="row-container">
-        <StarCmp reviewStar={attributes.star} />
-        {userAtom.id === attributes.UserId && (
-          <Button onClick={onClickDel}>삭제</Button>
+      <span>{attributes.auth_user.userName}</span>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2 text-gray-600 font-light">
+          <StarCmp reviewStar={attributes.star} />
+          <span>|</span>
+          <span id="date">
+            {new Date(attributes.createdAt).getFullYear()}.
+            {new Date(attributes.createdAt).getMonth() + 1}.
+            {new Date(attributes.createdAt).getDate()}
+          </span>
+        </div>
+        {userAtom.id === attributes.auth_user.id && (
+          <button
+            className="text-gray-600 text-sm"
+            onClick={() => deleteReview.mutate(id)}
+          >
+            삭제
+          </button>
         )}
-      </Wrapper>
-      <span id="content">{attributes.content}</span>
-      <Detail>
-        <span id="nickName">{attributes.nickName}</span>
-        <span id="date">
-          {new Date(attributes.createdAt).getFullYear()}.
-          {new Date(attributes.createdAt).getMonth() + 1}.
-          {new Date(attributes.createdAt).getDate()}
-        </span>
-      </Detail>
-    </Container>
+      </div>
+      <span>{attributes.content}</span>
+    </div>
   );
 };
 export default ReviewList;
-
-const Container = styled.div`
-  align-items: flex-start;
-  width: 90%;
-  font-size: medium;
-  padding: 15px;
-  border-top: ${(props) => `solid thin` + props.theme.color.border_grey};
-  > div {
-    padding: 10px 0;
-  }
-  #date,
-  #content {
-    font-weight: lighter;
-  }
-`;
-const Detail = styled.div`
-  span {
-    margin-right: 5px;
-    color: #6f6f6f;
-  }
-`;
-const Button = styled.button`
-  flex: 1;
-  text-align: end;
-  font-size: small;
-  color: #aaaaaa;
-`;
-const Wrapper = styled.div`
-  align-items: center;
-  margin-bottom: 15px;
-  width: 100%;
-`;
 const ImgWrapper = styled.div`
   max-width: 100%;
   max-height: 200px;

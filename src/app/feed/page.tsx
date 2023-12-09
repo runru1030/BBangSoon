@@ -6,11 +6,9 @@ import { useRouter } from "next/navigation";
 import * as React from "react";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import Nav from "../../components/Nav";
 // import StoreList, { StrapiStoreType } from "../../components/StoreItem";
-import HeaderCmp from "./components/HeaderCmp";
-import Review from "./components/Review";
 import { StrapiStoreType } from "@app/store/[storeId]/StoreInfoProvider";
+import HeaderCmp from "./components/HeaderCmp";
 
 export interface reviewType {
   id: number;
@@ -62,7 +60,6 @@ const Page = () => {
       ) : (
         <Review reviewArr={reviewArr} />
       )} */}
-      <Nav />
     </>
   );
 };

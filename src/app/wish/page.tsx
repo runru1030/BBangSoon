@@ -1,5 +1,6 @@
 "use client";
 import { userInfoAtoms } from "@app/GlobalProvider";
+import { StrapiStoreType } from "@app/store/[storeId]/StoreInfoProvider";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
@@ -8,8 +9,6 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Header } from "../../components/Header";
-import Nav from "../../components/Nav";
-import { StrapiStoreType } from "@app/store/[storeId]/StoreInfoProvider";
 // import StoreList, { StoreType } from "../../components/StoreItem";
 const Page = () => {
   const router = useRouter();
@@ -33,7 +32,6 @@ const Page = () => {
       {/* {storeArr.map((store: StrapiStoreType) => (
         <StoreList store={store} />
       ))} */}
-      <Nav />
     </Container>
   );
 };

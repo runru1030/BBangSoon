@@ -91,7 +91,7 @@ export default ImgGridContainer;
 const Wrapper = styled.div``;
 const GridContainer = styled.div`
   display: grid;
-  width: 100vw;
+  width: 100%;
   height: 100vw;
   grid-template-columns: 50% 50%;
   cursor: pointer;

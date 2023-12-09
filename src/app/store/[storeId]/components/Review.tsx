@@ -1,11 +1,11 @@
 import ReviewForm from "@app/store/[storeId]/components/ReviewForm";
 import ReviewList, { reviewProps } from "@components/ReviewList";
+import { strapiReviewsApi } from "@lib/apis/ReviewsApis";
+import { useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
-import { useAtom, useAtomValue } from "jotai";
+import { useAtom } from "jotai";
 import { openedStoreInfoAtom } from "../PageContent";
 import { storeInfoAtoms } from "../StoreInfoProvider";
-import { useQuery } from "@tanstack/react-query";
-import { strapiReviewsApi } from "@lib/apis/ReviewsApis";
 
 const Review = () => {
   const [storeInfo, setStoreInfo] = useAtom(storeInfoAtoms.storeAtom);

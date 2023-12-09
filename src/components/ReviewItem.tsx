@@ -16,7 +16,7 @@ export interface reviewProps {
     createdAt: Date;
   };
 }
-const ReviewList: React.FC<reviewProps> = ({ id, attributes }) => {
+const ReviewItem: React.FC<reviewProps> = ({ id, attributes }) => {
   const userAtom = useAtomValue(userInfoAtoms.userAtom);
   const isMine = attributes.userId === userAtom.id;
 
@@ -61,7 +61,7 @@ const ReviewList: React.FC<reviewProps> = ({ id, attributes }) => {
     </Container>
   );
 };
-export default ReviewList;
+export default ReviewItem;
 
 const Container = styled.div`
   align-items: flex-start;

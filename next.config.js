@@ -25,6 +25,15 @@ const nextConfig = {
     ],
   },
   transpilePackages: ["jotai-devtools"],
+  async redirects() {
+    return [
+      {
+        source: "/",
+        destination: "/home",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig;

@@ -2,8 +2,7 @@ import clsx from "clsx";
 import { useAtom, useAtomValue } from "jotai";
 import React from "react";
 import styled from "styled-components";
-import { openedStoreInfoAtom } from "../PageContent";
-import { StrapiStoreType, storeInfoAtoms } from "../StoreInfoProvider";
+import { StrapiStoreType, openedStoreInfoAtom, storeInfoAtoms } from "../StoreInfoProvider";
 
 const MenuInfo = () => {
   const storeInfo: StrapiStoreType = useAtomValue(storeInfoAtoms.storeAtom);

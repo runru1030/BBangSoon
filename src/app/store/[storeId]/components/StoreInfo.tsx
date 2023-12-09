@@ -8,8 +8,7 @@ import clsx from "clsx";
 import { useAtom, useAtomValue } from "jotai";
 import Link from "next/link";
 import styled from "styled-components";
-import { openedStoreInfoAtom } from "../PageContent";
-import { storeInfoAtoms } from "../StoreInfoProvider";
+import { openedStoreInfoAtom, storeInfoAtoms } from "../StoreInfoProvider";
 
 const StoreInfo = () => {
   const storeInfo = useAtomValue(storeInfoAtoms.storeAtom);

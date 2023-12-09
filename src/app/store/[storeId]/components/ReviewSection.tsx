@@ -1,17 +1,16 @@
 import ReviewForm from "@app/store/[storeId]/components/ReviewForm";
-import ReviewList, { reviewProps } from "@components/ReviewList";
-import clsx from "clsx";
-import { useAtom, useAtomValue } from "jotai";
-import { openedStoreInfoAtom } from "../PageContent";
-import { storeInfoAtoms } from "../StoreInfoProvider";
-import { useQuery } from "@tanstack/react-query";
+import ReviewItem, { reviewProps } from "@components/ReviewItem";
 import { strapiReviewsApi } from "@lib/apis/ReviewsApis";
+import { useQuery } from "@tanstack/react-query";
+import clsx from "clsx";
+import { useAtom } from "jotai";
+import { openedStoreInfoAtom, storeInfoAtoms } from "../StoreInfoProvider";
 
-const Review = () => {
+const ReviewSection = () => {
   const [storeInfo, setStoreInfo] = useAtom(storeInfoAtoms.storeAtom);
   const [openedStoreInfo, setOpenedStoreInfo] = useAtom(openedStoreInfoAtom);
 
-  useQuery(["getStoreReviews"], {
+  useQuery(["getStoreReviews", { storeInfo }], {
     queryFn: async () => {
       return await strapiReviewsApi.getReviewsOfStore(storeInfo.id);
     },
@@ -46,7 +45,7 @@ const Review = () => {
               <div className="flex justify-center w-full">리뷰가 없어용</div>
             ) : (
               storeInfo.reviews?.map((review: reviewProps) => (
-                <ReviewList {...{ ...review }} key={review.id} />
+                <ReviewItem {...{ ...review }} key={review.id} />
               ))
             )}
           </div>
@@ -55,4 +54,4 @@ const Review = () => {
     </div>
   );
 };
-export default Review;
+export default ReviewSection;

@@ -1,3 +1,4 @@
+"use client";
 import {
   faBook,
   faBreadSlice,
@@ -9,12 +10,7 @@ import clsx from "clsx";
 import { throttle } from "lodash";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React, {
-  useEffect,
-  useMemo,
-  useRef,
-  useState
-} from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 
 const Nav: React.FC = () => {
@@ -43,7 +39,12 @@ const Nav: React.FC = () => {
     [beforeScrollY]
   );
   return (
-    <BottomNav className={clsx(visible ? "visible" : "invisible")}>
+    <div
+      className={clsx(
+        visible ? "visible" : "invisible",
+        "sticky bottom-0 left-0 flex w-full justify-around bg-white py-2.5 z-10"
+      )}
+    >
       <StyledLink href="/home">
         <FontAwesomeIcon
           icon={faBreadSlice}
@@ -77,7 +78,7 @@ const Nav: React.FC = () => {
         />
         <span>일지</span>
       </StyledLink>
-    </BottomNav>
+    </div>
   );
 };
 
@@ -94,18 +95,4 @@ const StyledLink = styled(Link)`
     font-size: xx-small;
     margin-top: 5px;
   }
-`;
-const BottomNav = styled.div`
-  position: fixed;
-  bottom: 0;
-  display: flex;
-  width: 100%;
-  flex-direction: row;
-  gap: 20%;
-  align-items: center;
-  justify-content: center;
-  padding: 10px 0;
-  border-top: ${(props) => `solid thin` + props.theme.color.border_grey};
-  background-color: white;
-  z-index: 100;
 `;

@@ -3,6 +3,7 @@ import "src/styles/globals.css";
 import GlobalProvider from "./GlobalProvider";
 import ReactQueryProvider from "./ReactQueryProvider";
 import RootStyleRegistry from "./RootStyleRegistry";
+import Nav from "@components/Nav";
 
 export default async function RootLayout({
   children,
@@ -23,7 +24,12 @@ export default async function RootLayout({
       <body>
         <ReactQueryProvider>
           <RootStyleRegistry>
-            <GlobalProvider>{children}</GlobalProvider>
+            <GlobalProvider>
+              <div className="min-h-screen flex flex-col">
+                <div className="flex-1">{children}</div>
+                <Nav />
+              </div>
+            </GlobalProvider>
           </RootStyleRegistry>
         </ReactQueryProvider>
       </body>

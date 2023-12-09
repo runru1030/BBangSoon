@@ -15,7 +15,7 @@ const MapSection = () => {
 
   const [storeArr, setStoreArr] = useState<StrapiStoreType[]>([]);
 
-  useQuery(["getNearbyStores"], {
+  useQuery(["getNearbyStores", { mapLocation }], {
     queryFn: async () => {
       return await strapiStoresApi.getNearbyStores({
         curr_x: mapLocation.x,

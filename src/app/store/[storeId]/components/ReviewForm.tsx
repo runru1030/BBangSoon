@@ -3,11 +3,11 @@ import { storeInfoAtoms } from "@app/store/[storeId]/StoreInfoProvider";
 import { faBreadSlice, faCamera, faX } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { strapiReviewsApi } from "@lib/apis/ReviewsApis";
-import { QueryClient, useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import clsx from "clsx";
 import { atom, useAtom, useAtomValue } from "jotai";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 import styled from "styled-components";
 export interface reviewState {
@@ -32,7 +32,7 @@ const ReviewForm = () => {
     auth_user: userAtom.id,
     store: storeInfo.id,
   });
-  const queryClient = new QueryClient();
+  const queryClient = useQueryClient();
   const postReview = useMutation({
     mutationFn: async ({
       imgFormData,

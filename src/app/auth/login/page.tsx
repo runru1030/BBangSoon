@@ -1,10 +1,9 @@
 "use client";
 import useAuthKakao from "@components/hooks/useAuthKakao";
-import Nav from "@components/Nav";
 import {
   faBook,
   faBreadSlice,
-  faHeart
+  faHeart,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import clsx from "clsx";
@@ -55,7 +54,6 @@ const Page = () => {
           )}
         </Link>
       </Randing>
-      <Nav />
     </div>
   );
 };

@@ -14,6 +14,16 @@ const postReview = async (reviewData: reviewState) => {
     console.error(error);
   }
 };
+const deleteReview = async (reviewId: number) => {
+  try {
+    const res = await axios.delete(
+      `${process.env.NEXT_PUBLIC_DOMAIN}/api/reviews/${reviewId}`
+    );
+    return res;
+  } catch (error) {
+    console.error(error);
+  }
+};
 const postReviewImg = async (reviewFormData: FormData) => {
   try {
     const res = await axios.post(
@@ -30,10 +40,24 @@ const getReviewsOfStore = async (storeId: number) => {
     const {
       data: { data },
     } = await axios.get(
-      `${process.env.NEXT_PUBLIC_DOMAIN}/api/reviews?populate[store_imgs][populate]=*&filters[store][id][$eq]=${storeId}&sort=createdAt:desc`
+      `${process.env.NEXT_PUBLIC_DOMAIN}/api/reviews?populate[0]=auth_user&populate[1]=store_imgs.img&filters[store][id][$eq]=${storeId}&sort=createdAt:desc`
     );
-
-    return { data };
+    return {
+      data: [
+        ...data.map((review: any) => ({
+          id: review.id,
+          attributes: {
+            content: review.attributes.content,
+            star: review.attributes.star,
+            createdAt: review.attributes.createdAt,
+            userId: review.attributes.auth_user.data.id,
+            imgUrl:
+              review.attributes.store_imgs.data[0]?.attributes?.img?.data
+                ?.attributes?.url,
+          },
+        })),
+      ],
+    };
   } catch (error) {
     console.error(error);
     return { attributes: undefined };
@@ -41,6 +65,7 @@ const getReviewsOfStore = async (storeId: number) => {
 };
 export const strapiReviewsApi = {
   postReview,
+  deleteReview,
   getReviewsOfStore,
   postReviewImg,
 };

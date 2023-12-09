@@ -4,14 +4,13 @@ import { strapiReviewsApi } from "@lib/apis/ReviewsApis";
 import { useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
 import { useAtom } from "jotai";
-import { openedStoreInfoAtom } from "../PageContent";
-import { storeInfoAtoms } from "../StoreInfoProvider";
+import { openedStoreInfoAtom, storeInfoAtoms } from "../StoreInfoProvider";
 
 const ReviewSection = () => {
   const [storeInfo, setStoreInfo] = useAtom(storeInfoAtoms.storeAtom);
   const [openedStoreInfo, setOpenedStoreInfo] = useAtom(openedStoreInfoAtom);
 
-  useQuery(["getStoreReviews"], {
+  useQuery(["getStoreReviews", { storeInfo }], {
     queryFn: async () => {
       return await strapiReviewsApi.getReviewsOfStore(storeInfo.id);
     },

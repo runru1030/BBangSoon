@@ -1,6 +1,7 @@
 import { strapiStoresApi } from "@lib/apis/Stores";
 import { useQuery } from "@tanstack/react-query";
 import { atom, useAtom } from "jotai";
+import { atomWithReset } from "jotai/utils";
 import React from "react";
 
 export interface StoreImg {
@@ -29,6 +30,10 @@ export const storeInfoAtoms = {
     reviews: [],
   }),
 };
+
+export const openedStoreInfoAtom = atomWithReset<
+  "map" | "detail" | "menu" | "review"
+>("detail");
 
 export default function StoreInfoProvider(props: {
   children: React.ReactNode | React.ReactNode[];

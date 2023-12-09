@@ -5,8 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import clsx from "clsx";
 import { useAtom, useAtomValue } from "jotai";
 import Link from "next/link";
-import { openedStoreInfoAtom } from "../PageContent";
-import { storeInfoAtoms } from "../StoreInfoProvider";
+import { openedStoreInfoAtom, storeInfoAtoms } from "../StoreInfoProvider";
 const MapInfo = () => {
   const storeInfo = useAtomValue(storeInfoAtoms.storeAtom);
   const [openedStoreInfo, setOpenedStoreInfo] = useAtom(openedStoreInfoAtom);

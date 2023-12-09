@@ -19,10 +19,7 @@ export async function PUT(req: Request) {
       id: -1,
     };
 
-    // const { attributes } = await strapiAuthUsersApi.getUser(userInfo.email);
-    const attributes = {
-      id: 8,
-    };
+    const { attributes } = await strapiAuthUsersApi.getUser(userInfo.email);
     userInfo.id = attributes.id;
 
     if (!attributes) {

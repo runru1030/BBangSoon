@@ -42,7 +42,7 @@ const Nav: React.FC = () => {
     <div
       className={clsx(
         visible ? "visible" : "invisible",
-        "sticky bottom-0 left-0 flex w-full justify-around bg-white py-2.5"
+        "sticky bottom-0 left-0 flex w-full justify-around bg-white py-2.5 z-10"
       )}
     >
       <StyledLink href="/home">
